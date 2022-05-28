@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <script src="index.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/olum-ui.min.css" />
+    <link rel="stylesheet" href="css/font.css" />
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <div class="o-grid" style="grid-gap: 10px">
+      <div class="col=1:2 row=1:2">
+        <button id="prev" class="o-btn">prev</button>
+        <button id="next" class="o-btn" style="float: right">next</button>
+      </div>
+      <div id="content" class="col=1:2 row=2:3"></div>
+    </div>
+    <script src="js/index.js"></script>
+  </body>
 </html>
