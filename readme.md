@@ -1,0 +1,1 @@
+a quoran app named miracle because the quoran itself is a mental miracle
