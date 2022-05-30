@@ -1,3 +1,4 @@
+// todo display context as each page in real quoran
 let start = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ";
 let ref;
 let list;
