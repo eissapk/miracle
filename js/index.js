@@ -3,7 +3,24 @@ let start = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّح
 let ref;
 let list;
 
-let godArr = ["هو", "الله", "رب"];
+let godArr = [
+    "هو",
+    "الله",
+    "رب",
+    "ربهم",
+    "ربكم",
+    "ربك",
+    "ربه",
+    "ربنا",
+    "لرب",
+    "ربي",
+    "ربها",
+    "لربك",
+    "ربكما",
+    "ربهما",
+    "ربها",
+]
+
 
 const normalize = input => {
     return (
@@ -90,15 +107,17 @@ const normalize = input => {
 
 function highlight(str, arr) {
     let chunks = str.split(" ");
-    const targetWords = [];
+    let targetWords = [];
     chunks.forEach(word => {
         const normalWord = normalize(word);
         const index = arr.indexOf(normalWord)
         if (index != -1) targetWords.push(word);
     });
+    
+    targetWords = [...new Set(targetWords)] // remove duplication
 
     // console.log(targetWords);
-    targetWords.forEach(word => str = str.replaceAll(word, `<span class="god">${word}</span>`))
+    targetWords.forEach(word => str = str.replace(new RegExp(`${word}`, "g"), `<span class="god">${word}</span>`))
     return str;
 }
 
@@ -138,23 +157,47 @@ function display(num) {
         .then(res => res.json())
         .then(data => {
             localStorage.setItem("surahNum", num);
-            const surahText = data.ayahs.map((obj, index) => `<span class="verseNum" data-pos="${data.number}-${obj.numberInSurah}">${highlight(obj.text, godArr)} (${String(index+1).toArNum()})</span>`).join("");
+            const surahText = data.ayahs.map((obj, index) => {
+                const pos = `data-pos="${data.number}-${obj.numberInSurah}"`;
+                return `<span class="verse" ${pos}>${highlight(obj.text, godArr)}<span class="verseNum" ${pos}>${String(index+1).toArNum()}</span></span>`;
+            }).join("");
             if ([1, 9].includes(data.number)) {
                 content.innerHTML = `
-                <h4>${data.name}<span> (${String(data.number).toArNum()}) </span></h4>
+                <h4>
+                    ${data.name}
+                    <span class="verseNum">${String(data.number).toArNum()}</span>
+                </h4>
                 <div class="text">
                     ${surahText}
                 </div>
                 `;
             } else {
                 content.innerHTML = `
-                <h4>${data.name}<span> (${String(data.number).toArNum()}) </span></h4> 
+                <h4>
+                    ${data.name}
+                    <span class="verseNum">${String(data.number).toArNum()}</span>
+                </h4> 
                 <p class="start">${highlight(start, godArr)}</p>
                 <div class="text">
                     ${surahText}
                 </div>
                 `;
             }
+            
+            // wrape all text nodes into span element for better formatting with css
+            const nodes = content.querySelectorAll(".text .verse");
+            nodes.forEach(node => {
+                node.childNodes.forEach(item => {
+                    if (item.nodeType === 3) { // text
+                        const span = document.createElement("span");
+                        span.textContent = item.textContent;
+                        item.replaceWith(span)
+                    }
+                    
+                })
+            })
+            console.warn();
+            
         })
         .catch(console.error);
 }
@@ -190,3 +233,9 @@ function slide() {
 }
 
 slide();
+
+document.body.onclick = function (e) {
+    if (e.target.classList.contains("verse")) {
+        console.warn(e.target.textContent);
+    }
+}
