@@ -1,43 +1,35 @@
 body {
-    /* Set "my-sec-counter" to 0 */
-    /* counter-reset: my-sec-counter; */
+  /* Set "my-sec-counter" to 0 */
+  /* counter-reset: my-sec-counter; */
 }
 
 #content {
-    font-family: "Kitab-Regular", serif;
-    /* font-weight: bold; */
-    font-size: 25px;
-    padding: 0 20px;
-    text-align: right;
+  font-family: "Kitab-Regular", serif;
+  font-size: 25px;
+  padding: 0 20px;
+  text-align: right;
 }
-h3,h4{
+
+#content *,
+#content *::after,
+#content *::before {
+  font-family: "Kitab-Regular", serif;
+}
+
+#content h4 {
   text-align: center;
 }
-#content>p {
-    /* outline: 1px solid red; */
-    margin: 5px 0;
-    cursor: pointer;
-    overflow: hidden;
+
+#content p.start {
+  text-align: center;
 }
 
-#content>p span {
-    pointer-events: none;
-    transition: background 0.3s ease;
+#content .text .verseNum {
+  margin-left: 10px;
+  float: right;
 }
 
-.verse {
-    background: #eee;
-    padding: 5px 10px;
-    border-radius: 5px;
-    float: right;
+#content .god {
+  color: red;
 }
-
-#content>p::before {
-    /* Increment "my-sec-counter" by 1 */
-    /* counter-increment: my-sec-counter;
-  content: "*" counter(my-sec-counter) "* "; */
-}
-
-#content>p:hover span {
-  background-color: white;
-}
+/*# sourceMappingURL=index.css.map */

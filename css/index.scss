@@ -1,0 +1,36 @@
+body {
+  /* Set "my-sec-counter" to 0 */
+  /* counter-reset: my-sec-counter; */
+}
+
+#content {
+  font-family: "Kitab-Regular", serif;
+  font-size: 25px;
+  padding: 0 20px;
+  text-align: right;
+
+  *,
+  *::after,
+  *::before {
+    font-family: "Kitab-Regular", serif;
+  }
+
+  h4 {
+    text-align: center;
+  }
+
+  p.start {
+    text-align: center;
+  }
+
+  .text {
+    .verseNum {
+      margin-left: 10px;
+      float: right;
+    }
+  }
+
+  .god {
+    color: red;
+  }
+}
