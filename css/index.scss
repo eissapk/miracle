@@ -1,44 +1,52 @@
-body {
-  /* Set "my-sec-counter" to 0 */
-  /* counter-reset: my-sec-counter; */
+body,
+html {
+  margin: 0;
+  padding: 0;
 }
 
-#content {
-  font-family: "Kitab-Regular", serif;
-  font-size: 25px;
-  padding: 0 20px;
-  text-align: right;
+#loader {
+  width: 0;
+  height: 5px;
+  background: royalblue;
+}
 
-  *,
-  *::after,
-  *::before {
+.hide {
+  display: none;
+}
+
+.god {
+  color: red;
+}
+
+.page {
+  padding: 30px 10px;
+  max-width: 550px;
+  margin: 30px auto;
+  border: 10px solid burlywood;
+  box-sizing: border-box;
+  // position: relative;
+  &::before {
+    // position: absolute;
+    // content: "";
+    // pointer-events: none;
+    // background: url("/assets/img/border.png");
+    // background-repeat: no-repeat;
+    // background-size: contain;
+    // font-size: 18px;
+    // width: 30px;
+    // height: 100%;
+    // display: inline-block;
+    // line-height: 50px;
+    // text-align: center;
+    // user-select: none;
+  }
+
+  .verse {
     font-family: "Kitab-Regular", serif;
-  }
+    font-size: 30px;
+    line-height: 55px;
 
-  h4 {
-    text-align: center;
-  }
-
-  p.start {
-    text-align: center;
-  }
-
-  .text {
-    line-height: 60px;
-    .verse {
-      span {
-         pointer-events: none
-      }
-      cursor: pointer;
-      &:last-of-type {
-        span {
-          // float: right;
-        }
-      }
-
-    }
-
-    .verseNum {
+    .num {
       pointer-events: none;
       background: url("/assets/img/verseNum.png");
       background-repeat: no-repeat;
@@ -49,13 +57,8 @@ body {
       display: inline-block;
       line-height: 50px;
       text-align: center;
+      margin: 0 10px;
       user-select: none;
-      margin-left: 10px;
     }
-  }
-
-  .god {
-    pointer-events: none;
-    color: red;
   }
 }

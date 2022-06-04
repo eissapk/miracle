@@ -121,8 +121,6 @@ function highlight(str, arr) {
     return str;
 }
 
-
-
 String.prototype.toArNum = function () {
     const digits = {
         "0": "٠",
@@ -150,92 +148,93 @@ function search(str, limit = 30) {
     }
 }
 
-const content = document.getElementById("content");
+// const content = document.getElementById("content");
 
-function display(num) {
-    fetch("/assets/surahs/surah_" + num + ".json")
-        .then(res => res.json())
-        .then(data => {
-            localStorage.setItem("surahNum", num);
-            const surahText = data.ayahs.map((obj, index) => {
-                const pos = `data-pos="${data.number}-${obj.numberInSurah}"`;
-                return `<span class="verse" ${pos}>${highlight(obj.text, godArr)}<span class="verseNum" ${pos}>${String(index+1).toArNum()}</span></span>`;
-            }).join("");
-            if ([1, 9].includes(data.number)) {
-                content.innerHTML = `
-                <h4>
-                    ${data.name}
-                    <span class="verseNum">${String(data.number).toArNum()}</span>
-                </h4>
-                <div class="text">
-                    ${surahText}
-                </div>
-                `;
-            } else {
-                content.innerHTML = `
-                <h4>
-                    ${data.name}
-                    <span class="verseNum">${String(data.number).toArNum()}</span>
-                </h4> 
-                <p class="start">${highlight(start, godArr)}</p>
-                <div class="text">
-                    ${surahText}
-                </div>
-                `;
-            }
+// function display(num) {
+//     fetch("/assets/surahs/surah_" + num + ".json")
+//         .then(res => res.json())
+//         .then(data => {
+//             // console.warn(data);
+//             localStorage.setItem("surahNum", num);
+//             const surahText = data.ayahs.map((obj, index) => {
+//                 const pos = `data-pos="${data.number}-${obj.numberInSurah}"`;
+//                 return `<span class="verse" ${pos}>${highlight(obj.text, godArr)}<span class="verseNum" ${pos}>${String(index+1).toArNum()}</span></span>`;
+//             }).join("");
+//             if ([1, 9].includes(data.number)) {
+//                 content.innerHTML = `
+//                 <h4>
+//                     ${data.name}
+//                     <span class="verseNum">${String(data.number).toArNum()}</span>
+//                 </h4>
+//                 <div class="text">
+//                     ${surahText}
+//                 </div>
+//                 `;
+//             } else {
+//                 content.innerHTML = `
+//                 <h4>
+//                     ${data.name}
+//                     <span class="verseNum">${String(data.number).toArNum()}</span>
+//                 </h4> 
+//                 <p class="start">${highlight(start, godArr)}</p>
+//                 <div class="text">
+//                     ${surahText}
+//                 </div>
+//                 `;
+//             }
             
-            // wrape all text nodes into span element for better formatting with css
-            const nodes = content.querySelectorAll(".text .verse");
-            nodes.forEach(node => {
-                node.childNodes.forEach(item => {
-                    if (item.nodeType === 3) { // text
-                        const span = document.createElement("span");
-                        span.textContent = item.textContent;
-                        item.replaceWith(span)
-                    }
+//             // wrape all text nodes into span element for better formatting with css
+//             const nodes = content.querySelectorAll(".text .verse");
+//             nodes.forEach(node => {
+//                 node.childNodes.forEach(item => {
+//                     if (item.nodeType === 3) { // text
+//                         const span = document.createElement("span");
+//                         span.textContent = item.textContent;
+//                         item.replaceWith(span)
+//                     }
                     
-                })
-            })
-            console.warn();
+//                 })
+//             })
+//             // console.warn();
             
-        })
-        .catch(console.error);
-}
+//         })
+//         .catch(console.error);
+// }
 
-function slide() {
-    let max = 114;
-    let num = +localStorage.getItem("surahNum") || 1;
-    const next = document.getElementById("next");
-    const prev = document.getElementById("prev");
+// function slide() {
+//     let max = 114;
+//     let num = +localStorage.getItem("surahNum") || 1;
+//     const next = document.getElementById("next");
+//     const prev = document.getElementById("prev");
 
-    next.onclick = function () {
-        if (num < max) {
-            num += 1;
-        }
-        console.log(num);
-        display(num);
-        localStorage.setItem("surahNum", num);
-    };
+//     next.onclick = function () {
+//         if (num < max) {
+//             num += 1;
+//         }
+//         // console.log(num);
+//         display(num);
+//         localStorage.setItem("surahNum", num);
+//     };
 
-    prev.onclick = function () {
-        if (num <= max && num > 1) {
-            num -= 1;
-        }
-        console.log(num);
-        display(num);
-        localStorage.setItem("surahNum", num);
+//     prev.onclick = function () {
+//         if (num <= max && num > 1) {
+//             num -= 1;
+//         }
+//         // console.log(num);
+//         display(num);
+//         localStorage.setItem("surahNum", num);
 
-    };
+//     };
 
-    console.log(num);
-    display(num);
+//     // console.log(num);
+//     display(num);
 
-}
+// }
 
-slide();
+// slide();
 
-document.body.onclick = function (e) {
-    if (e.target.classList.contains("verse")) {
-        console.warn(e.target.textContent);
-    }
-}
+// document.body.onclick = function (e) {
+//     if (e.target.classList.contains("verse")) {
+//         console.warn(e.target.textContent);
+//     }
+// }

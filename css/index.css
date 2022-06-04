@@ -1,42 +1,39 @@
-body {
-  /* Set "my-sec-counter" to 0 */
-  /* counter-reset: my-sec-counter; */
+body,
+html {
+  margin: 0;
+  padding: 0;
 }
 
-#content {
+#loader {
+  width: 0;
+  height: 5px;
+  background: royalblue;
+}
+
+.hide {
+  display: none;
+}
+
+.god {
+  color: red;
+}
+
+.page {
+  padding: 30px 10px;
+  max-width: 550px;
+  margin: 30px auto;
+  border: 10px solid burlywood;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.page .verse {
   font-family: "Kitab-Regular", serif;
-  font-size: 25px;
-  padding: 0 20px;
-  text-align: right;
+  font-size: 30px;
+  line-height: 55px;
 }
 
-#content *,
-#content *::after,
-#content *::before {
-  font-family: "Kitab-Regular", serif;
-}
-
-#content h4 {
-  text-align: center;
-}
-
-#content p.start {
-  text-align: center;
-}
-
-#content .text {
-  line-height: 60px;
-}
-
-#content .text .verse {
-  cursor: pointer;
-}
-
-#content .text .verse span {
-  pointer-events: none;
-}
-
-#content .text .verseNum {
+.page .verse .num {
   pointer-events: none;
   background: url("/assets/img/verseNum.png");
   background-repeat: no-repeat;
@@ -47,15 +44,10 @@ body {
   display: inline-block;
   line-height: 50px;
   text-align: center;
+  margin: 0 10px;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  margin-left: 10px;
-}
-
-#content .god {
-  pointer-events: none;
-  color: red;
 }
 /*# sourceMappingURL=index.css.map */
