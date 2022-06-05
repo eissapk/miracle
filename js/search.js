@@ -1,11 +1,12 @@
 const engine = document.getElementById("engine");
 const engineClearBtn = document.getElementById("engine-clear");
 
+// todo search exact word
 function search(str, limit = 30) {
   str = str.replace(/ى/g, "ي"); // because all reltaive letters in ref.json are "ي"
   if (ref) {
-    return ref.filter(obj => obj.text.includes(str)).slice(0, limit);
-    // return ref.filter(obj => obj.text.includes(str));
+    // return ref.filter(obj => normalize(obj.text).trim().includes(str)).slice(0, limit);
+    return ref.filter(obj => normalize(obj.text).trim().includes(str));
   }
 }
 

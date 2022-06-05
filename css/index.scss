@@ -155,6 +155,7 @@ body {
 }
 
 .searchPanel {
+  width: 100%;
   max-width: 100%;
   color: #666;
   overflow: auto;
@@ -165,6 +166,9 @@ body {
     height: auto;
     border: 1px solid #eee;
     margin-bottom: 10px;
+    font-family: "Kitab-Regular", serif !important;
+    font-size: 20px;
+    color: #333;
     &:last-of-type {
       margin-bottom: 0;
     }

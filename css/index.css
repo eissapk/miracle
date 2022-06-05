@@ -172,6 +172,7 @@ body {
 }
 
 .searchPanel {
+  width: 100%;
   max-width: 100%;
   color: #666;
   overflow: auto;
@@ -183,6 +184,9 @@ body {
   height: auto;
   border: 1px solid #eee;
   margin-bottom: 10px;
+  font-family: "Kitab-Regular", serif !important;
+  font-size: 20px;
+  color: #333;
 }
 
 .searchPanel li:last-of-type {
@@ -190,7 +194,7 @@ body {
 }
 
 .highlight {
-  background-color: #5fd068;
+  background-color: #ffeb3b;
   color: #3c2c3e;
 }
 /*# sourceMappingURL=index.css.map */
