@@ -2,12 +2,33 @@ body,
 html {
   margin: 0;
   padding: 0;
+  font-family: "Tajawal", Helvetica, Arial, sans-serif;
+  *,
+  *::after,
+  *::before {
+    font-family: "Tajawal", Helvetica, Arial, sans-serif;
+  }
+}
+
+body {
+  overflow: hidden;
 }
 
 #loader {
-  width: 0;
-  height: 5px;
-  background: royalblue;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  background-color: white;
+
+  .indicator {
+    width: 0;
+    height: 5px;
+    background-color: #5fd068;
+    transition: width 0.3s ease;
+  }
 }
 
 .hide {
@@ -16,12 +37,14 @@ html {
 
 .god {
   color: red;
+  pointer-events: none;
+  font-family: "Kitab-Regular", serif !important;
 }
 
 .surahName,
 .start,
 .verse {
-  font-family: "Kitab-Regular", serif;
+  font-family: "Kitab-Regular", serif !important;
 }
 
 .start {
@@ -40,7 +63,7 @@ html {
   padding: 10px 0;
 
   span {
-    font-family: "Kitab-Regular", serif;
+    font-family: "Kitab-Regular", serif !important;
     text-align: center;
     align-self: center;
   }
@@ -53,7 +76,6 @@ html {
   .name {
     font-size: 35px;
   }
-
 }
 
 .page {
@@ -65,8 +87,34 @@ html {
   position: relative;
   border-radius: 5px;
 
+  @media (max-width: 768px) {
+    border-color: transparent;
+  }
+
+  .pageHint {
+    position: absolute;
+    left: 0;
+    top: -20px;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    span {
+      padding: 0 5px;
+      border-radius: 5px;
+      font-family: "Kitab-Regular", serif !important;
+    }
+    &_name {
+      background: white;
+      float: left;
+    }
+    &_part {
+      float: right;
+      background: white;
+    }
+  }
+
   &::after {
-    font-family: "Kitab-Regular", serif;
+    font-family: "Kitab-Regular", serif !important;
     position: absolute;
     content: attr(data-page);
     text-align: center;
@@ -88,7 +136,6 @@ html {
   .verse {
     font-size: 30px;
     line-height: 55px;
-
     .num {
       pointer-events: none;
       background: url("/assets/img/verseNum.png");
@@ -102,6 +149,29 @@ html {
       text-align: center;
       margin: 0 10px;
       user-select: none;
+      font-family: "Kitab-Regular", serif !important;
     }
   }
+}
+
+.searchPanel {
+  max-width: 100%;
+  color: #666;
+  overflow: auto;
+  max-height: 50vh;
+  line-height: 25px;
+
+  li {
+    height: auto;
+    border: 1px solid #eee;
+    margin-bottom: 10px;
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.highlight {
+  background-color: #5fd068;
+  color: #3c2c3e;
 }

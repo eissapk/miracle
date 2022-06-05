@@ -10,20 +10,29 @@
     <link rel="stylesheet" href="css/index.css" />
   </head>
   <body>
-    <div id="loader"></div>
+    <div id="loader">
+      <div class="indicator"></div>
+    </div>
 
-    <main></main>
-    <!-- <div class="o-grid" style="grid-gap: 10px">
-      <div class="col=1:2 row=1:2">
-        <button id="prev" class="o-btn">السورة السابقة</button>
-        <button id="next" class="o-btn" style="float: right">السورة التالية</button>
+    <div class="o-grid" style="grid-gap: 10px">
+      <!-- next/prev -->
+      <div class="o-grid col=1:2 row=1:2" style="grid-gap: 25px; margin: 25px">
+        <button id="next" class="o-btn col=1:2">الصفحة التالية</button>
+        <button id="prev" class="o-btn col=2:3">الصفحة السابقة</button>
       </div>
-      <div class="col=1:2 row=2:3" style="justify-self: center;">
-        <input type="text" class="o-input">
+      <!-- search -->
+      <div class="col=1:2 row=2:3" style="justify-self: center">
+        <div class="o-search">
+          <input id="engine" class="o-input" type="text" required placeholder="ابحث عن أية" />
+          <button class="o-close" id="engine-clear"></button>
+        </div>
       </div>
-      <div id="content" class="col=1:2 row=3:4"></div>
-    </div> -->
-    <script src="js/index.js"></script>
-    <script src="js/app.js"></script>
+      <!-- pages -->
+      <main class="col=1:2 row=3:4"></main>
+    </div>
+
+    <script defer src="js/olum-ui.min.js"></script>
+    <script defer src="js/index.js"></script>
+    <script defer src="js/app.js"></script>
   </body>
 </html>
