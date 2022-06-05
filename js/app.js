@@ -55,6 +55,7 @@ function sortPages() {
 function displayPages(pages) {
   return new Promise((resolve, reject) => {
     // console.log(pages);
+    let partCounter = 0;
 
     for (let page in pages) {
       indicator.style.width = loader + "%";
@@ -97,16 +98,30 @@ function displayPages(pages) {
 
       div.innerHTML = content;
 
+      
       // page hint surah name + part num for each 21 page | we have to divid over 630 to get the right parts order
-      // todo use getPartNum()
-      const partNum = Math.ceil((Number(page)/630) * 30);
-      div.insertAdjacentHTML(
-        "afterbegin",
-        `<div class="pageHint">
-      <span class="pageHint_name">${currentPageArr[0].surahName}</span>
-      <span class="pageHint_part">الجزء ${String(partNum).toPartName()}</span>
-      </div>`
-      );
+      if (page >= 2) {
+        partCounter++;
+        // const partNum = getPartNum(page);
+        const partNum = Math.ceil(((+page - 1) / 603) * 30)
+        console.log({partNum,page});
+        
+        // 
+        if (partCounter + 18 == page) {
+          console.log("part");
+        }
+        
+        div.insertAdjacentHTML(
+          "afterbegin",
+          `<div class="pageHint">
+        <span class="pageHint_name">${currentPageArr[0].surahName}</span>
+        <span class="pageHint_part">الجزء ${String(partNum).toPartName()}</span>
+        </div>`
+        );
+        
+      }
+      
+      
 
       const wrapper = document.querySelector("main");
       wrapper.append(div);

@@ -4,21 +4,21 @@ let list;
 let verseLocation = null;
 
 // calc parts starting/ending pages | note: the order of the quran surahs is a miracle itself
+// get 1st page from part number
 function getFirstPage(part) {
   return +((part - 1) * 2 + "2");
 }
 
+// get last page from part number
 function getLastPage(part) {
   return getFirstPage(part) + 19;
 }
 
+// get part number from 1st page in the part
 function getPartNum(page) {
-    // const firstPage = (part - 1) * 2 + "2";
-    
-    
-    console.log(page);
+  page = +String(page).slice(0, -1);
+  return (page + 2) / 2;
 }
-
 
 let godArr = ["هو", "الله", "رب", "ربهم", "ربكم", "ربك", "ربه", "ربنا", "لرب", "ربي", "ربها", "لربك", "ربكما", "ربهما", "ربها"];
 
@@ -169,7 +169,7 @@ String.prototype.toPartName = function () {
     29: "التاسع والعشرون",
     30: "الثلاثون",
   };
-  return digits[this]
+  return digits[this];
 };
 
 fetch("/assets/ref.json")
