@@ -55,8 +55,6 @@ function sortPages() {
 function displayPages(pages) {
   return new Promise((resolve, reject) => {
     // console.log(pages);
-    let partCounter = 0;
-
     for (let page in pages) {
       indicator.style.width = loader + "%";
       // console.log(loader + "%");
@@ -70,9 +68,9 @@ function displayPages(pages) {
           const verseText = highlight(obj.text, godArr);
           const surahName = `
           <div class="surahInfo o-grid">
-          <span class="order col=3:4 row=1:2"> ترتيبها ${String(obj.surahNum).toArNum()}</span>
+          <span class="total col=3:4 row=1:2"> اياتها ${String(obj.totalVerses).toArNum()}</span>
           <span class="name col=2:3 row=1:2">${obj.surahName}</span>
-          <span class="total col=1:2 row=1:2"> اياتها ${String(obj.totalVerses).toArNum()}</span>
+          <span class="order col=1:2 row=1:2"> ترتيبها ${String(obj.surahNum).toArNum()}</span>
           </div>`;
 
           const pos = `data-pos="${obj.surahNum}-${verseNum}-${obj.page}"`;
@@ -98,19 +96,17 @@ function displayPages(pages) {
 
       div.innerHTML = content;
 
-      
       // page hint surah name + part num for each 21 page | we have to divid over 630 to get the right parts order
-      if (page >= 2) {
-        partCounter++;
-        // const partNum = getPartNum(page);
-        const partNum = Math.ceil(((+page - 1) / 603) * 30)
-        console.log({partNum,page});
-        
-        // 
-        if (partCounter + 18 == page) {
-          console.log("part");
-        }
-        
+      let formula = null;
+      if (page >= 2) { // start of part 1
+        formula = ((+page - 1) / 603) * 30;
+        if (page >= 182) formula = ((+page) / 603) * 30; // start of part 10
+        if (page >= 382) formula = ((+page + 1) / 603) * 30; // start of part 20
+        if (page >= 603) formula = 30; // fix last two pages
+
+        const partNum = Math.ceil(formula);
+        // console.log({ partNum, page });
+
         div.insertAdjacentHTML(
           "afterbegin",
           `<div class="pageHint">
@@ -118,10 +114,8 @@ function displayPages(pages) {
         <span class="pageHint_part">الجزء ${String(partNum).toPartName()}</span>
         </div>`
         );
-        
+
       }
-      
-      
 
       const wrapper = document.querySelector("main");
       wrapper.append(div);
