@@ -5,10 +5,11 @@ let list;
 let verseLocation = null;
 
 let loader = 0;
+let loader_0 = 1;
 let loader_1 = 1;
 let loader_2 = 114;
 let loader_3 = 604;
-let total = loader_1 + loader_2 + loader_3;
+let total = loader_0 + loader_1 + loader_2 + loader_3;
 const indicator = document.querySelector("#loader .indicator");
 indicator.style.width = loader + "%";
 
@@ -92,7 +93,7 @@ const normalize = input => {
     .replace(/چ/g, "ج")
 };
 
-function highlight(str, arr) {
+function highlight(str, arr, className) {
   let chunks = str.split(" ");
   let targetWords = [];
   chunks.forEach(word => {
@@ -104,7 +105,7 @@ function highlight(str, arr) {
   targetWords = [...new Set(targetWords)]; // remove duplication
 
   // console.log(targetWords);
-  targetWords.forEach(word => (str = str.replace(new RegExp(`${word}`, "g"), `<span class="god">${word}</span>`)));
+  targetWords.forEach(word => (str = str.replace(new RegExp(`${word}`, "g"), `<span class="${className}">${word}</span>`)));
   return str;
 }
 
@@ -180,7 +181,11 @@ fetch("/assets/ref.json")
     // console.log(loader);
   })
   .catch(console.error);
-// fetch("/assets/list.json")
-//   .then(res => res.json())
-//   .then(data => (list = data))
-//   .catch(console.error);
+fetch("/assets/list.json")
+  .then(res => res.json())
+  .then(data => {
+    list = data;
+    loader = Math.ceil((1 / total) * 100);
+    indicator.style.width = loader + "%";
+  })
+  .catch(console.error);

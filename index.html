@@ -13,6 +13,13 @@
     <div id="loader">
       <div class="indicator"></div>
     </div>
+    
+    <div class="featuresBox">
+      <button class="o-btn" id="saveVerse">احفظ الاية</button>
+      <button class="o-btn">احفظ الصفحة</button>
+      <button class="o-btn">تفسير</button>
+      <button class="o-btn">قراءة</button>
+    </div>
 
     <div class="o-grid" style="grid-gap: 10px">
       <!-- next/prev -->
@@ -29,12 +36,22 @@
       </div>
 
       <!-- go to page number -->
-      <div class="col=1:2 row=3:4" style="justify-self: center;">
-        <input id="gotoPageNum" style="min-width: 100px;" type="number" placeholder="اذهب الى صفحة" class="o-input" min="1" max="604" />
+      <div class="col=1:2 row=3:4" style="justify-self: center">
+        <input id="gotoPageNum" style="min-width: 100px" type="number" placeholder="اذهب الى صفحة" class="o-input" min="1" max="604" />
+      </div>
+
+      <!-- go to part number -->
+      <div class="col=1:2 row=4:5" style="justify-self: center">
+        <input id="gotoPartNum" style="min-width: 100px" type="number" placeholder="اذهب الى جزء" class="o-input" min="1" max="30" />
+      </div>
+
+      <!-- table of contents -->
+      <div class="col=1:2 row=5:6" style="justify-self: center">
+        <button type="button" class="o-btn" id="tocBtn">الفهرس</button>
       </div>
 
       <!-- pages -->
-      <main class="col=1:2 row=4:5"></main>
+      <main class="col=1:2 row=6:7"></main>
     </div>
 
     <script defer src="js/olum-ui.min.js"></script>

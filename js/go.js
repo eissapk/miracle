@@ -34,3 +34,60 @@ gotoPageNum.onkeyup = function (e) {
   if (e.keyCode === 13) page(+val);
 }
 
+// go to specific page by number
+const gotoPartNum = document.getElementById("gotoPartNum");
+gotoPartNum.onkeyup = function (e) {
+  const val = e.target.value.trim();
+  if (e.keyCode === 13) page(+getFirstPage(+val));
+}
+
+// handle toc
+const tocBtn = document.getElementById("tocBtn");
+if (tocBtn) {
+  tocBtn.onclick = function () {
+    if (list) {
+      let content = list.map(obj=>{
+        return `<tr data-page="${obj.page}">
+        <td class="toc_item">${obj.name}</td>
+        <td class="toc_item">${String(obj.surah).toArNum()}</td>
+        <td class="toc_item">${String(obj.page).toArNum()}</td>
+        <td class="toc_item">${obj.type === "medinan" ? "مكية" : "مدنية"}</td>
+        </tr>`
+      }).join("");
+
+      oAlert({
+        desc: `<div class="tocPanel">
+        <table>
+        <thead>
+          <td>السور</td>
+          <td>رقمها</td>
+          <td>الصحيفة</td>
+          <td>البيان</td>
+        </thead>
+        <tbody>
+          ${content}
+        </tbody>
+        </table>
+        </div>
+        `,
+        okay: { text: "حسنا" },
+      }).then(res => {
+        if (res) {
+          console.log("ok");
+        }
+      })
+    }
+  }
+}
+
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("toc_item")) {
+    const num = +e.target.parentElement.getAttribute("data-page");
+    page(num);
+    
+    // todo handle olum-ui to close the instance of oAlert/oConfirm
+    // todo add focus to okay button
+    const btn = document.querySelector(".o-popup .okBtn");
+    btn.click();
+  }
+})

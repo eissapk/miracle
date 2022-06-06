@@ -5,8 +5,9 @@ const engineClearBtn = document.getElementById("engine-clear");
 function search(str, limit = 30) {
   str = str.replace(/ى/g, "ي"); // because all reltaive letters in ref.json are "ي"
   if (ref) {
-    // return ref.filter(obj => normalize(obj.text).trim().includes(str)).slice(0, limit);
-    return ref.filter(obj => normalize(obj.text).trim().includes(str));
+    const resultsArr = ref.filter(obj => normalize(obj.text).trim().includes(str));
+    const firstChunck = resultsArr.slice(0, limit);
+    return { length: resultsArr.length, resultsArr: firstChunck }
   }
 }
 
@@ -14,24 +15,26 @@ function search(str, limit = 30) {
 engineClearBtn.onclick = e => (engine.value = "");
 
 // todo add load more on scroll
-// todo display resutls with تشكيل
 engine.onkeyup = function (e) {
   const val = e.target.value.trim();
   if (e.keyCode === 13) {
-    const resultsArr = search(val);
-    console.log(resultsArr);
+    const { resultsArr, length } = search(val);
+    console.log(resultsArr, length);
     if (resultsArr.length) {
       const content = resultsArr
         .map((obj, index) => {
+          const info = `<i>${obj.name} - أية:${String(obj.verse).toArNum()} (صفحة ${String(obj.page).toArNum()})</i>`;
           const location = `data-verse="${obj.surah}-${obj.verse}-${obj.page}"`;
-          if (index === 0) return `<li class="active resultItem" ${location}>${obj.text}</li>`;
-          return `<li class="resultItem" ${location}>${obj.text}</li>`;
+          if (index === 0) return `<li class="active resultItem" ${location}>${highlight(obj.text, [val], "query")}<br/>${info}</li>`;
+          return `<li class="resultItem" ${location}>${highlight(obj.text, [val], "query")}<br/>${info}</li>`;
         })
         .join("");
 
+      let lengthDesc = "نتيجة";
+
       oConfirm({
         title: "البحث فى المصحف",
-        desc: `<ul class='o-list searchPanel'>${content}</ul>`,
+        desc: `<p class="length">${length.toLocaleString().toArNum()} ${lengthDesc}</p><ul class='o-list searchPanel'>${content}</ul>`,
         btns: { cancel: { exists: true, text: "الغاء" }, okay: { text: "اذهب الى الأية" } },
       }).then(res => {
         if (res) {
@@ -54,7 +57,7 @@ engine.onkeyup = function (e) {
 };
 
 // handle results
-document.onclick = function (e) {
+document.addEventListener("click", e => {
   if (e.target.classList.contains("resultItem")) {
     console.log(e.target);
     // ui
@@ -66,7 +69,7 @@ document.onclick = function (e) {
     const verseData = { surah: +surah, verse: +verse, page: +page };
     verseLocation = verseData;
   }
-};
+});
 
 function goToVerse() {
   console.log(verseLocation);
@@ -76,7 +79,7 @@ function goToVerse() {
     const verse = document.querySelector(posAttr);
     console.log(verse);
     if (verse) {
-      verse.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+      verse.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
       verse.classList.add("highlight");
       setTimeout(() => verse.classList.remove("highlight"), 3000);
     }

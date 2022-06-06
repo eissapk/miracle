@@ -1,4 +1,4 @@
-// todo add page number for each object in ref.json
+// const surahs = []
 function sortPages() {
   return new Promise((resolve, reject) => {
     const min = 1;
@@ -11,6 +11,7 @@ function sortPages() {
       fetch("/assets/surahs/surah_" + num + ".json")
         .then(res => res.json())
         .then(data => {
+          // surahs.push(data)
           const surahName = data.name;
           const surahNum = data.number;
           const totalVerses = data.numberOfAyahs;
@@ -58,7 +59,7 @@ function displayPages(pages) {
         .map(obj => {
           // console.warn(obj);
           const verseNum = String(obj.numberInSurah);
-          const verseText = highlight(obj.text, godArr);
+          const verseText = highlight(obj.text, godArr, "god");
           const surahName = `
           <div class="surahInfo o-grid">
           <span class="total col=3:4 row=1:2"> اياتها ${String(obj.totalVerses).toArNum()}</span>
@@ -74,7 +75,7 @@ function displayPages(pages) {
             } else {
               return `${surahName}<h3 class="start">${highlight(
                 start,
-                godArr
+                godArr, "god"
               )}</h3><span class="verse" ${pos}>${verseText.trim()}<span class="num">${verseNum.toArNum()}</span></span>`;
             }
           }
@@ -114,7 +115,7 @@ function displayPages(pages) {
       wrapper.append(div);
 
       // loader
-      loader = Math.ceil(((loader_1 + loader_2 + Number(page)) / total) * 100);
+      loader = Math.ceil(((loader_0 + loader_1 + loader_2 + Number(page)) / total) * 100);
       if (loader === 100)
         setTimeout(() => {
           indicator.parentElement.classList.add("hide");
@@ -127,6 +128,8 @@ function displayPages(pages) {
 }
 
 function page(num) {
+  const featuresBox = document.querySelector(".featuresBox");
+  featuresBox.style.display = "none"
   const pages = document.querySelectorAll(".page");
   pages.forEach(page => page.classList.add("hide"));
   const targetPage = document.getElementById("page_" + num);

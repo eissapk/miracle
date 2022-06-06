@@ -40,7 +40,8 @@ body {
   display: none;
 }
 
-.god {
+.god,
+.query {
   color: red;
   pointer-events: none;
   font-family: "Kitab-Regular", serif !important;
@@ -149,7 +150,35 @@ body {
 
 .page .verse {
   font-size: 30px;
-  line-height: 55px;
+  -webkit-user-select: auto;
+     -moz-user-select: auto;
+      -ms-user-select: auto;
+          user-select: auto;
+  -webkit-transition: background 0.3s ease;
+  transition: background 0.3s ease;
+  cursor: pointer;
+}
+
+.page .verse:hover {
+  background: #eee;
+}
+
+.page .verse * ::-moz-selection {
+  background-color: royalblue;
+  color: white;
+}
+
+.page .verse * ::selection {
+  background-color: royalblue;
+  color: white;
+}
+
+.page .verse .god {
+  -webkit-user-select: auto;
+     -moz-user-select: auto;
+      -ms-user-select: auto;
+          user-select: auto;
+  pointer-events: none;
 }
 
 .page .verse .num {
@@ -187,6 +216,20 @@ body {
   font-family: "Kitab-Regular", serif !important;
   font-size: 20px;
   color: #333;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 10px;
+}
+
+.searchPanel li i {
+  font-size: 16px;
+  font-style: normal;
+}
+
+.searchPanel li .query,
+.searchPanel li i {
+  font-family: "Kitab-Regular", serif !important;
+  pointer-events: none;
 }
 
 .searchPanel li:last-of-type {
@@ -196,5 +239,63 @@ body {
 .highlight {
   background-color: #ffeb3b;
   color: #3c2c3e;
+}
+
+.length {
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.tocPanel {
+  height: 50vh;
+  overflow: auto;
+}
+
+.tocPanel table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tocPanel table thead tr {
+  height: 50px;
+  line-height: 50px;
+}
+
+.tocPanel table thead td {
+  color: #333;
+  font-weight: bold;
+}
+
+.tocPanel table tbody td {
+  color: #666;
+  font-family: "Kitab-Regular", serif !important;
+}
+
+.tocPanel table tbody tr {
+  line-height: 30px;
+  height: 30px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.tocPanel table tbody tr:hover {
+  background-color: #eee;
+}
+
+.featuresBox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  top: 0;
+  border-radius: 5px;
+  display: none;
+  border: 1px solid #333;
+  max-width: 280px;
+  z-index: 999;
+  padding: 5px;
+  background: #666;
+  text-align: center;
 }
 /*# sourceMappingURL=index.css.map */
