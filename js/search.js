@@ -14,11 +14,10 @@ function search(str, limit = 30) {
 // engine
 engineClearBtn.onclick = e => (engine.value = "");
 
-// todo add load more on scroll
 engine.onkeyup = function (e) {
   const val = e.target.value.trim();
   if (e.keyCode === 13) {
-    const { resultsArr, length } = search(val);
+    let { resultsArr, length } = search(val, 31); // todo check length === 31 then show 30 and load others onclick loadmorebtn
     console.log(resultsArr, length);
     if (resultsArr.length) {
       const content = resultsArr
@@ -34,7 +33,7 @@ engine.onkeyup = function (e) {
 
       oConfirm({
         title: "البحث فى المصحف",
-        desc: `<p class="length">${length.toLocaleString().toArNum()} ${lengthDesc}</p><ul class='o-list searchPanel'>${content}</ul>`,
+        desc: `<p class="length">${length.toLocaleString().toArNum()} ${lengthDesc}</p><ul class='o-list searchPanel'>${content} <button class="o-btn loadMoreBtn" style="margin: 10px 0;">اظهر المزيد</button></ul>`,
         btns: { cancel: { exists: true, text: "الغاء" }, okay: { text: "اذهب الى الأية" } },
       }).then(res => {
         if (res) {

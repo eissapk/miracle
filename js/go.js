@@ -46,9 +46,9 @@ const tocBtn = document.getElementById("tocBtn");
 if (tocBtn) {
   tocBtn.onclick = function () {
     if (list) {
-      let content = list.map(obj=>{
+      let content = list.map(obj => {
         return `<tr data-page="${obj.page}">
-        <td class="toc_item">${obj.name}</td>
+        <td class="toc_item name">${obj.name}</td>
         <td class="toc_item">${String(obj.surah).toArNum()}</td>
         <td class="toc_item">${String(obj.page).toArNum()}</td>
         <td class="toc_item">${obj.type === "medinan" ? "مكية" : "مدنية"}</td>
@@ -56,7 +56,10 @@ if (tocBtn) {
       }).join("");
 
       oAlert({
-        desc: `<div class="tocPanel">
+        desc: `
+        <input type="text" class="o-input searchSurahsInput" placeholder="ابحث عن سورة">
+        
+        <div class="tocPanel">
         <table>
         <thead>
           <td>السور</td>
@@ -84,10 +87,27 @@ document.addEventListener("click", e => {
   if (e.target.classList.contains("toc_item")) {
     const num = +e.target.parentElement.getAttribute("data-page");
     page(num);
-    
+
     // todo handle olum-ui to close the instance of oAlert/oConfirm
     // todo add focus to okay button
     const btn = document.querySelector(".o-popup .okBtn");
     btn.click();
   }
+
 })
+
+document.body.addEventListener("keyup", e => {
+  if (e.target.classList.contains("searchSurahsInput")) {
+    if (e.keyCode === 13) {
+      const val = e.target.value.trim()
+      const rows = document.querySelectorAll(".tocPanel tbody tr");
+      rows.forEach(row => {
+        let td = row.querySelector("td.name");
+        const name = normalize(td.textContent).trim();
+        row.classList.add("hide");
+        if (name.includes(val)) row.classList.remove("hide");
+      })
+    }
+  }
+});
+
