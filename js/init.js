@@ -46,6 +46,7 @@ function sortPages() {
   });
 }
 
+// todo add سجدة/حزب
 function displayPages(pages) {
   return new Promise((resolve, reject) => {
     // console.log(pages);
@@ -68,18 +69,19 @@ function displayPages(pages) {
           </div>`;
 
           const pos = `data-pos="${obj.surahNum}-${verseNum}-${obj.page}"`;
+          const order = `data-order="${obj.number}"`;
           if (verseNum == 1) {
             if ([1, 9].includes(obj.surahNum)) {
               // الفاتحة و التوبة
-              return `${surahName}<span class="verse" ${pos}>${verseText.trim()}<span class="num">${verseNum.toArNum()}</span></span>`;
+              return `${surahName}<span class="verse" ${pos} ${order}>${verseText.trim()}<span class="num">${verseNum.toArNum()}</span></span>`;
             } else {
               return `${surahName}<h3 class="start">${highlight(
                 start,
                 godArr, "god"
-              )}</h3><span class="verse" ${pos}>${verseText.trim()}<span class="num">${verseNum.toArNum()}</span></span>`;
+              )}</h3><span class="verse" ${pos} ${order}>${verseText.trim()}<span class="num">${verseNum.toArNum()}</span></span>`;
             }
           }
-          return `<span class="verse" ${pos}>${verseText.trim()}<span class="num">${verseNum.toArNum()}</span></span>`;
+          return `<span class="verse" ${pos} ${order}>${verseText.trim()}<span class="num">${verseNum.toArNum()}</span></span>`;
         })
         .join("");
 
@@ -134,6 +136,7 @@ function page(num) {
   pages.forEach(page => page.classList.add("hide"));
   const targetPage = document.getElementById("page_" + num);
   if (targetPage) {
+    currentPageNum = num;
     targetPage.classList.remove("hide");
     localStorage.setItem("pageNum", num);
   }

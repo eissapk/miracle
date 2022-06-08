@@ -111,3 +111,4 @@ document.body.addEventListener("keyup", e => {
   }
 });
 
+// todo go to specific verse in specific surah

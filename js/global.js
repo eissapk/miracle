@@ -3,6 +3,7 @@ let godArr = ["هو", "لله", "الله", "رب", "ربهم", "ربكم", "ر�
 let ref;
 let list;
 let verseLocation = null;
+let currentPageNum = 1;
 
 let loader = 0;
 let loader_0 = 1;
