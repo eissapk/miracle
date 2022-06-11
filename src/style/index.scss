@@ -15,6 +15,12 @@ body {
     user-select: none;
   }
 }
+
+body {
+  &.overflow {
+    overflow: hidden;
+  }
+}
 #app {
   padding: 10px;
 
@@ -28,5 +34,31 @@ body {
   ul {
     padding: 0;
     margin: 0;
+  }
+}
+
+.LoaderView {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  svg {
+    width: 50px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: scale 1s ease-in-out infinite alternate;
+  }
+}
+@keyframes scale {
+  from {
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.1);
   }
 }

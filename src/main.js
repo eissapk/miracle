@@ -5,6 +5,13 @@ const app = createApp(App);
 app.use(router);
 app.mount('#app');
 
+// mixins
+app.mixin({
+  data() {
+    return {}
+  },
+})
+
 // filters
 app.config.globalProperties.$filters = {
   normalize(input) {
@@ -86,6 +93,7 @@ app.config.globalProperties.$filters = {
       .replace(/ڛ/g, "س")
       .replace(/چ/g, "ج")
   },
+
   // get 1st page from part number
   getFirstPage(part) {
     return +((part - 1) * 2 + "2");
@@ -95,6 +103,7 @@ app.config.globalProperties.$filters = {
   getLastPage(part) {
     return this.getFirstPage(part) + 19;
   },
+
   highlight(str, arr, className) {
     let chunks = str.split(" ");
     let targetWords = [];
