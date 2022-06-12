@@ -10,9 +10,7 @@ body {
   *,
   *::after,
   *::before {
-    font-family: "Tajawal", Helvetica, Arial, sans-serif;
     box-sizing: border-box;
-    user-select: none;
   }
 }
 
@@ -23,21 +21,10 @@ body {
 }
 #app {
   padding: 10px;
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  ul {
-    padding: 0;
-    margin: 0;
-  }
 }
 
-.LoaderView {
+.LoaderView,
+.NotFound {
   position: fixed;
   width: 100vw;
   height: 100vh;
@@ -45,13 +32,31 @@ body {
   left: 0;
   top: 0;
   z-index: 9999;
-  svg {
-    width: 50px;
+  .container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    animation: scale 1s ease-in-out infinite alternate;
+    svg {
+      width: 50px;
+      animation: scale 1s ease-in-out infinite alternate;
+    }
+    p {
+      margin-top: -20px;
+      color: #666;
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+}
+
+.NotFound {
+  svg {
+    animation: none !important;
+    width: 95px;
+    height: 105px;
+    margin: 0 auto;
+    display: block;
   }
 }
 @keyframes scale {
@@ -60,5 +65,65 @@ body {
   }
   to {
     transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+.god {
+  color: #F32424;
+}
+
+.hizb {
+  color: #000957;
+}
+
+.modal {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  left: 0;
+  top: 0;
+  z-index: 9999;
+
+  .container {
+    position: relative;
+    background: white;
+    height: 95vh;
+    width: 100%;
+    left: 0;
+    top: 5vh;
+    animation: slideToUp 0.6s cubic-bezier(0.46, 0.03, 0.52, 0.96) forwards;
+    border-radius: 30px 30px 0 0;
+    border: 1px solid #eee;
+    padding: 25px 25px 0;
+    box-shadow: 1px 1px 6px 1px rgba(0, 0, 0, 0.05), -1px -1px 6px 1px rgba(0, 0, 0, 0.05);
+
+    // background-image: linear-gradient(90deg, rgba(106, 17, 203, 50%), rgba(47, 112, 236, 50%)), url("./assets/bookmarks.jpg");
+    // background-size: cover;
+    // background-position: center top;
+    // background-repeat: no-repeat;
+  }
+  &.hide {
+    .container {
+      animation: slideToDown 0.5s cubic-bezier(0.46, 0.03, 0.52, 0.96) forwards !important;
+    }
+  }
+}
+
+@keyframes slideToUp {
+  from {
+    top: 100vh;
+  }
+  to {
+    top: 5vh;
+  }
+}
+
+@keyframes slideToDown {
+  from {
+    top: 5vh;
+  }
+  to {
+    top: 100vh;
   }
 }

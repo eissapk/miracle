@@ -8,8 +8,11 @@ app.mount('#app');
 // mixins
 app.mixin({
   data() {
-    return {}
+    return {
+    }
   },
+  methods: {
+  }
 })
 
 // filters
@@ -105,10 +108,11 @@ app.config.globalProperties.$filters = {
   },
 
   highlight(str, arr, className) {
+    str = str.replace(/۞/g, `<span class="hizb">۞</span>`);
     let chunks = str.split(" ");
     let targetWords = [];
     chunks.forEach(word => {
-      const normalWord = normalize(word);
+      const normalWord = this.normalize(word);
       const index = arr.indexOf(normalWord);
       if (index != -1) targetWords.push(word);
     });
@@ -116,8 +120,61 @@ app.config.globalProperties.$filters = {
     targetWords = [...new Set(targetWords)]; // remove duplication
 
     // console.log(targetWords);
-    targetWords.forEach(word => (str = str.replace(new RegExp(`${word}`, "g"), `<span class="${className}">${word}</span>`)));
+    targetWords.forEach(word => str = str.replace(new RegExp(`${word}`, "g"), `<span class="${className}">${word}</span>`));
     return str;
+  },
+  arNum(num) {
+    const digits = {
+      0: "٠",
+      1: "١",
+      2: "٢",
+      3: "٣",
+      4: "٤",
+      5: "٥",
+      6: "٦",
+      7: "٧",
+      8: "٨",
+      9: "٩",
+    };
+    return String(num).replace(/[0-9]/g, d => digits[d]);
+  },
+  juz(num) {
+    const digits = {
+      1: "الاول",
+      2: "الثانى",
+      3: "الثالث",
+      4: "الرابع",
+      5: "الخامس",
+      6: "السادس",
+      7: "السابع",
+      8: "الثامن",
+      9: "التاسع",
+      10: "العاشر",
+      11: "الحادى عشر",
+      12: "الثانى عشر",
+      13: "الثالث عشر",
+      14: "الرابع عشر",
+      15: "الخامس عشر",
+      16: "السادس عشر",
+      17: "السابع عشر",
+      18: "الثامن عشر",
+      19: "التاسع عشر",
+      20: "العشرون",
+      21: "الحادى والعشرون",
+      22: "الثانى والعشرون",
+      23: "الثالث والعشرون",
+      24: "الرابع والعشرون",
+      25: "الخامس والعشرون",
+      26: "السادس والعشرون",
+      27: "السابع والعشرون",
+      28: "الثامن والعشرون",
+      29: "التاسع والعشرون",
+      30: "الثلاثون",
+    };
+    return "الجزء " + digits[num];
+  },
+  surahType(str) {
+    return str.trim().toLowerCase() === "mec" ? "مكية" : "مدنية";
   }
 }
 
@@ -140,7 +197,7 @@ app.directive('arNum', {
   }
 })
 
-app.directive("partName", {
+app.directive("juz", {
   beforeMount(el) {
     const digits = {
       1: "الاول",
@@ -174,6 +231,12 @@ app.directive("partName", {
       29: "التاسع والعشرون",
       30: "الثلاثون",
     };
-    el.textContent = digits[el.textContent.trim()];
+    el.textContent = "الجزء " + digits[el.textContent.trim()];
+  }
+})
+
+app.directive('surahType', {
+  beforeMount(el, binding, vnode) {
+    el.textContent = el.textContent.trim() === "mec" ? "مكية" : "مدنية";
   }
 })

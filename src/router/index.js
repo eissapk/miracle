@@ -11,17 +11,6 @@ const routes = [
     path: '/read/:page',
     name: 'readView',
     component: () => import('../views/readView.vue')
-  },
-  {
-    path: '/search',
-    name: 'searchView',
-    component: () => import('../views/searchView.vue')
-  }
-  ,
-  {
-    path: '/bookmarks',
-    name: 'bookmarksView',
-    component: () => import('../views/bookmarksView.vue')
   }
 ]
 

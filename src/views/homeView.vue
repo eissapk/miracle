@@ -2,13 +2,13 @@
   <div class="home">
     <!-- read -->
     <div class="read tab">
-      <router-link :to="'/read/' + page" class="router-link"></router-link>
+      <router-link :to="'/read/' + lastRead.page" class="router-link"></router-link>
       <img src="../assets/book.png" alt="book" />
       <p class="lastRead">
         <span class="icon" v-html="solid_book_open"></span>
         اخر قراءة
       </p>
-      <p class="surah">الفاتحة</p>
+      <p class="surah">سُورَةُ {{lastRead.name}}</p>
       <p class="progress">
         <p class="percent" v-arNum>{{percent + "%"}}</p>
         <p class="bar">
@@ -20,7 +20,7 @@
     
     <!-- search -->
     <div class="search tab">
-      <router-link to="/search" class="router-link"></router-link>
+      <a class="router-link" @click="showModal('search')"></a>
       <p>
         <span class="icon" v-html="solid_search"></span>
         بحث
@@ -29,7 +29,7 @@
     
     <!-- bookmarks -->
     <div class="bookmarks tab">
-      <router-link to="/bookmarks" class="router-link"></router-link>
+      <a class="router-link" @click="showModal('bookmarks')"></a>
       <p>
         <span class="icon" v-html="solid_bookmark"></span>
         المفضلة
@@ -51,17 +51,28 @@ export default {
       solid_bookmark,
       solid_search,
       percent: 0,
-      page: 1,
+      lastRead: null,
     };
   },
-  mounted() {
-    const page = JSON.parse(localStorage.getItem("lastRead")) || 1;
-    this.page = page;
+  created() {
+    const lastRead = JSON.parse(localStorage.getItem("lastRead")) || {
+      juz: 1,
+      page: 1,
+      name: "ٱلْفَاتِحَةِ",
+      type: "mec",
+      surah: 1,
+      verses: 7,
+    };
+    this.lastRead = lastRead;
   },
+  mounted() {},
   methods: {
     saveCompletion() {
       console.log("saveCompletion");
     },
+    showModal(name) {
+      this.$parent.$parent.modal = name;
+    }
   },
 };
 </script>
@@ -76,6 +87,7 @@ export default {
     border-radius: 5px;
     color: white;
     background: linear-gradient(90deg, #6a11cb, #2f70ec);
+    cursor: pointer;
   }
 
   .read {
@@ -85,7 +97,8 @@ export default {
       pointer-events: none;
     }
     > p {
-      margin-bottom: 20px !important;
+      margin: 0;
+      margin-bottom: 10px;
     }
 
     > img {
@@ -112,13 +125,16 @@ export default {
 
     .surah {
       font-weight: bold;
+      font-family: "Kitab-Regular" !important;
     }
 
     .progress {
-      width: calc(100% - 160px);
+      width: calc(100% - 120px);
       .percent {
+        margin: 0;
         margin-bottom: 5px !important;
         font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
       }
       .bar {
         position: relative;
@@ -165,6 +181,7 @@ export default {
     padding: 15px 10px;
     p {
       font-weight: bold;
+      margin: 0;
       .icon {
         display: inline-block;
         margin-left: 5px;
