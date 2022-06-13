@@ -1,6 +1,13 @@
 <template>
   <div class="readView">
     <NotFound v-if="isLoading" />
+    <NotifyModal
+      v-if="!isLoading && notifyShown"
+      :class="[notifyShown ? notifyClass : '']"
+      :desc="notifyDesc"
+    />
+
+    <OptionsRect v-if="!isLoading && optionsRectShown" :coords="coords" />
 
     <div class="container" v-if="!isLoading && currentPage">
       <div class="page">
@@ -12,8 +19,25 @@
 
         <!-- options -->
         <div class="options">
-          <a @click="showModal('search')" v-html="solid_search"></a>
-          <a v-html="solid_bookmark" @click="bookmarkPage(currentPage[0])"></a>
+          <button @click="showModal('search')" v-html="solid_search"></button>
+          <button
+            :disabled="isBookmarkDisabled"
+            :class="[isBookmarkDisabled ? 'disabled' : '']"
+            v-html="solid_bookmark"
+            @click="bookmarkPage(currentPage[0])"
+          ></button>
+          <template v-if="isInitialPlaying">
+            <button
+              v-if="isPlaying"
+              v-html="solid_pause_circle"
+              @click="pauseReciting()"
+            ></button>
+            <button
+              v-else
+              v-html="solid_play_circle"
+              @click="resumeReciting()"
+            ></button>
+          </template>
         </div>
         <!-- content -->
         <template v-for="(obj, index) of currentPage" :key="index">
@@ -40,7 +64,7 @@
           </div>
 
           <!-- verses -->
-          <span class="verse" @click="showVerseOpt(obj)"
+          <span class="verse" @click="showVerseOpt(obj, $event)"
             ><span
               class="text"
               v-html="$filters.highlight(obj.text, godArr, 'god')"
@@ -50,8 +74,29 @@
         </template>
 
         <!-- page number -->
-        <div class="pageNum">
-          <span v-text="$filters.arNum(pageNum)"></span>
+        <div class="pageFooter">
+          <div class="sound">
+            <label>القارئ</label>
+            <div class="o-select rtl">
+              <select v-model="reciter">
+                <option value="mahermuaiqly">ماهر المعيقلى</option>
+                <option value="ahmedajamy">احمد العجمى</option>
+                <option value="husary">الحصرى</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pageNum" v-text="$filters.arNum(pageNum)"></div>
+
+          <div class="explanation">
+            <label>التفسير</label>
+            <div class="o-select rtl">
+              <select v-model="explainer">
+                <option value="muyassar">الميسر</option>
+                <option value="jalalayn">الجلالين</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -60,14 +105,36 @@
 
 <script>
 import NotFound from "../components/NotFound.vue";
+import NotifyModal from "../modals/NotifyModal.vue";
+import OptionsRect from "../modals/OptionsRect.vue";
 import solid_bookmark from "olum-icons/dist/fa/solid_bookmark";
 import solid_search from "olum-icons/dist/fa/solid_search";
+import solid_play_circle from "olum-icons/dist/fa/solid_play_circle";
+import solid_pause_circle from "olum-icons/dist/fa/solid_pause_circle";
+
 export default {
-  components: { NotFound },
+  components: { NotFound, NotifyModal, OptionsRect },
   data() {
     return {
+      coords: {
+        top: 0,
+        left: 0,
+      },
+      optionsRectShown: false,
+      notifyDesc: "",
+      notifyClass: "",
+      notifyShown: false,
+      isBookmarkDisabled: false,
+      isInitialPlaying: false,
+      audioInstance: null,
+      reciter: "mahermuaiqly",
+      explainer: "muyassar",
+      translator: "ahmedraza",
+      isPlaying: null,
       solid_bookmark,
       solid_search,
+      solid_play_circle,
+      solid_pause_circle,
       pageNum: null,
       currentPage: null,
       isLoading: true,
@@ -127,6 +194,7 @@ export default {
     }
   },
   mounted() {
+    this.audioInstance = new Audio();
     document.body.addEventListener("keydown", (e) => {
       if (e.keyCode === 39) this.next();
       else if (e.keyCode === 37) this.prev();
@@ -136,6 +204,62 @@ export default {
     if (this.interval) clearInterval(this.interval);
   },
   methods: {
+    pauseReciting() {
+      this.audioInstance.pause();
+      this.isPlaying = false;
+    },
+    resumeReciting() {
+      this.audioInstance.play();
+      this.isPlaying = true;
+    },
+    reciteVerse(obj) {
+      const rate = 64;
+      const url =
+        "https://cdn.islamic.network/quran/audio/" +
+        rate +
+        "/ar." +
+        this.reciter +
+        "/" +
+        obj.globalVerse +
+        ".mp3";
+      this.audioInstance.src = url;
+      this.audioInstance.play();
+      this.audioInstance.onended = () => (this.isPlaying = false);
+      this.isPlaying = true;
+      this.isInitialPlaying = true;
+    },
+    getVerseExplanation(obj) {
+      const url =
+        "http://api.alquran.cloud/ayah/" +
+        obj.surah +
+        ":" +
+        obj.localVerse +
+        "/editions/ar." +
+        this.explainer;
+      fetch(url)
+        .then((res) => res.json())
+        .then((res) => {
+          const text = res.data[0].text;
+          console.log("explanation of " + this.explainer + ": ", text);
+        })
+        .catch(console.error);
+    },
+    getVerseTrans(obj) {
+      const url =
+        "http://api.alquran.cloud/v1/ayah/" +
+        obj.surah +
+        ":" +
+        obj.localVerse +
+        "/en." +
+        this.translator;
+      fetch(url)
+        .then((res) => res.json())
+        .then((res) => {
+          const text = res.data.text;
+          console.log("en trans: ", text);
+        })
+        .catch(console.error);
+    },
     getLastReadObj(arr) {
       const firstObj = arr[0];
       const obj = {
@@ -152,6 +276,8 @@ export default {
       if (this.pageNum < 604) this.pageNum++;
       else return (this.pageNum = 604);
       this.currentPage = window.pages[this.pageNum];
+      location.hash = "#read/" + this.pageNum; // update hash
+      this.optionsRectShown = false;
       console.log(this.currentPage);
       const obj = this.getLastReadObj(this.currentPage);
       localStorage.setItem("lastRead", JSON.stringify(obj));
@@ -160,6 +286,8 @@ export default {
       if (this.pageNum > 1 && this.pageNum <= 604) this.pageNum--;
       else return (this.pageNum = 1);
       this.currentPage = window.pages[this.pageNum];
+      location.hash = "#read/" + this.pageNum; // update hash
+      this.optionsRectShown = false;
       console.log(this.currentPage);
       const obj = this.getLastReadObj(this.currentPage);
       localStorage.setItem("lastRead", JSON.stringify(obj));
@@ -167,10 +295,19 @@ export default {
     showModal(name) {
       this.$parent.$parent.modal = name;
     },
-    showVerseOpt(obj) {
+    showVerseOpt(obj, e) {
+      this.optionsRectShown = true;
+      this.coords.top = e.target.getBoundingClientRect().top;
+
       console.log(obj);
+      console.log(this.coords);
+
+      this.reciteVerse(obj);
+      this.getVerseExplanation(obj);
+      this.getVerseTrans(obj);
     },
     bookmarkPage(arg) {
+      this.isBookmarkDisabled = true;
       const obj = {
         juz: arg.juz,
         page: arg.page,
@@ -179,13 +316,27 @@ export default {
         surah: arg.surah,
         verses: arg.verses,
       };
+      console.log(obj);
 
       const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
       const hasSamePage = bookmarks.find((item) => item.page === obj.page);
       if (!hasSamePage) {
         bookmarks.push(obj);
         localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+        this.notifyClass = "";
+        this.notifyDesc = "تمت الاضافة للمفضلة";
+        this.notifyShown = true;
+      } else {
+        this.notifyClass = "alert";
+        this.notifyDesc = "هذه الصفحة مضافة بالفعل";
+        this.notifyShown = true;
       }
+
+      setTimeout(() => {
+        this.notifyShown = false;
+        this.notifyDesc = "";
+        this.isBookmarkDisabled = false;
+      }, 3000);
     },
   },
 };
@@ -220,7 +371,8 @@ export default {
         overflow: hidden;
         margin-bottom: 10px;
         padding: 5px 0;
-        a {
+        button {
+          border: none;
           cursor: pointer;
           display: block;
           float: right;
@@ -233,6 +385,7 @@ export default {
           box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
 
           svg {
+            pointer-events: none;
             height: 20px;
             fill: white;
             position: absolute;
@@ -288,13 +441,15 @@ export default {
 
       .start {
         text-align: center;
-        font-size: 25px;
+        font-size: 40px;
+        letter-spacing: initial;
         margin: 10px 0;
-        font-family: "Kitab-Regular";
-        background-image: linear-gradient(to left, #ed69f4, #3c97ee);
+        font-family: "almushaf", serif;
+        background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+        background-clip: text;
         -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         color: transparent;
-        background-size: 5% auto;
       }
 
       .verse {
@@ -302,7 +457,9 @@ export default {
         padding: 20px 5px 7px 0px;
         .text {
           font-size: 25px;
-          font-family: "Kitab-Regular";
+          // font-family: "Kitab-Regular";
+          font-family: "Kitab-Regular2";
+          letter-spacing: initial;
           color: #333;
           pointer-events: none;
         }
@@ -329,24 +486,39 @@ export default {
           transition: background 0.1s ease-in-out;
           .text {
             transition: all 0.1s ease-in-out;
-            background-image: linear-gradient(to left, #ed69f4, #3c97ee);
+            background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+            background-clip: text;
             -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             color: transparent;
-            background-size: 5% auto;
-
             .god,
             .hizb {
+              -webkit-text-fill-color: transparent;
               color: transparent;
             }
           }
         }
       }
 
-      .pageNum {
-        margin-top: 25px;
+      .pageFooter {
         user-select: none;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+        width: 100%;
+        max-width: 500px;
+        margin: 25px auto 0;
+        grid-template-columns: 1fr;
+        grid-gap: 20px 0;
+        justify-content: center;
 
-        span {
+        @media (min-width: 500px) {
+          grid-template-columns: none;
+
+          grid-gap: 0 30px;
+        }
+
+        .pageNum {
           font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
           font-size: 14px;
           font-weight: bold;
@@ -360,6 +532,38 @@ export default {
           margin: 0 auto;
           display: block;
           box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
+          grid-row: 3/4;
+          align-self: end;
+          @media (min-width: 500px) {
+            grid-column: 2/3;
+            grid-row: 1/2;
+          }
+        }
+
+        .sound {
+          @media (min-width: 500px) {
+            grid-column: 1/2;
+            grid-row: 1/2;
+          }
+        }
+        .explanation {
+          @media (min-width: 500px) {
+            grid-column: 3/4;
+            grid-row: 1/2;
+          }
+        }
+        .sound,
+        .explanation {
+          label {
+            width: 100%;
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            font-family: "Tajawal", Helvetica, Arial, sans-serif;
+            margin-bottom: 5px;
+            margin-right: 5px;
+          }
         }
       }
     }
