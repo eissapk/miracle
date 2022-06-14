@@ -7,7 +7,7 @@
       :desc="notifyDesc"
     />
 
-    <OptionsRect v-if="!isLoading && optionsRectShown" :coords="coords" />
+    <OptionsRect v-if="!isLoading && optionsRectShown" :options="optionsData" :audio="audioInstance" :initial="isInitialPlaying" :playing="isPlaying" />
 
     <div class="container" v-if="!isLoading && currentPage">
       <div class="page">
@@ -78,7 +78,7 @@
           <div class="sound">
             <label>القارئ</label>
             <div class="o-select rtl">
-              <select v-model="reciter">
+              <select v-model="optionsData.reciter">
                 <option value="mahermuaiqly">ماهر المعيقلى</option>
                 <option value="ahmedajamy">احمد العجمى</option>
                 <option value="husary">الحصرى</option>
@@ -91,7 +91,7 @@
           <div class="explanation">
             <label>التفسير</label>
             <div class="o-select rtl">
-              <select v-model="explainer">
+              <select v-model="optionsData.explainer">
                 <option value="muyassar">الميسر</option>
                 <option value="jalalayn">الجلالين</option>
               </select>
@@ -116,21 +116,28 @@ export default {
   components: { NotFound, NotifyModal, OptionsRect },
   data() {
     return {
-      coords: {
-        top: 0,
-        left: 0,
+      optionsData: {
+        coords: {
+          top: 0,
+          left: 0,
+        },
+        obj: null,
+        reciter: "mahermuaiqly",
+        explainer: "muyassar",
+        translator: "ahmedraza",
       },
+      audioInstance: null,
+      
       optionsRectShown: false,
       notifyDesc: "",
       notifyClass: "",
       notifyShown: false,
       isBookmarkDisabled: false,
+      
+      // handle these two props isPlaying and isInitialPlay
       isInitialPlaying: false,
-      audioInstance: null,
-      reciter: "mahermuaiqly",
-      explainer: "muyassar",
-      translator: "ahmedraza",
       isPlaying: null,
+
       solid_bookmark,
       solid_search,
       solid_play_circle,
@@ -214,54 +221,6 @@ export default {
       this.audioInstance.play();
       this.isPlaying = true;
     },
-    reciteVerse(obj) {
-      const rate = 64;
-      const url =
-        "https://cdn.islamic.network/quran/audio/" +
-        rate +
-        "/ar." +
-        this.reciter +
-        "/" +
-        obj.globalVerse +
-        ".mp3";
-      this.audioInstance.src = url;
-      this.audioInstance.play();
-      this.audioInstance.onended = () => (this.isPlaying = false);
-      this.isPlaying = true;
-      this.isInitialPlaying = true;
-    },
-    getVerseExplanation(obj) {
-      const url =
-        "http://api.alquran.cloud/ayah/" +
-        obj.surah +
-        ":" +
-        obj.localVerse +
-        "/editions/ar." +
-        this.explainer;
-      fetch(url)
-        .then((res) => res.json())
-        .then((res) => {
-          const text = res.data[0].text;
-          console.log("explanation of " + this.explainer + ": ", text);
-        })
-        .catch(console.error);
-    },
-    getVerseTrans(obj) {
-      const url =
-        "http://api.alquran.cloud/v1/ayah/" +
-        obj.surah +
-        ":" +
-        obj.localVerse +
-        "/en." +
-        this.translator;
-      fetch(url)
-        .then((res) => res.json())
-        .then((res) => {
-          const text = res.data.text;
-          console.log("en trans: ", text);
-        })
-        .catch(console.error);
-    },
     getLastReadObj(arr) {
       const firstObj = arr[0];
       const obj = {
@@ -299,14 +258,10 @@ export default {
     },
     showVerseOpt(obj, e) {
       this.optionsRectShown = true;
-      this.coords.top = e.target.getBoundingClientRect().top;
-
-      console.log(obj);
-      console.log(this.coords);
-
-      this.reciteVerse(obj);
-      this.getVerseExplanation(obj);
-      this.getVerseTrans(obj);
+      this.optionsData.coords.top =
+        e.target.getBoundingClientRect().top;
+      this.optionsData.obj = obj;
+      console.log(this.optionsData);
     },
     bookmarkPage(arg) {
       this.isBookmarkDisabled = true;
