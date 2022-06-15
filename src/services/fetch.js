@@ -7,7 +7,7 @@ function handlePages() {
       .then((book) => {
         function recursive(num) {
           const surah = book[num];
-          
+
           surah.ayahs.forEach((obj) => {
             obj.name = surah.name;
             obj.type = surah.type;
@@ -21,9 +21,18 @@ function handlePages() {
               pages[obj.page].push(obj);
             }
           });
-          
-          if (num + 1 <= 114) recursive(num + 1);
-          else resolve(pages)
+
+          if (num + 1 <= 114) {
+            recursive(num + 1);
+          } else {
+            let verses = [];
+            function recursive2(num2) {
+              pages[num2].forEach(item => verses.push(item))
+              if (num2 + 1 <= 604) recursive2(num2 + 1);
+              else resolve({ pages, verses });
+            }
+            recursive2(1);
+          }
         }
         recursive(1);
       })

@@ -2,10 +2,10 @@
   <router-view />
 
   <!-- modals -->
-  <SearchModal v-if="modal === 'search'" />
-  <BookmarksModal v-if="modal === 'bookmarks'" />
-  <TransModal v-if="modal === 'trans'" />
-  <ExplanationModal v-if="modal === 'explanation'" />
+  <SearchModal v-if="modal.name === 'search'" />
+  <BookmarksModal v-if="modal.name === 'bookmarks'" />
+  <TransModal v-if="modal.name === 'trans'" />
+  <ExplanationModal v-if="modal.name === 'explanation'" />
 
   <LoaderView v-if="isLoading" />
 </template>
@@ -28,13 +28,17 @@ export default {
   data() {
     return {
       isLoading: true,
-      modal: "",
+      modal: {
+        name: "",
+        data: null,
+      },
     };
   },
   created() {
     handlePages()
-      .then((pages) => {
+      .then(({ pages, verses }) => {
         window.pages = pages;
+        window.verses = verses;
         document.body.classList.remove("overflow");
         this.isLoading = false;
       })

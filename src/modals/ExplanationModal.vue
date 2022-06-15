@@ -2,15 +2,27 @@
   <div class="ExplanationModal modal">
     <div class="container">
       <button @click="hideModal()">x</button>
-
-      Explanation Modal
+      <p>
+        {{ explainer }}
+      </p>
+      <p>
+        {{ text }}
+      </p>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      text: "",
+      explainer: "",
+    };
+  },
   mounted() {
+    this.text = this.$parent.modal.data.text;
+    this.explainer = this.$parent.modal.data.explainer;
     document.body.classList.add("overflow");
   },
   methods: {

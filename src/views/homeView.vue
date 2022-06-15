@@ -10,7 +10,7 @@
       </p>
       <p class="surah">سُورَةُ {{lastRead.name}}</p>
       <p class="progress">
-        <p class="percent" v-arNum>{{percent + "%"}}</p>
+        <p class="percent" v-text="$filters.arNum(percent) + '%'"></p>
         <p class="bar">
           <span :style="{width: percent + '%'}"></span>
         </p>
@@ -65,14 +65,16 @@ export default {
     };
     this.lastRead = lastRead;
   },
-  mounted() {},
+  mounted() {
+    this.percent = Math.floor((this.lastRead.page / 604) * 100);
+  },
   methods: {
     saveCompletion() {
       console.log("saveCompletion");
     },
     showModal(name) {
-      this.$parent.$parent.modal = name;
-    }
+      this.$parent.$parent.modal = { name };
+    },
   },
 };
 </script>
@@ -129,7 +131,7 @@ export default {
     }
 
     .progress {
-      width: calc(100% - 120px);
+      width: calc(100% - 150px);
       .percent {
         margin: 0;
         margin-bottom: 5px !important;
@@ -143,7 +145,7 @@ export default {
         border-radius: 5px;
         span {
           position: absolute;
-          left: 0;
+          right: 0;
           top: 0;
           width: 0;
           height: 100%;

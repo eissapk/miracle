@@ -7,7 +7,14 @@
       :desc="notifyDesc"
     />
 
-    <OptionsRect v-if="!isLoading && optionsRectShown" :options="optionsData" :audio="audioInstance" :initial="isInitialPlaying" :playing="isPlaying" />
+    <OptionsRect
+      v-show="!isLoading && optionsRectShown"
+      @update="handlePlaying(e, $event)"
+      @hide="optionsRectShown = false"
+      @textCopied="textCopied()"
+      :options="optionsData"
+      :audio="audioInstance"
+    />
 
     <div class="container" v-if="!isLoading && currentPage">
       <div class="page">
@@ -120,6 +127,7 @@ export default {
         coords: {
           top: 0,
           left: 0,
+          elm: null,
         },
         obj: null,
         reciter: "mahermuaiqly",
@@ -127,17 +135,13 @@ export default {
         translator: "ahmedraza",
       },
       audioInstance: null,
-      
+      isPlaying: false,
+      isInitialPlaying: null,
       optionsRectShown: false,
       notifyDesc: "",
       notifyClass: "",
       notifyShown: false,
       isBookmarkDisabled: false,
-      
-      // handle these two props isPlaying and isInitialPlay
-      isInitialPlaying: false,
-      isPlaying: null,
-
       solid_bookmark,
       solid_search,
       solid_play_circle,
@@ -213,6 +217,18 @@ export default {
     if (this.interval) clearInterval(this.interval);
   },
   methods: {
+    textCopied() {
+      this.notifyShown = true;
+      this.notifyDesc = "تم النسخ";
+      setTimeout(() => {
+        this.notifyShown = false;
+        this.notifyClass = "";
+      }, 1000);
+    },
+    handlePlaying(e, obj) {
+      this.isPlaying = obj.isPlaying;
+      this.isInitialPlaying = obj.isInitialPlaying;
+    },
     pauseReciting() {
       this.audioInstance.pause();
       this.isPlaying = false;
@@ -254,12 +270,15 @@ export default {
       localStorage.setItem("lastRead", JSON.stringify(obj));
     },
     showModal(name) {
-      this.$parent.$parent.modal = name;
+      this.$parent.$parent.modal = { name };
     },
     showVerseOpt(obj, e) {
       this.optionsRectShown = true;
-      this.optionsData.coords.top =
-        e.target.getBoundingClientRect().top;
+      this.optionsData.coords.top = e.target.getBoundingClientRect().top;
+      this.optionsData.coords.elm = e.target;
+      window.onscroll = () => {
+        this.optionsData.coords.top = e.target.getBoundingClientRect().top;
+      };
       this.optionsData.obj = obj;
       console.log(this.optionsData);
     },
@@ -419,6 +438,7 @@ export default {
           letter-spacing: initial;
           color: #333;
           pointer-events: none;
+          user-select: none;
         }
         .num {
           pointer-events: none;
@@ -464,7 +484,7 @@ export default {
         align-items: center;
         width: 100%;
         max-width: 500px;
-        margin: 25px auto 0;
+        margin: 25px auto 25px;
         grid-template-columns: 1fr;
         grid-gap: 20px 0;
         justify-content: center;

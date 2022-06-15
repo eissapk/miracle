@@ -1,28 +1,31 @@
 <template>
   <div class="OptionsRect" :style="{ top: options.coords.top - height + 'px' }">
-    <div class="highlight" @click="highlight(options.obj, $event)">
+    <div class="highlight" @click="highlight(options.obj, $event), hide()">
       <button class="orange"></button>
       <button class="purple"></button>
       <button class="blue"></button>
     </div>
     <div class="trans">
       <button
-        @click="getVerseTrans(options.obj)"
+        @click="getVerseTrans(options.obj), hide()"
         v-html="solid_language"
       ></button>
     </div>
     <div class="copyText">
-      <button @click="copyText(options.obj)" v-html="solid_copy"></button>
+      <button
+        @click="copyText(options.obj), hide()"
+        v-html="solid_copy"
+      ></button>
     </div>
     <div class="explain">
       <button
-        @click="getVerseExplanation(options.obj)"
+        @click="getVerseExplanation(options.obj), hide()"
         v-html="solid_book_open"
       ></button>
     </div>
     <div class="sound">
       <button
-        @click="reciteVerse(options.obj)"
+        @click="reciteVerse(options.obj), hide()"
         v-html="solid_play_circle"
       ></button>
       <!-- <button>auto</button> -->
@@ -45,11 +48,19 @@ export default {
       height: 40,
     };
   },
-  props: ["options", "audio", "playing", "initial"],
-  updated() {
-    console.log(this.options);
+  mounted() {
+    // blur
+    document.body.addEventListener("click", (e) => {
+      if (e.target !== this.$el && e.target !== this.options.coords.elm) {
+        this.hide();
+      }
+    });
   },
+  props: ["options", "audio"],
   methods: {
+    hide() {
+      this.$emit("hide");
+    },
     reciteVerse(obj) {
       const rate = 64;
       const url =
@@ -62,10 +73,17 @@ export default {
         ".mp3";
       this.audio.src = url;
       this.audio.play();
-      // handle these two props isPlaying and isInitialPlay
-      // this.audio.onended = () => (this.playing = false);
-      // this.playing = true;
-      // this.initial = true;
+      this.audio.onended = () => {
+        console.log("ended");
+        this.$emit("update", {
+          isPlaying: false,
+          isInitialPlaying: true,
+        });
+      };
+      this.$emit("update", {
+        isPlaying: true,
+        isInitialPlaying: true,
+      });
     },
     getVerseExplanation(obj) {
       const url =
@@ -79,9 +97,18 @@ export default {
         .then((res) => res.json())
         .then((res) => {
           const text = res.data[0].text;
-          console.log("explanation of " + this.options.explainer + ": ", text);
+          this.$parent.$parent.$parent.modal = {
+            name: "explanation",
+            data: { text, explainer: this.options.explainer },
+          };
         })
-        .catch(console.error);
+        .catch((err) => {
+          console.error(err);
+          this.$parent.$parent.$parent.modal = {
+            name: "explanation",
+            data: { error: true },
+          };
+        });
     },
     getVerseTrans(obj) {
       const url =
@@ -95,14 +122,24 @@ export default {
         .then((res) => res.json())
         .then((res) => {
           const text = res.data.text;
-          console.log("en trans: ", text);
+          this.$parent.$parent.$parent.modal = {
+            name: "trans",
+            data: { text, translator: this.options.translator },
+          };
         })
-        .catch(console.error);
+        .catch((err) => {
+          console.error(err);
+          this.$parent.$parent.$parent.modal = {
+            name: "trans",
+            data: { error: true },
+          };
+        });
     },
     copyText(obj) {
       const text = this.$filters.normalize(obj.text);
       console.log(text);
       navigator.clipboard.writeText(text);
+      this.$emit("textCopied");
     },
     highlight(obj, e) {
       let color = null;
@@ -113,7 +150,6 @@ export default {
       } else if (e.target.classList.contains("blue")) {
         color = "blue";
       }
-      // todo highlight selected verse
 
       console.log(color, obj);
     },
