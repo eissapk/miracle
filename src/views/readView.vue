@@ -71,7 +71,12 @@
           </div>
 
           <!-- verses -->
-          <span class="verse" @click="showVerseOpt(obj, $event)"
+          <span
+            :class="[
+              isHighlightedVerse(obj) ? isHighlightedVerse(obj) : '',
+              'verse',
+            ]"
+            @click="showVerseOpt(obj, $event)"
             ><span
               class="text"
               v-html="$filters.highlight(obj.text, godArr, 'god')"
@@ -80,6 +85,7 @@
           ></span>
         </template>
 
+        <!-- todo save explanation/reciter in localstorage -->
         <!-- page number -->
         <div class="pageFooter">
           <div class="sound">
@@ -207,7 +213,7 @@ export default {
     }
   },
   mounted() {
-    this.audioInstance = new Audio();
+    this.audioInstance = this.$parent.$parent.audioInstance;
     document.body.addEventListener("keydown", (e) => {
       if (e.keyCode === 39) this.next();
       else if (e.keyCode === 37) this.prev();
@@ -217,6 +223,15 @@ export default {
     if (this.interval) clearInterval(this.interval);
   },
   methods: {
+    isHighlightedVerse(obj) {
+      const highlightedVersesArr =
+        JSON.parse(localStorage.getItem("highlightedVerses")) || [];
+      const verseObj = highlightedVersesArr.find(
+        (item) => obj.globalVerse === item.globalVerse
+      );
+      if (verseObj) return verseObj.color;
+      return null;
+    },
     textCopied() {
       this.notifyShown = true;
       this.notifyDesc = "تم النسخ";
@@ -273,13 +288,20 @@ export default {
       this.$parent.$parent.modal = { name };
     },
     showVerseOpt(obj, e) {
-      this.optionsRectShown = true;
+      // reset verses
+      const verses = document.querySelectorAll(".page .verse");
+      verses.forEach((verseNode) => verseNode.classList.remove("selected"));
+      // select current verse
+      e.target.classList.add("selected");
+      // update info
       this.optionsData.coords.top = e.target.getBoundingClientRect().top;
       this.optionsData.coords.elm = e.target;
       window.onscroll = () => {
         this.optionsData.coords.top = e.target.getBoundingClientRect().top;
       };
       this.optionsData.obj = obj;
+      // show rect
+      this.optionsRectShown = true;
       console.log(this.optionsData);
     },
     bookmarkPage(arg) {
@@ -430,7 +452,7 @@ export default {
 
       .verse {
         cursor: pointer;
-        padding: 20px 5px 7px 0px;
+        padding: 16px 7px 11px 0px;
         .text {
           font-size: 25px;
           // font-family: "Kitab-Regular";
@@ -457,7 +479,7 @@ export default {
           box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
         }
 
-        &:hover {
+        @mixin selected {
           background: #f7f7f7;
           border-radius: 5px;
           transition: background 0.1s ease-in-out;
@@ -473,6 +495,59 @@ export default {
               -webkit-text-fill-color: transparent;
               color: transparent;
             }
+          }
+        }
+
+        &.selected {
+          @include selected;
+        }
+
+        &:hover {
+          @include selected;
+        }
+
+        &.orange {
+          background: #ff8214 !important;
+        }
+        &.purple {
+          background: #8b0efe !important;
+        }
+        &.blue {
+          background: #0671ff !important;
+        }
+
+        &.orange,
+        &.purple,
+        &.blue {
+          border-radius: 5px;
+          .text {
+            background: transparent !important;
+            color: white !important;
+            -webkit-text-fill-color: initial;
+            background-clip: initial;
+            -webkit-background-clip: initial;
+            .god,
+            .hizb {
+              color: white !important;
+              -webkit-text-fill-color: initial;
+            }
+          }
+          &:hover {
+            .text {
+              color: white;
+              -webkit-text-fill-color: initial;
+              background-clip: initial;
+              -webkit-background-clip: initial;
+              .god,
+              .hizb {
+                -webkit-text-fill-color: initial;
+              }
+            }
+          }
+          .num {
+            background: white;
+            color: #666;
+            box-shadow: none;
           }
         }
       }

@@ -4,6 +4,7 @@
       <button class="orange"></button>
       <button class="purple"></button>
       <button class="blue"></button>
+      <!-- todo add button for uncolor -->
     </div>
     <div class="trans">
       <button
@@ -28,6 +29,7 @@
         @click="reciteVerse(options.obj), hide()"
         v-html="solid_play_circle"
       ></button>
+      <!-- todo add auto reciting -->
       <!-- <button>auto</button> -->
     </div>
   </div>
@@ -73,8 +75,11 @@ export default {
         ".mp3";
       this.audio.src = url;
       this.audio.play();
+      const currentVerseElm = this.options.coords.elm;
+      currentVerseElm.classList.add("selected");
       this.audio.onended = () => {
         console.log("ended");
+        currentVerseElm.classList.remove("selected");
         this.$emit("update", {
           isPlaying: false,
           isInitialPlaying: true,
@@ -151,7 +156,36 @@ export default {
         color = "blue";
       }
 
-      console.log(color, obj);
+      // reset classes
+      this.options.coords.elm.classList.remove(
+        "selected",
+        "orange",
+        "blue",
+        "purple"
+      );
+      // add current selected color
+      this.options.coords.elm.classList.add(color);
+      obj.color = color; // bind color
+
+      const highlightedVersesArr =
+        JSON.parse(localStorage.getItem("highlightedVerses")) || [];
+
+      // handle new verse
+      const status = highlightedVersesArr.find((item) => {
+        if (item.globalVerse === obj.globalVerse) {
+          item.color = color;
+          return true;
+        }
+        return null;
+      });
+      if (!status) highlightedVersesArr.push(obj);
+
+      // update storage
+      localStorage.setItem(
+        "highlightedVerses",
+        JSON.stringify(highlightedVersesArr)
+      );
+      console.log(highlightedVersesArr);
     },
   },
 };

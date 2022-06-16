@@ -32,6 +32,7 @@ export default {
         name: "",
         data: null,
       },
+      audioInstance: null
     };
   },
   created() {
@@ -44,6 +45,9 @@ export default {
       })
       .catch(console.error);
   },
+  mounted() {
+    this.audioInstance = new Audio();
+  }
 };
 </script>
 

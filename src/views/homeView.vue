@@ -67,6 +67,9 @@ export default {
   },
   mounted() {
     this.percent = Math.floor((this.lastRead.page / 604) * 100);
+    // stop audio
+    const audioInstance = this.$parent.$parent.audioInstance;
+    audioInstance.src = ""; 
   },
   methods: {
     saveCompletion() {
