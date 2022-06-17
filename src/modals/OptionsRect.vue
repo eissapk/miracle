@@ -67,15 +67,24 @@
         this.$emit("hide");
       },
       reciteVerse(obj) {
-        obj = verses[obj.globalVerse - 1];
-        if (this.$parent.isAuto && obj.page !== this.$parent.pageNum) this.$parent.next();
-        console.warn("current playing verse: ", obj);
+        let globalVerse = obj.globalVerse;
+        // todo handle auto play
+        if (obj.auto && obj.globalVerse <= 6236) {
+          obj = verses[obj.globalVerse - 1];
+          globalVerse = obj.globalVerse += 1
+        }
+        console.warn("current playing verse: ", obj.text, globalVerse, this.options.reciter);
+
+        // auto navigate to next page
+        if (this.$parent.isAuto && obj.page !== this.$parent.pageNum && obj.page <= 604) this.$parent.next(obj.page);
+
         const rate = 64;
-        const url = "https://cdn.islamic.network/quran/audio/" + rate + "/ar." + this.options.reciter + "/" + obj.globalVerse + ".mp3";
+        const url = "https://cdn.islamic.network/quran/audio/" + rate + "/ar." + this.options.reciter + "/" + globalVerse + ".mp3";
         this.audio.src = url;
         this.audio.play();
         const currentVerseElm = this.options.coords.elm;
         currentVerseElm.classList.add("selected");
+
         this.audio.onended = () => {
           console.log("ended");
           currentVerseElm.classList.remove("selected");
@@ -83,10 +92,12 @@
             isPlaying: false,
             isInitialPlaying: true,
           });
-          // todo handle auto 
+
+          // auto recite verses
           if (this.$parent.isAuto) {
-            if (obj.page !== this.$parent.pageNum) this.$parent.next();
-            this.reciteVerse({ globalVerse: (obj.globalVerse += 1) });
+            if (globalVerse + 1 <= 6236) {
+              this.reciteVerse({ globalVerse, auto: true });
+            }
           }
         };
         this.$emit("update", {
