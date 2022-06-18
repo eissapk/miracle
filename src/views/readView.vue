@@ -3,7 +3,7 @@
     <NotFound v-if="isLoading" />
     <NotifyModal v-if="!isLoading && notifyShown" :class="[notifyShown ? notifyClass : '']" :desc="notifyDesc" />
 
-    <OptionsRect v-show="!isLoading && optionsRectShown" @update="handlePlaying(e, $event)" @hide="optionsRectShown = false" @textCopied="textCopied()" :options="optionsData" :audio="audioInstance" />
+    <OptionsRect v-show="!isLoading && optionsRectShown" @update="handlePlaying(e, $event)" @textCopied="textCopied()" :options="optionsData" :audio="audioInstance" />
 
     <div class="container" v-if="!isLoading && currentPage">
       <div class="page">
@@ -22,7 +22,7 @@
             <button v-else v-html="playIcon" @click="resumeReciting()"></button>
           </template>
           <label v-if="isInitialPlaying" class="autoReciting">
-            <input type="checkbox" class="o-switch-btn" @click="auto" />
+            <input type="checkbox" class="o-switch-btn" @click="auto" :checked="isAuto" />
             تلقائي
           </label>
         </div>
@@ -45,7 +45,7 @@
           </div>
 
           <!-- verses -->
-          <span :class="[isHighlightedVerse(obj) ? isHighlightedVerse(obj) : '', 'verse']" @click="showVerseOpt(obj, $event)">
+          <span :id="'verse_' + obj.globalVerse" :class="[isHighlightedVerse(obj) ? isHighlightedVerse(obj) : '', 'verse']" @click="showVerseOpt(obj, $event)">
             <span class="text" v-html="$filters.highlight(obj.text, godArr, 'god')"></span>
             <span class="num" v-text="$filters.arNum(obj.localVerse)"></span>
           </span>
@@ -143,6 +143,7 @@
         getCurrentPage.bind(this)();
       } else {
         console.warn("window.pages is NOT defined!");
+        this.isLoading = true;
         this.interval = setInterval(() => {
           console.log("interval");
           if (window.pages) {
@@ -167,12 +168,19 @@
       "optionsData.translator": function () {
         this.setOptionsData();
       },
+      isAuto() {
+        localStorage.setItem("autoReciting", JSON.stringify(this.isAuto));
+      },
     },
     beforeMount() {
+      // options
       const optionsData = JSON.parse(localStorage.getItem("optionsData")) || { reciter: "mahermuaiqly", explainer: "muyassar", translator: "ahmedraza" };
       this.optionsData.reciter = optionsData.reciter;
       this.optionsData.explainer = optionsData.explainer;
       this.optionsData.translator = optionsData.translator;
+      // auto
+      const isAuto = JSON.parse(localStorage.getItem("autoReciting")) || false;
+      this.isAuto = isAuto;
     },
     mounted() {
       this.audioInstance = this.$parent.$parent.audioInstance;
@@ -231,13 +239,12 @@
         };
         return obj;
       },
-      next(num) {
-        if (!num) {
-          if (this.pageNum < 604) this.pageNum++;
-          else return (this.pageNum = 604);
-          this.currentPage = window.pages[this.pageNum];
-        }
-        location.hash = "#read/" + (num ? num : this.pageNum); // update hash
+      next() {
+        if (this.pageNum < 604) this.pageNum++;
+        else return (this.pageNum = 604);
+        this.currentPage = window.pages[this.pageNum];
+
+        location.hash = "#read/" + this.pageNum; // update hash
         this.optionsRectShown = false;
         console.log(this.currentPage);
         const obj = this.getLastReadObj(this.currentPage);
@@ -253,13 +260,24 @@
         const obj = this.getLastReadObj(this.currentPage);
         localStorage.setItem("lastRead", JSON.stringify(obj));
       },
+      setPage(num) {
+        this.currentPage = window.pages[num];
+        location.hash = "#read/" + num; // update hash
+        this.optionsRectShown = false;
+        console.log(this.currentPage);
+        const obj = this.getLastReadObj(this.currentPage);
+        localStorage.setItem("lastRead", JSON.stringify(obj));
+      },
       showModal(name) {
         this.$parent.$parent.modal = { name };
       },
-      showVerseOpt(obj, e) {
-        // reset verses
+      deselectVerses() {
         const verses = document.querySelectorAll(".page .verse");
         verses.forEach(verseNode => verseNode.classList.remove("selected"));
+      },
+      showVerseOpt(obj, e) {
+        // reset verses
+        this.deselectVerses();
         // select current verse
         e.target.classList.add("selected");
         // update info
@@ -398,7 +416,6 @@
           margin: 20px auto;
           .surah {
             font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-            font-size: 14px;
             width: 30px;
             height: 30px;
             line-height: 30px;
@@ -407,6 +424,8 @@
             margin-bottom: 10px;
             background: white;
             color: #666;
+            font-size: 12px;
+            font-weight: bold;
           }
           .name {
             font-weight: bold;
@@ -417,6 +436,9 @@
           }
           .other {
             margin: 0;
+            font-family: "Tajawal", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
             .type {
             }
             .verses {
@@ -458,40 +480,37 @@
             line-height: 35px;
             border-radius: 50%;
             background: #5fd068;
+            color: white;
+            box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
             display: inline-block;
             font-size: 15px;
             text-align: center;
-            color: white;
             margin: 0 8px;
             user-select: none;
-            box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
           }
 
           @mixin selected {
-            background: #f7f7f7;
-            border-radius: 5px;
-            transition: background 0.1s ease-in-out;
+            background: #f7f7f7 !important;
+            border-radius: 5px !important;
+            transition: background 0.1s ease-in-out !important;
             .text {
-              transition: all 0.1s ease-in-out;
-              background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
-              background-clip: text;
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
-              color: transparent;
+              transition: all 0.1s ease-in-out !important;
+              background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff) !important;
+              background-clip: text !important;
+              -webkit-background-clip: text !important;
+              -webkit-text-fill-color: transparent !important;
+              color: transparent !important;
               .god,
               .hizb {
-                -webkit-text-fill-color: transparent;
-                color: transparent;
+                -webkit-text-fill-color: transparent !important;
+                color: transparent !important;
               }
             }
-          }
-
-          &.selected {
-            @include selected;
-          }
-
-          &:hover {
-            @include selected;
+            .num {
+              background: #5fd068 !important;
+              color: white !important;
+              box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%) !important;
+            }
           }
 
           &.orange {
@@ -537,6 +556,14 @@
               color: #666;
               box-shadow: none;
             }
+          }
+
+          &.selected {
+            @include selected;
+          }
+
+          &:hover {
+            @include selected;
           }
         }
 

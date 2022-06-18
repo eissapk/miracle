@@ -1,22 +1,22 @@
 <template>
   <div class="OptionsRect" :style="calcStyle">
-    <div class="highlight" @click="highlight(options.obj, $event), hide()">
+    <div class="highlight" @click="highlight(options.obj, $event)">
       <button class="orange"></button>
       <button class="purple"></button>
       <button class="blue"></button>
       <button class="noColor"></button>
     </div>
     <div class="trans">
-      <button @click="getVerseTrans(options.obj), hide()" v-html="translateIcon"></button>
+      <button @click="getVerseTrans(options.obj)" v-html="translateIcon"></button>
     </div>
     <div class="copyText">
-      <button @click="copyText(options.obj), hide()" v-html="clipboardIcon"></button>
+      <button @click="copyText(options.obj)" v-html="clipboardIcon"></button>
     </div>
     <div class="explain">
-      <button @click="getVerseExplanation(options.obj), hide()" v-html="bookIcon"></button>
+      <button @click="getVerseExplanation(options.obj)" v-html="bookIcon"></button>
     </div>
     <div class="sound">
-      <button @click="reciteVerse(options.obj), hide()" v-html="playIcon"></button>
+      <button @click="reciteVerse(options.obj)" v-html="playIcon"></button>
     </div>
   </div>
 </template>
@@ -57,53 +57,61 @@
       // blur
       document.body.addEventListener("click", e => {
         if (e.target !== this.$el && e.target !== this.options.coords.elm) {
-          this.hide();
+          this.$parent.optionsRectShown = false;
         }
       });
     },
     props: ["options", "audio", "shown"],
     methods: {
-      hide() {
-        this.$emit("hide");
-      },
       reciteVerse(obj) {
-        let globalVerse = obj.globalVerse;
-        // todo handle auto play
-        if (obj.auto && obj.globalVerse <= 6236) {
-          obj = verses[obj.globalVerse - 1];
-          globalVerse = obj.globalVerse += 1
-        }
-        console.warn("current playing verse: ", obj.text, globalVerse, this.options.reciter);
+        if (verses) {
+          obj = verses[obj.globalVerse - 1]; // get full obj data
+          console.log(obj);
 
-        // auto navigate to next page
-        if (this.$parent.isAuto && obj.page !== this.$parent.pageNum && obj.page <= 604) this.$parent.next(obj.page);
+          // show the page of current working verse
+          if (this.$parent.isAuto && this.$parent.pageNum !== obj.page && obj.page <= 604) this.$parent.setPage(obj.page);
 
-        const rate = 64;
-        const url = "https://cdn.islamic.network/quran/audio/" + rate + "/ar." + this.options.reciter + "/" + globalVerse + ".mp3";
-        this.audio.src = url;
-        this.audio.play();
-        const currentVerseElm = this.options.coords.elm;
-        currentVerseElm.classList.add("selected");
-
-        this.audio.onended = () => {
-          console.log("ended");
-          currentVerseElm.classList.remove("selected");
-          this.$emit("update", {
-            isPlaying: false,
-            isInitialPlaying: true,
-          });
-
-          // auto recite verses
-          if (this.$parent.isAuto) {
-            if (globalVerse + 1 <= 6236) {
-              this.reciteVerse({ globalVerse, auto: true });
-            }
+          // start reset
+          if (!this.audio.paused) {
+            this.audio.pause();
+            this.$emit("update", { isPlaying: false, isInitialPlaying: true });
           }
-        };
-        this.$emit("update", {
-          isPlaying: true,
-          isInitialPlaying: true,
-        });
+          this.audio.src = "";
+          this.$parent.deselectVerses();
+          // end reset
+
+          let globalVerse = obj.globalVerse;
+          const rate = 64;
+          const url = "https://cdn.islamic.network/quran/audio/" + rate + "/ar." + this.options.reciter + "/" + globalVerse + ".mp3";
+          this.audio.src = url;
+
+          this.audio.onended = () => {
+            console.log("ended");
+            // reset
+            this.$emit("update", { isPlaying: false, isInitialPlaying: true });
+            this.$parent.deselectVerses();
+
+            // auto reciting
+            if (this.$parent.isAuto) {
+              if (globalVerse < 6236) {
+                this.reciteVerse({ globalVerse: (globalVerse += 1) });
+              }
+            }
+          };
+
+          this.audio.play();
+          this.$emit("update", { isPlaying: true, isInitialPlaying: true });
+          setTimeout(() => {
+            const currentVerse = document.getElementById("verse_" + obj.globalVerse);
+            console.log({ currentVerse });
+            if (currentVerse) {
+              currentVerse.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+              currentVerse.classList.add("selected");
+            }
+          }, 1);
+        } else {
+          console.warn("verse variable is NOT defined");
+        }
       },
       getVerseExplanation(obj) {
         const url = "http://api.alquran.cloud/ayah/" + obj.surah + ":" + obj.localVerse + "/editions/ar." + this.options.explainer;
