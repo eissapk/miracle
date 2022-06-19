@@ -1,4 +1,10 @@
 @import "./fonts.scss";
+@import "./components/input.scss";
+@import "./components/btn.scss";
+@import "./components/switch.scss";
+@import "./components/select.scss";
+@import "./components/modal.scss";
+@import "./components/keyFrames.scss";
 html,
 body {
   padding: 0;
@@ -60,14 +66,6 @@ body {
     display: block;
   }
 }
-@keyframes scale {
-  from {
-    transform: translate(-50%, -50%) scale(0.9);
-  }
-  to {
-    transform: translate(-50%, -50%) scale(1.1);
-  }
-}
 
 .god {
   color: #f32424;
@@ -75,146 +73,6 @@ body {
 
 .hizb {
   color: #000957;
-}
-
-.modal {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
-  left: 0;
-  top: 0;
-  z-index: 9999;
-
-  .container {
-    position: relative;
-    background: white;
-    height: 95vh;
-    width: 100%;
-    left: 0;
-    top: 5vh;
-    animation: slideToUp 0.6s cubic-bezier(0.46, 0.03, 0.52, 0.96) forwards;
-    border-radius: 30px 30px 0 0;
-    border: 1px solid #eee;
-    padding: 25px 25px 0;
-    box-shadow: 1px 1px 6px 1px rgba(0, 0, 0, 0.05), -1px -1px 6px 1px rgba(0, 0, 0, 0.05);
-
-    // background-image: linear-gradient(90deg, rgba(106, 17, 203, 50%), rgba(47, 112, 236, 50%)), url("./assets/bookmarks.jpg");
-    // background-size: cover;
-    // background-position: center top;
-    // background-repeat: no-repeat;
-  }
-  &.hide {
-    .container {
-      animation: slideToDown 0.5s cubic-bezier(0.46, 0.03, 0.52, 0.96) forwards !important;
-    }
-  }
-}
-
-@keyframes slideToUp {
-  from {
-    top: 100vh;
-  }
-  to {
-    top: 5vh;
-  }
-}
-
-@keyframes slideToDown {
-  from {
-    top: 5vh;
-  }
-  to {
-    top: 100vh;
-  }
-}
-
-// select
-$arrow: '<svg viewBox="0 0 23 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.1924 0.70711C11.583 0.316586 12.2161 0.316585 12.6066 0.70711L14.0209 2.12132C14.4114 2.51185 14.4114 3.14501 14.0209 3.53554L4.0128 13.5436C3.62228 13.9341 2.98911 13.9341 2.59859 13.5436L1.18437 12.1294C0.793848 11.7389 0.793848 11.1057 1.18437 10.7152L11.1924 0.70711Z" fill="%23ffffff"/><path d="M22.5436 10.7152C22.9342 11.1057 22.9342 11.7389 22.5436 12.1294L21.1294 13.5436C20.7389 13.9341 20.1057 13.9341 19.7152 13.5436L9.70714 3.53554C9.31662 3.14501 9.31662 2.51185 9.70714 2.12132L11.1214 0.707108C11.5119 0.316584 12.145 0.316584 12.5356 0.707108L22.5436 10.7152Z" fill="%23ffffff"/><path d="M12.5356 35.1294C12.1451 35.5199 11.5119 35.5199 11.1214 35.1294L9.70717 33.7152C9.31664 33.3246 9.31664 32.6915 9.70717 32.3009L19.7152 22.2929C20.1058 21.9024 20.7389 21.9024 21.1294 22.2929L22.5437 23.7071C22.9342 24.0976 22.9342 24.7308 22.5437 25.1213L12.5356 35.1294Z" fill="%23ffffff"/><path d="M1.1844 25.1213C0.793875 24.7308 0.793875 24.0976 1.1844 23.7071L2.59861 22.2929C2.98914 21.9024 3.6223 21.9024 4.01283 22.2929L14.0209 32.301C14.4114 32.6915 14.4114 33.3246 14.0209 33.7152L12.6067 35.1294C12.2161 35.5199 11.583 35.5199 11.1925 35.1294L1.1844 25.1213Z" fill="%23ffffff"/></svg>';
-.o-select {
-  position: relative;
-  min-width: 190px;
-  select {
-    width: 100%;
-    height: 30px;
-    margin: 0;
-    padding: 0 5px;
-    outline: none;
-    box-shadow: none;
-    box-sizing: border-box;
-    color: #242639;
-    background: white;
-    border-radius: 5px;
-    border: 1px solid #d8d8d8;
-    transition: all 0.3s ease;
-    appearance: none;
-    cursor: pointer;
-    font-family: "Tajawal", Helvetica, Arial, sans-serif;
-    &:focus {
-      box-shadow: 0 0 0px 2px #8eb9ff;
-      border-color: #8eb9ff;
-    }
-  }
-  &::before {
-    position: absolute;
-    content: "";
-    width: 20px;
-    height: 28px;
-    z-index: 1;
-    left: 1px;
-    border-radius: 4px 0 0 4px;
-    top: 1px;
-    pointer-events: none;
-    background: #156fe9;
-  }
-
-  &::after {
-    position: absolute;
-    content: url("data:image/svg+xml; utf8, " + $arrow);
-    width: 10px;
-    height: 15px;
-    z-index: 1;
-    left: 6.5px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
-}
-
-// switch btn
-input[type="checkbox"].o-switch-btn {
-  position: relative;
-  width: 35px;
-  height: 20px;
-  margin: 0;
-  outline: none;
-  box-sizing: border-box;
-  background: #b3b3b3;
-  appearance: none;
-  cursor: pointer;
-  border-radius: 50px;
-
-  &:focus {
-    box-shadow: 0 0 0px 2px #2f70ec;
-    border-color: #2f70ec;
-  }
-  &:checked {
-    background: linear-gradient(90deg, #6a11cb, #2f70ec);
-  }
-  &::before {
-    position: absolute;
-    content: "";
-    top: 2px;
-    left: 2px;
-    width: 16px;
-    height: 16px;
-    background: white;
-    border-radius: 50%;
-    transition: 0.3s left ease-in-out;
-  }
-  &:checked::before {
-    left: calc(100% - (16px + 2px));
-  }
 }
 
 .disabled {
@@ -225,10 +83,22 @@ input[type="checkbox"].o-switch-btn {
   }
 }
 
-button {
-  outline: none !important;
-  &:focus {
-    box-shadow: 0 0 0px 2px #2f70ec !important;
-    border-color: #2f70ec !important;
+svg {
+  pointer-events: none;
+}
+
+.scrollbar {
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #979797;
+    border-radius: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #fff;
+    border-radius: 5px;
   }
 }

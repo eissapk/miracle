@@ -1,42 +1,35 @@
 <template>
-  <div class="TransModal modal">
+  <ModalSlot name="trans">trans</ModalSlot>
+
+  <!-- <div class="TransModal modal">
     <div class="container">
       <button @click="hideModal()">x</button>
-      <p>{{translator}}</p>
+      <p>{{ translator }}</p>
       <p>
-      {{ text }}
-        
+        {{ text }}
       </p>
       trans modal
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      text: "",
-      translator: ""
-    };
-  },
-  mounted() {
-    this.text = this.$parent.modal.data.text;
-    this.translator = this.$parent.modal.data.translator;
-    document.body.classList.add("overflow");
-  },
-  methods: {
-    hideModal() {
-      this.$el.classList.add("hide");
-      setTimeout(() => {
-        document.body.classList.remove("overflow");
-        this.$el.classList.remove("hide");
-        this.$parent.modal = "";
-      }, 400);
+  import ModalSlot from "../components/modalSlot.vue";
+
+  export default {
+    components: { ModalSlot },
+    data() {
+      return {
+        text: "",
+        translator: "",
+      };
     },
-  },
-};
+    mounted() {
+      this.text = this.$parent.modal.data.text;
+      this.translator = this.$parent.modal.data.translator;
+    },
+    methods: {},
+  };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

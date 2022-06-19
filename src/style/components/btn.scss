@@ -1,0 +1,72 @@
+$bXIcon: "<svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' viewBox='0 0 24 24' stroke='%23666' stroke-width='2'><path stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12' /></svg>";
+$wXIcon: "<svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' viewBox='0 0 24 24' stroke='%23fff' stroke-width='2'><path stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12' /></svg>";
+
+.o-btn {
+  min-width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0 5px;
+  outline: none;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: #242639;
+  background: linear-gradient(to bottom, #fcfcfc, #f4f4f4);
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #d8d8d8;
+
+  &:hover {
+    background: #ffffff;
+  }
+
+  &:active {
+    background: #2b80f1;
+    border-color: #2b80f1;
+    color: white;
+    &.close {
+      &::after {
+        content: url("data:image/svg+xml; utf8, " + $wXIcon);
+      }
+    }
+  }
+
+  &:focus {
+    box-shadow: 0 0 0px 2px #8eb9ff;
+    border-color: #8eb9ff;
+  }
+
+  &.close {
+    position: relative;
+    &::after {
+      position: absolute;
+      content: url("data:image/svg+xml; utf8, " + $bXIcon);
+      left: 0;
+      top: 0;
+      width: 80%;
+      height: 80%;
+      margin: 10%;
+      background: transparent;
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+  }
+
+  &.blue {
+    background: #3584e2;
+    border-color: #1f6eca;
+
+    color: white;
+    &:hover {
+      background: #619fe8;
+    }
+
+    &:active {
+      background: #1c6bc7;
+      border-color: #1c6bc7;
+    }
+
+    &:focus {
+      border-color: #8eb9ff;
+    }
+  }
+}

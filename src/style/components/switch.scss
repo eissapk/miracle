@@ -1,0 +1,46 @@
+input[type="checkbox"].o-switch-btn {
+  position: relative;
+  width: 35px;
+  height: 20px;
+  margin: 0;
+  outline: none;
+  box-sizing: border-box;
+  background: #b3b3b3;
+  appearance: none;
+  cursor: pointer;
+  border-radius: 50px;
+  
+  &:focus {
+    box-shadow: 0 0 0px 2px #8eb9ff;
+    border-color: #8eb9ff;
+  }
+  &:checked {
+    // background: #71c837;
+    background:#2f70ec;
+  }
+  &::before {
+    position: absolute;
+    content: "";
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s left ease-in-out;
+  }
+  &:checked::before {
+    left: calc(100% - (16px + 2px));
+  }
+  // todo add dark colors
+  &.dark {
+    // background: #b3b3b3;
+
+    &:checked {
+      // background: #71c837;
+    }
+    &::before {
+      // background: white;
+    }
+  }
+}

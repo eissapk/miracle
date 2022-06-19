@@ -15,11 +15,12 @@
 
         <!-- options -->
         <div class="options">
-          <button @click="showModal('search')" v-html="searchIcon"></button>
-          <button :disabled="isBookmarkDisabled" :class="[isBookmarkDisabled ? 'disabled' : '']" v-html="bookmarkIcon" @click="bookmarkPage(currentPage[0])"></button>
+          <button @click="$router.push('/')" v-html="homeIcon" class="o-btn"></button>
+          <button @click="showModal('search')" v-html="searchIcon" class="o-btn"></button>
+          <button :disabled="isBookmarkDisabled" :class="['o-btn', isBookmarkDisabled ? 'disabled' : '']" v-html="bookmarkIcon" @click="bookmarkPage(currentPage[0])"></button>
           <template v-if="isInitialPlaying">
-            <button v-if="isPlaying" v-html="pauseIcon" @click="pauseReciting()"></button>
-            <button v-else v-html="playIcon" @click="resumeReciting()"></button>
+            <button v-if="isPlaying" v-html="pauseIcon" @click="pauseReciting()" class="o-btn"></button>
+            <button v-else v-html="playIcon" @click="resumeReciting()" class="o-btn"></button>
           </template>
           <label v-if="isInitialPlaying" class="autoReciting">
             <input type="checkbox" class="o-switch-btn" @click="auto" :checked="isAuto" />
@@ -114,6 +115,7 @@
         isBookmarkDisabled: false,
         bookmarkIcon: icons.bookmark,
         searchIcon: icons.search,
+        homeIcon: icons.home,
         playIcon: icons.playSolid,
         pauseIcon: icons.pause,
         pageNum: null,
@@ -173,6 +175,7 @@
       },
     },
     beforeMount() {
+      this.$parent.$parent.readViewEnabled = true;
       // options
       const optionsData = JSON.parse(localStorage.getItem("optionsData")) || { reciter: "mahermuaiqly", explainer: "muyassar", translator: "ahmedraza" };
       this.optionsData.reciter = optionsData.reciter;
@@ -185,11 +188,14 @@
     mounted() {
       this.audioInstance = this.$parent.$parent.audioInstance;
       document.body.addEventListener("keydown", e => {
-        if (e.keyCode === 39) this.next();
-        else if (e.keyCode === 37) this.prev();
+        if (this.$parent.$parent.readViewEnabled) {
+          if (e.keyCode === 39) this.next();
+          else if (e.keyCode === 37) this.prev();
+        }
       });
     },
     unmounted() {
+      this.$parent.readViewEnabled = false;
       if (this.interval) clearInterval(this.interval);
     },
     methods: {
@@ -360,9 +366,6 @@
           margin-bottom: 10px;
           padding: 5px 0;
           button {
-            border: none;
-            cursor: pointer;
-            display: block;
             float: right;
             width: 40px;
             height: 40px;
@@ -370,10 +373,8 @@
             margin: 0px 5px;
             position: relative;
             border-radius: 50%;
-            box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
 
             svg {
-              pointer-events: none;
               height: 20px;
               color: white;
               position: absolute;

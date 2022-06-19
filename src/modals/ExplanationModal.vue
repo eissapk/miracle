@@ -1,5 +1,7 @@
 <template>
-  <div class="ExplanationModal modal">
+  <ModalSlot name="explanation">explanation</ModalSlot>
+
+  <!-- <div class="ExplanationModal modal">
     <div class="container">
       <button @click="hideModal()">x</button>
       <p>
@@ -9,34 +11,25 @@
         {{ text }}
       </p>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      text: "",
-      explainer: "",
-    };
-  },
-  mounted() {
-    this.text = this.$parent.modal.data.text;
-    this.explainer = this.$parent.modal.data.explainer;
-    document.body.classList.add("overflow");
-  },
-  methods: {
-    hideModal() {
-      document.body.classList.remove("overflow");
-      this.$el.classList.add("hide");
-      setTimeout(() => {
-        this.$el.classList.remove("hide");
-        this.$parent.modal = "";
-      }, 400);
-    },
-  },
-};
-</script>
+  import ModalSlot from "../components/modalSlot.vue";
 
-<style lang="scss">
-</style>
+  export default {
+    components: { ModalSlot },
+
+    data() {
+      return {
+        text: "",
+        explainer: "",
+      };
+    },
+    mounted() {
+      this.text = this.$parent.modal.data.text;
+      this.explainer = this.$parent.modal.data.explainer;
+    },
+    methods: {},
+  };
+</script>

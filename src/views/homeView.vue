@@ -15,7 +15,7 @@
           <span :style="{width: percent + '%'}"></span>
         </p>
       </p>
-      <button v-if="percent === 100" @click="saveCompletion()" class="saveCompletion">احفظ الختمة</button>
+      <button v-if="percent === 100" @click="saveCompletion()" class="saveCompletion o-btn">احفظ الختمة</button>
     </div>
     
     <!-- search -->
@@ -139,7 +139,8 @@ export default {
         margin: 0;
         margin-bottom: 5px !important;
         font-weight: bold;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: "Tajawal", Helvetica, Arial, sans-serif;
+        letter-spacing: 2px;
       }
       .bar {
         position: relative;
@@ -160,23 +161,17 @@ export default {
     }
     .saveCompletion {
       pointer-events: initial !important;
-      background: #fff;
-      padding: 10px 15px 5px;
-      color: #666;
-      border: none;
-      outline: none;
-      box-shadow: none;
-      border-radius: 3px;
-      cursor: pointer;
+      padding-left: 10px;
+      padding-right: 10px;
       font-weight: bold;
+      font-family: "Tajawal", Helvetica, Arial, sans-serif;
       position: relative;
       z-index: 1;
-      &:active {
-        transform: perspective(1px) translateZ(-0.04px);
-        transition: 200ms cubic-bezier(0.12, 0.8, 0.32, 1);
-      }
-      &:focus {
-        box-shadow: 0 0 0px 2px #e87d1f;
+      font-size: 12px;
+      color: #666;
+      line-height: 35px;
+      &:active{
+        color: white;
       }
     }
   }

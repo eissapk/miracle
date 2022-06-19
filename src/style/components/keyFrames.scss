@@ -1,0 +1,26 @@
+@keyframes scale {
+  from {
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes slideToUp {
+  from {
+    top: 100vh;
+  }
+  to {
+    top: 5vh;
+  }
+}
+
+@keyframes slideToDown {
+  from {
+    top: 5vh;
+  }
+  to {
+    top: 100vh;
+  }
+}

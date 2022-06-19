@@ -32,7 +32,8 @@ export default {
         name: "",
         data: null,
       },
-      audioInstance: null
+      audioInstance: null,
+      readViewEnabled: false,
     };
   },
   created() {
