@@ -19,11 +19,9 @@
     },
     mounted() {
       console.log("mounted " + this.name + " Slot");
-      // this.$parent.$parent.readViewEnabled = false;
       document.body.classList.add("overflow");
     },
     unmounted() {
-      // this.$parent.$parent.readViewEnabled = true;
     },
     methods: {
       hideModal() {

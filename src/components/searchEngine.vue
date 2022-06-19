@@ -21,7 +21,7 @@
 
       <!-- resutls -->
       <div v-if="!settingsShown && hasResults" class="results">
-        <ul @click="goTo($event)">
+        <ul @click="goTo($event)" class="scrollbar">
           <li v-for="(item, index) of results" :key="index" :data-pos="item.page + '-' + item.localVerse">
             <div class="verseInfo">
               <span>{{ item.name }} -</span>
@@ -114,15 +114,12 @@
           const [page, verse] = e.target.getAttribute("data-pos").split("-");
           console.log({ page, verse });
           this.$parent.hideModal();
-          this.$router.push("/read/" + page);
-          // fix if readView is mounted already
-          // console.log(this.$parent.$parent.$parent.readViewEnabled);
-          // if (this.$parent.$parent.$parent.readViewEnabled) {
-          //   console.log("set page");
-          // } else {
-          //   console.log("push");
-          //   this.$router.push("/read/" + page);
-          // }
+          
+          if (this.$parent.$parent.$parent.readViewEnabled) {
+            readViewComp.setPage(page);
+          } else {
+            this.$router.push("/read/" + page);
+          }
         }
       },
     },
@@ -249,6 +246,8 @@
           margin: 0;
           padding: 10px;
           list-style-type: none;
+          overflow: auto;
+          height: calc(100vh - 212px);
           li {
             border-bottom: 1px solid #eee;
             padding: 10px 0;

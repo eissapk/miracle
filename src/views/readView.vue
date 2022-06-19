@@ -175,7 +175,6 @@
       },
     },
     beforeMount() {
-      this.$parent.$parent.readViewEnabled = true;
       // options
       const optionsData = JSON.parse(localStorage.getItem("optionsData")) || { reciter: "mahermuaiqly", explainer: "muyassar", translator: "ahmedraza" };
       this.optionsData.reciter = optionsData.reciter;
@@ -186,6 +185,9 @@
       this.isAuto = isAuto;
     },
     mounted() {
+      this.$parent.$parent.readViewEnabled = true;
+      window.readViewComp = this;
+      
       this.audioInstance = this.$parent.$parent.audioInstance;
       document.body.addEventListener("keydown", e => {
         if (this.$parent.$parent.readViewEnabled) {
@@ -195,7 +197,7 @@
       });
     },
     unmounted() {
-      this.$parent.readViewEnabled = false;
+      this.$parent.$parent.readViewEnabled = false;
       if (this.interval) clearInterval(this.interval);
     },
     methods: {
