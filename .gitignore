@@ -12,10 +12,10 @@ package-lock.json
 
 vueApp/.DS_Store
 vueApp/node_modules
-vueApp//dist
+vueApp/dist
 
-vueApp//tests/e2e/videos/
-vueApp//tests/e2e/screenshots/
+vueApp/tests/e2e/videos/
+vueApp/tests/e2e/screenshots/
 
 
 # local env files
