@@ -86,6 +86,7 @@
     },
     methods: {
       searchForVerse(str, limit = 30) {
+        // todo handle أ ا 
         str = str.replace(/ى/g, "ي"); // because all reltaive letters in ref.json are "ي"
         if (window.verses) {
           const resultsArr = window.verses.filter(obj => this.$filters.normalize(obj.text).trim().includes(str));
