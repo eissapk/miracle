@@ -34,6 +34,7 @@ export default {
       },
       audioInstance: null,
       readViewEnabled: false,
+      currentVerse: null
     };
   },
   created() {

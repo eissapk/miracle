@@ -9,14 +9,14 @@ input[type="checkbox"].o-switch-btn {
   appearance: none;
   cursor: pointer;
   border-radius: 50px;
-  
+
   &:focus {
     box-shadow: 0 0 0px 2px #8eb9ff;
     border-color: #8eb9ff;
   }
   &:checked {
     // background: #71c837;
-    background:#2f70ec;
+    background: linear-gradient(90deg, #6a11cb, #2f70ec);
   }
   &::before {
     position: absolute;

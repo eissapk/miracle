@@ -187,20 +187,87 @@
     mounted() {
       this.$parent.$parent.readViewEnabled = true;
       window.readViewComp = this;
-      
+      this.highlightVerseOfSearch();
       this.audioInstance = this.$parent.$parent.audioInstance;
-      document.body.addEventListener("keydown", e => {
-        if (this.$parent.$parent.readViewEnabled) {
+
+      // navigate to pages
+      if (this.$parent.$parent.readViewEnabled) {
+        // keyboard
+        document.body.onkeydown = e => {
           if (e.keyCode === 39) this.next();
           else if (e.keyCode === 37) this.prev();
-        }
-      });
+        };
+        // swipe via touch
+        this.enableSwipe();
+      }
+    },
+    updated() {
+      this.highlightVerseOfSearch();
     },
     unmounted() {
       this.$parent.$parent.readViewEnabled = false;
       if (this.interval) clearInterval(this.interval);
     },
     methods: {
+      enableSwipe() {
+        const $this = this;
+        var isDown;
+        var startX;
+        var currentX;
+        var walkX;
+        let direction;
+        let distance;
+        let toggler = true;
+        document.body.ontouchstart = dragStart;
+        function dragStart(e) {
+          e.stopPropagation();
+          isDown = true;
+          e = e || window.event;
+          startX = Math.round(e.touches[0].clientX);
+          document.body.addEventListener("touchmove", dragMove);
+          document.body.addEventListener("touchend", dragEnd);
+
+          function dragEnd() {
+            // reset
+            isDown = false;
+            toggler = true;
+
+            document.body.removeEventListener("touchmove", dragMove);
+            document.body.removeEventListener("touchend", dragEnd);
+          }
+
+          function dragMove(e) {
+            e = e || window.event;
+            if (isDown) {
+              currentX = Math.round(e.touches[0].clientX);
+              // get direction
+              walkX = currentX - startX;
+              if (walkX > 0) direction = "right";
+              else direction = "left";
+              // get distance as positive value
+              distance = walkX < 0 ? walkX * -1 : walkX;
+
+              if (distance >= 50 && toggler) {
+                toggler = false;
+                if (direction === "right") $this.next();
+                else $this.prev();
+              }
+              console.warn({ direction, distance });
+            }
+          }
+        }
+      },
+      highlightVerseOfSearch() {
+        const globalVerse = this.$parent.$parent.currentVerse;
+        console.warn({ globalVerse });
+        if (globalVerse) {
+          const verseElm = document.getElementById("verse_" + globalVerse);
+          if (verseElm) {
+            verseElm.classList.add("selected");
+            setTimeout(() => verseElm.classList.remove("selected"), 2000);
+          }
+        }
+      },
       auto(e) {
         this.isAuto = e.target.checked;
         console.log({ auto: this.isAuto });
@@ -269,6 +336,7 @@
         localStorage.setItem("lastRead", JSON.stringify(obj));
       },
       setPage(num) {
+        this.pageNum = num;
         this.currentPage = window.pages[num];
         location.hash = "#read/" + num; // update hash
         this.optionsRectShown = false;

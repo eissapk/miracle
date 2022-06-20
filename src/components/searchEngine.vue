@@ -22,7 +22,7 @@
       <!-- resutls -->
       <div v-if="!settingsShown && hasResults" class="results">
         <ul @click="goTo($event)" class="scrollbar">
-          <li v-for="(item, index) of results" :key="index" :data-pos="item.page + '-' + item.localVerse">
+          <li v-for="(item, index) of results" :key="index" :data-pos="item.page + '-' + item.globalVerse">
             <div class="verseInfo">
               <span>{{ item.name }} -</span>
               <span v-text="$filters.juz(item.juz) + ' - '"></span>
@@ -81,6 +81,7 @@
       };
     },
     mounted() {
+      this.$parent.$parent.$parent.currentVerse = null; // reset
       this.$refs.engine.focus();
     },
     methods: {
@@ -105,18 +106,22 @@
             console.log(obj);
           }
         } else if (this.tab === "surah") {
+          // add select box of verses in each surah result 
         } else if (this.tab === "page") {
         } else if (this.tab === "part") {
         }
       },
       goTo(e) {
         if (e.target.nodeName === "LI") {
-          const [page, verse] = e.target.getAttribute("data-pos").split("-");
-          console.log({ page, verse });
-          this.$parent.hideModal();
+          const [page, globalVerse] = e.target.getAttribute("data-pos").split("-");
+          console.log({ page, globalVerse });
           
+          this.$parent.hideModal();
+          this.$parent.$parent.$parent.currentVerse = globalVerse;
+
           if (this.$parent.$parent.$parent.readViewEnabled) {
-            readViewComp.setPage(page);
+            if (readViewComp) readViewComp.setPage(page);
+            else console.warn("readViewComp is NOT defined");
           } else {
             this.$router.push("/read/" + page);
           }

@@ -22,6 +22,7 @@
       document.body.classList.add("overflow");
     },
     unmounted() {
+      document.body.classList.remove("overflow");
     },
     methods: {
       hideModal() {

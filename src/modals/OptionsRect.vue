@@ -55,11 +55,11 @@
     },
     mounted() {
       // blur
-      document.body.addEventListener("click", e => {
+      this.$parent.$el.onclick = e => {
         if (e.target !== this.$el && e.target !== this.options.coords.elm) {
           this.$parent.optionsRectShown = false;
         }
-      });
+      };
     },
     props: ["options", "audio", "shown"],
     methods: {
