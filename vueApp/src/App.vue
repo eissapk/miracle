@@ -39,8 +39,9 @@ export default {
   },
   created() {
     handlePages()
-      .then(({ pages, verses }) => {
+      .then(({ pages, verses, surahs }) => {
         window.pages = pages;
+        window.surahs = surahs;
         window.verses = verses;
         document.body.classList.remove("overflow");
         this.isLoading = false;

@@ -12,7 +12,7 @@
       <!-- tabs -->
       <nav>
         <ul class="scrollbar">
-          <li v-for="(item, index) in tabs" :key="index" :class="{ active: item.tab === tab, checked: item.checked }" @click="tab = item.tab">
+          <li v-for="(item, index) in tabs" :key="index" :class="{ active: item.tab === tab, checked: item.checked }" @click="(tab = item.tab), (results = [])">
             <a>{{ item.text }}</a>
           </li>
         </ul>
@@ -21,17 +21,41 @@
 
       <!-- resutls -->
       <div v-if="!settingsShown && hasResults" class="results">
+        <div class="length" v-if="length">
+          <span v-arNum>{{ length }}</span>
+        </div>
         <ul @click="goTo($event)" class="scrollbar">
-          <li v-for="(item, index) of results" :key="index" :data-pos="item.page + '-' + item.globalVerse">
-            <div class="verseInfo">
-              <span>{{ item.name }} -</span>
-              <span v-text="$filters.juz(item.juz) + ' - '"></span>
-              <span>{{ item.type === "med" ? "مدنية" : "مكية" }} -</span>
-              <span v-arNum>أية {{ item.localVerse }} -</span>
-              <span v-arNum>صفحة {{ item.page }}</span>
-            </div>
-            <a>{{ item.text }}</a>
-          </li>
+          <template v-if="tab === 'verse'">
+            <li v-for="(item, index) of results" :key="index" :data-verse="item.page + '-' + item.globalVerse">
+              <div class="verseInfo">
+                <span>{{ item.name }} -</span>
+                <span v-text="$filters.juz(item.juz) + ' - '"></span>
+                <span>{{ item.type === "med" ? "مدنية" : "مكية" }} -</span>
+                <span v-arNum>أية {{ item.localVerse }} -</span>
+                <span v-arNum>صفحة {{ item.page }}</span>
+              </div>
+              <a>{{ item.text }}</a>
+            </li>
+          </template>
+          <template v-else-if="tab === 'surah'">
+            <li v-for="(item, index) of results" :key="index" :data-surah="item.page + '-' + item.ayahs[0].globalVerse">
+              <div class="surahInfo">
+                <span>{{ item.name }} -</span>
+                <span v-text="$filters.juz(item.juz) + ' - '"></span>
+                <span>{{ item.type === "med" ? "مدنية" : "مكية" }} -</span>
+                <span v-arNum>أياتها {{ item.verses }} -</span>
+                <span v-arNum>صفحة {{ item.page }}</span>
+              </div>
+              <div class="versesSelectBox">
+                <label>اختر الأية</label>
+                <div class="o-select" ref="select">
+                  <select v-model="selectedVerse">
+                    <option v-for="(surah, index) in item.ayahs" :key="index" :value="surah.page + '-' + surah.globalVerse">{{ surah.localVerse }}</option>
+                  </select>
+                </div>
+              </div>
+            </li>
+          </template>
         </ul>
       </div>
 
@@ -64,7 +88,6 @@
         tabs: [
           { text: "أية", tab: "verse", checked: true },
           { text: "سورة", tab: "surah", checked: true },
-          { text: "أية فى سورة", tab: "verseInSurah", checked: false },
           { text: "صفحة", tab: "page", checked: false },
           { text: "جزء", tab: "part", checked: false },
         ],
@@ -74,6 +97,8 @@
         settingsShown: false,
         hasResults: false,
         results: [],
+        length: 0,
+        selectedVerse: null,
         error: {
           status: false,
           text: "",
@@ -86,12 +111,20 @@
     },
     methods: {
       searchForVerse(str, limit = 30) {
-        // todo handle أ ا 
         str = str.replace(/ى/g, "ي"); // because all reltaive letters in ref.json are "ي"
+        str = str.replace(/ٱ|آ|إ|أ/g, "ا");
         if (window.verses) {
           const resultsArr = window.verses.filter(obj => this.$filters.normalize(obj.text).trim().includes(str));
           const firstChunck = resultsArr.slice(0, limit);
           return { length: resultsArr.length, results: firstChunck };
+        }
+      },
+      searchForSurah(str) {
+        str = str.replace(/ى/g, "ي"); // because all reltaive letters in ref.json are "ي"
+        str = str.replace(/ٱ|آ|إ|أ/g, "ا");
+        if (window.surahs) {
+          const resultsArr = window.surahs.filter(obj => this.$filters.normalize(obj.name).trim().includes(str));
+          return { length: resultsArr.length, results: resultsArr };
         }
       },
       search(e) {
@@ -104,27 +137,87 @@
             } else {
               this.hasResults = false;
             }
+            this.length = obj.length;
             console.log(obj);
           }
         } else if (this.tab === "surah") {
-          // add select box of verses in each surah result 
+          if (this.input !== "" && e.keyCode === 13) {
+            const obj = this.searchForSurah(this.input);
+            if (obj.length) {
+              this.results = obj.results;
+              this.hasResults = true;
+            } else {
+              this.hasResults = false;
+            }
+            this.selectedVerse = null;
+            this.length = obj.length;
+            console.log(obj);
+          }
         } else if (this.tab === "page") {
+          if (this.input !== "" && e.keyCode === 13) {
+            const num = +this.input;
+            this.$parent.hideModal();
+            if (this.$parent.$parent.$parent.readViewEnabled) {
+              if (readViewComp) readViewComp.setPage(num);
+              else console.warn("readViewComp is NOT defined");
+            } else {
+              this.$router.push("/read/" + num);
+            }
+          }
         } else if (this.tab === "part") {
+          if (this.input !== "" && e.keyCode === 13) {
+            const num = this.getFirstPage(+this.input);
+            this.$parent.hideModal();
+            if (this.$parent.$parent.$parent.readViewEnabled) {
+              if (readViewComp) readViewComp.setPage(num);
+              else console.warn("readViewComp is NOT defined");
+            } else {
+              this.$router.push("/read/" + num);
+            }
+          }
         }
+      },
+      getFirstPage(part) {
+        return +((part - 1) * 2 + "2");
       },
       goTo(e) {
         if (e.target.nodeName === "LI") {
-          const [page, globalVerse] = e.target.getAttribute("data-pos").split("-");
-          console.log({ page, globalVerse });
-          
-          this.$parent.hideModal();
-          this.$parent.$parent.$parent.currentVerse = globalVerse;
-
-          if (this.$parent.$parent.$parent.readViewEnabled) {
-            if (readViewComp) readViewComp.setPage(page);
-            else console.warn("readViewComp is NOT defined");
-          } else {
-            this.$router.push("/read/" + page);
+          const hasAttr = attr => e.target.getAttribute(attr);
+          if (hasAttr("data-verse")) {
+            const [page, globalVerse] = hasAttr("data-verse").split("-");
+            console.log({ page, globalVerse });
+            this.$parent.hideModal();
+            this.$parent.$parent.$parent.currentVerse = globalVerse;
+            if (this.$parent.$parent.$parent.readViewEnabled) {
+              if (readViewComp) readViewComp.setPage(page);
+              else console.warn("readViewComp is NOT defined");
+            } else {
+              this.$router.push("/read/" + page);
+            }
+          } else if (hasAttr("data-surah")) {
+            if (this.selectedVerse) {
+              const [page, verse] = this.selectedVerse.split("-");
+              console.log({ page, verse });
+              console.warn(this.selectedVerse);
+              this.$parent.hideModal();
+              this.$parent.$parent.$parent.currentVerse = verse;
+              if (this.$parent.$parent.$parent.readViewEnabled) {
+                if (readViewComp) readViewComp.setPage(page);
+                else console.warn("readViewComp is NOT defined");
+              } else {
+                this.$router.push("/read/" + page);
+              }
+            } else {
+              // if (readViewComp) {
+              //   readViewComp.notifyShown = true;
+              //   readViewComp.notifyDesc = "برجاء اختيار أية";
+              //   setTimeout(() => {
+              //     readViewComp.notifyShown = false;
+              //   }, 1000);
+              // } else {
+              alert("برجاء اختيار أية");
+              // }
+            }
           }
         }
       },
@@ -248,6 +341,23 @@
       }
 
       .results {
+        .length {
+          padding: 10px;
+          span {
+            text-align: center;
+            width: 49px;
+            height: 50px;
+            line-height: 56px;
+            border-radius: 50%;
+            display: block;
+            background: #2f70ec;
+            color: white;
+            font-size: 18px;
+            font-family: "Tajawal", Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            margin-right: auto;
+          }
+        }
         ul {
           margin: 0;
           padding: 10px;
@@ -290,13 +400,15 @@
                 -webkit-text-fill-color: transparent;
                 transition: background 0.1s ease;
               }
-              .verseInfo {
+              .verseInfo,
+              .surahInfo {
                 background: #647eff;
                 color: white;
               }
             }
 
-            .verseInfo {
+            .verseInfo,
+            .surahInfo {
               transition: background 0.1s ease;
               border-radius: 3px;
               display: inline-block;
@@ -306,7 +418,7 @@
               margin-bottom: 10px;
               font-size: 14px;
               padding: 5px 0;
-              font-family: "Kitab-Regular";
+              font-family: "Kitab-Regular2";
               font-weight: bold;
               color: #666;
               span {
@@ -315,6 +427,25 @@
                 &:first-of-type {
                   margin-right: 0;
                 }
+              }
+            }
+
+            .versesSelectBox {
+              margin-top: 5px;
+              width: 140px;
+              label {
+                margin-bottom: 10px;
+                font-family: "Tajawal", Helvetica, Arial, sans-serif;
+                font-weight: bold;
+                font-size: 14px;
+                color: #666;
+                pointer-events: none;
+              }
+              .o-select {
+                max-width: 70px;
+                display: inline-block;
+                margin-right: 10px;
+                min-width: 70px;
               }
             }
           }

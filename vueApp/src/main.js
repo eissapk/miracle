@@ -1,4 +1,3 @@
-// todo go to specific verse in specific surah
 // todo add سجدة/حزب
 //todo engine options["tashkil", "extact match", "limit"]
 import book from "./services/book";

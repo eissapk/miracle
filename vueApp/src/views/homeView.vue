@@ -3,7 +3,7 @@
     <!-- read -->
     <div class="read tab">
       <router-link :to="'/read/' + lastRead.page" class="router-link"></router-link>
-      <img src="../assets/book.png" alt="book" />
+      <img src="img/book.png" alt="book" />
       <p class="lastRead">
         <span class="icon" v-html="solid_book_open"></span>
         اخر قراءة
@@ -130,7 +130,7 @@ export default {
 
     .surah {
       font-weight: bold;
-      font-family: "Kitab-Regular" !important;
+      font-family: "Kitab-Regular2" !important;
     }
 
     .progress {

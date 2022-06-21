@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import homeView from "../views/homeView.vue";
+import readView from "../views/readView.vue";
 
 const routes = [
   {
@@ -10,7 +11,7 @@ const routes = [
   {
     path: '/read/:page',
     name: 'readView',
-    component: () => import('../views/readView.vue')
+    component: readView
   }
 ]
 

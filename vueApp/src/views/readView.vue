@@ -10,6 +10,7 @@
         <!-- bar -->
         <div class="bar">
           <span class="name" v-text="currentPage[0].name"></span>
+                    <div class="pageNum" v-text="$filters.arNum(pageNum)"></div>
           <span class="juz" v-text="$filters.juz(currentPage[0].juz)"></span>
         </div>
 
@@ -64,7 +65,7 @@
             </div>
           </div>
 
-          <div class="pageNum" v-text="$filters.arNum(pageNum)"></div>
+          <!-- <div class="pageNum" v-text="$filters.arNum(pageNum)"></div> -->
 
           <div class="explanation">
             <label>التفسير</label>
@@ -263,8 +264,8 @@
         if (globalVerse) {
           const verseElm = document.getElementById("verse_" + globalVerse);
           if (verseElm) {
-            verseElm.classList.add("selected");
-            setTimeout(() => verseElm.classList.remove("selected"), 2000);
+            verseElm.classList.add("red");
+            setTimeout(() => verseElm.classList.remove("red"), 3000);
           }
         }
       },
@@ -413,6 +414,7 @@
         .bar {
           user-select: none;
           overflow: hidden;
+          padding: 5px 0;
           margin-bottom: 20px;
           span {
             font-size: 12px;
@@ -423,11 +425,29 @@
           }
           .name {
             float: left;
-            font-family: "Kitab-Regular";
+            font-family: "Kitab-Regular2";
             font-size: 15px;
           }
           .juz {
             float: right;
+          }
+
+          .pageNum {
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            // background: #f94c66;
+            background: linear-gradient(90deg, #6a11cb, #2f70ec);
+            filter: grayscale(1);
+            text-align: center;
+            color: white;
+            display: inline-block;
+            margin-right: 20px;
+            box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
           }
         }
 
@@ -501,7 +521,7 @@
           .name {
             font-weight: bold;
             font-size: 20px;
-            font-family: "Kitab-Regular";
+            font-family: "Kitab-Regular2";
             margin: 0;
             margin-bottom: 5px;
           }
@@ -593,7 +613,11 @@
           &.blue {
             background: #0671ff !important;
           }
+          &.red {
+            background: #f94c66 !important;
+          }
 
+          &.red,
           &.orange,
           &.purple,
           &.blue {
@@ -652,30 +676,7 @@
 
           @media (min-width: 500px) {
             grid-template-columns: none;
-
             grid-gap: 0 30px;
-          }
-
-          .pageNum {
-            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-            font-size: 14px;
-            font-weight: bold;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            border-radius: 50%;
-            background: #f94c66;
-            text-align: center;
-            color: white;
-            margin: 0 auto;
-            display: block;
-            box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
-            grid-row: 3/4;
-            align-self: end;
-            @media (min-width: 500px) {
-              grid-column: 2/3;
-              grid-row: 1/2;
-            }
           }
 
           .sound {
@@ -686,7 +687,7 @@
           }
           .explanation {
             @media (min-width: 500px) {
-              grid-column: 3/4;
+              grid-column: 2/3;
               grid-row: 1/2;
             }
           }

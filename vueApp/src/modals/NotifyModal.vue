@@ -28,7 +28,7 @@ export default {
   padding: 10px 0 5px;
   font-weight: bold;
   font-family: "Tajawal", Helvetica, Arial, sans-serif;
-  z-index: 999;
+  z-index: 99999;
   line-height: initial;
   animation: notifySlideToDown 0.3s ease-in-out forwards;
   user-select: none;
