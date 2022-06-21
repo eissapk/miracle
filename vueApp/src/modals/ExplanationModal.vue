@@ -1,17 +1,12 @@
 <template>
-  <ModalSlot name="explanation">explanation</ModalSlot>
-
-  <!-- <div class="ExplanationModal modal">
-    <div class="container">
-      <button @click="hideModal()">x</button>
-      <p>
-        {{ explainer }}
-      </p>
-      <p>
-        {{ text }}
-      </p>
+  <ModalSlot name="explanation">
+    <div>
+      <h3>
+        {{explainer}}
+      </h3>
+      <p>{{text}}</p>
     </div>
-  </div> -->
+  </ModalSlot>
 </template>
 
 <script>
@@ -27,8 +22,11 @@
       };
     },
     mounted() {
-      this.text = this.$parent.modal.data.text;
-      this.explainer = this.$parent.modal.data.explainer;
+      console.log("mounted explanation");
+      if (this.$parent.modal.name === "explanation") {
+        this.text = this.$parent.modal.data.text;
+        this.explainer = this.$parent.modal.data.explainer;
+      }
     },
     methods: {},
   };

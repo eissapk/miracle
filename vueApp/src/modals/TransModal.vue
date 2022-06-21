@@ -1,16 +1,12 @@
 <template>
-  <ModalSlot name="trans">trans</ModalSlot>
-
-  <!-- <div class="TransModal modal">
-    <div class="container">
-      <button @click="hideModal()">x</button>
-      <p>{{ translator }}</p>
-      <p>
-        {{ text }}
-      </p>
-      trans modal
+  <ModalSlot name="trans">
+    <div>
+      <h3>
+        {{ translator }}
+      </h3>
+      <p>{{ text }}</p>
     </div>
-  </div> -->
+  </ModalSlot>
 </template>
 
 <script>
@@ -25,8 +21,11 @@
       };
     },
     mounted() {
-      this.text = this.$parent.modal.data.text;
-      this.translator = this.$parent.modal.data.translator;
+      console.log("mounted trans");
+      if (this.$parent.modal.name === "trans") {
+        this.text = this.$parent.modal.data.text;
+        this.translator = this.$parent.modal.data.translator;
+      }
     },
     methods: {},
   };
