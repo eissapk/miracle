@@ -10,8 +10,8 @@
         <!-- bar -->
         <div class="bar">
           <span class="name" v-text="currentPage[0].name"></span>
-                    <div class="pageNum" v-text="$filters.arNum(pageNum)"></div>
-          <span class="juz" v-text="$filters.juz(currentPage[0].juz)"></span>
+          <!-- <div class="pageNum" v-text="$filters.arNum(pageNum)"></div> -->
+          <span class="juz" v-text="$filters.juz(currentPage[0].juz) + ' - صفحة ' +  $filters.arNum(pageNum)"></span>
         </div>
 
         <!-- options -->
@@ -54,6 +54,11 @@
         </template>
         <!-- page number -->
         <div class="pageFooter">
+          <div class="navBtns">
+            <button class="o-btn" @click="next()" v-html="nextIcon"></button>
+            <button class="o-btn" @click="prev()" v-html="prevIcon"></button>
+          </div>
+
           <div class="sound">
             <label>القارئ</label>
             <div class="o-select rtl">
@@ -64,8 +69,6 @@
               </select>
             </div>
           </div>
-
-          <!-- <div class="pageNum" v-text="$filters.arNum(pageNum)"></div> -->
 
           <div class="explanation">
             <label>التفسير</label>
@@ -116,6 +119,8 @@
         isBookmarkDisabled: false,
         bookmarkIcon: icons.bookmark,
         searchIcon: icons.search,
+        nextIcon: icons.next,
+        prevIcon: icons.prev,
         homeIcon: icons.home,
         playIcon: icons.playSolid,
         pauseIcon: icons.pause,
@@ -130,6 +135,9 @@
     created() {
       this.pageNum = +this.$route.params.page;
       console.log({ pageNum: this.pageNum });
+      if (isNaN(this.pageNum) || (!isNaN(this.pageNum) && this.pageNum < 1) || (!isNaN(this.pageNum) && this.pageNum > 604)) {
+        return (this.isLoading = true);
+      }
 
       function getCurrentPage() {
         this.currentPage = window.pages[this.pageNum];
@@ -430,6 +438,7 @@
           }
           .juz {
             float: right;
+            letter-spacing: 1px;
           }
 
           .pageNum {
@@ -679,16 +688,47 @@
             grid-gap: 0 30px;
           }
 
+          .navBtns {
+            button {
+              float: right;
+              width: 40px;
+              height: 40px;
+              background: linear-gradient(90deg, #6a11cb, #2f70ec);
+              margin: 0px 5px;
+              position: relative;
+              border-radius: 50%;
+
+              svg {
+                height: 20px;
+                color: white;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+              }
+              &:active {
+                transform: perspective(1px) translateZ(-0.04px);
+                transition: 200ms cubic-bezier(0.12, 0.8, 0.32, 1);
+              }
+            }
+
+            @media (min-width: 500px) {
+              grid-column: 1/4;
+              grid-row: 1/2;
+              margin-bottom: 20px;
+            }
+          }
+
           .sound {
             @media (min-width: 500px) {
-              grid-column: 1/2;
-              grid-row: 1/2;
+              grid-column: 1/3;
+              grid-row: 2/3;
             }
           }
           .explanation {
             @media (min-width: 500px) {
-              grid-column: 2/3;
-              grid-row: 1/2;
+              grid-column: 3/4;
+              grid-row: 2/3;
             }
           }
           .sound,
