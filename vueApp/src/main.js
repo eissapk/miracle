@@ -1,7 +1,13 @@
 // todo add سجدة/حزب
 //todo engine options["tashkil", "extact match", "limit"]
+// start global
 import book from "./services/book";
 window.book = book;
+import popup from "./services/popup.js";
+window.oConfirm = popup.oConfirm;
+window.oAlert = popup.oAlert;
+// end global
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'

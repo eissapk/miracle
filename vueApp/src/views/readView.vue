@@ -11,7 +11,7 @@
         <div class="bar">
           <span class="name" v-text="currentPage[0].name"></span>
           <!-- <div class="pageNum" v-text="$filters.arNum(pageNum)"></div> -->
-          <span class="juz" v-text="$filters.juz(currentPage[0].juz) + ' - صفحة ' +  $filters.arNum(pageNum)"></span>
+          <span class="juz" v-text="$filters.juz(currentPage[0].juz) + ' - صفحة ' + $filters.arNum(pageNum)"></span>
         </div>
 
         <!-- options -->
@@ -28,30 +28,33 @@
             تلقائي
           </label>
         </div>
-        <!-- content -->
-        <template v-for="(obj, index) of currentPage" :key="index">
-          <!-- header -->
-          <div class="head" v-if="obj.localVerse === 1">
-            <p class="surah" v-text="$filters.arNum(obj.surah)"></p>
-            <p class="name" v-text="'سُورَةُ ' + obj.name"></p>
-            <p class="other">
-              <span class="verses" v-text="'أياتها ' + $filters.arNum(obj.verses)"></span>
-              -
-              <span class="type" v-text="$filters.surahType(obj.type)"></span>
-            </p>
-          </div>
 
-          <!-- بسملة -->
-          <div class="start" v-if="obj.localVerse === 1 && ![1, 9].includes(obj.surah)">
-            {{ start }}
-          </div>
+        <div class="pageContent scrollbar">
+          <!-- content -->
+          <template v-for="(obj, index) of currentPage" :key="index">
+            <!-- header -->
+            <div class="head" v-if="obj.localVerse === 1">
+              <p class="surah" v-text="$filters.arNum(obj.surah)"></p>
+              <p class="name" v-text="'سُورَةُ ' + obj.name"></p>
+              <p class="other">
+                <span class="verses" v-text="'أياتها ' + $filters.arNum(obj.verses)"></span>
+                -
+                <span class="type" v-text="$filters.surahType(obj.type)"></span>
+              </p>
+            </div>
 
-          <!-- verses -->
-          <span :id="'verse_' + obj.globalVerse" :class="[isHighlightedVerse(obj) ? isHighlightedVerse(obj) : '', 'verse']" @click="showVerseOpt(obj, $event)">
-            <span class="text" v-html="$filters.highlight(obj.text, godArr, 'god')"></span>
-            <span class="num" v-text="$filters.arNum(obj.localVerse)"></span>
-          </span>
-        </template>
+            <!-- بسملة -->
+            <div class="start" v-if="obj.localVerse === 1 && ![1, 9].includes(obj.surah)">
+              {{ start }}
+            </div>
+
+            <!-- verses -->
+            <span :id="'verse_' + obj.globalVerse" :class="[isHighlightedVerse(obj) ? isHighlightedVerse(obj) : '', 'verse']" @click="showVerseOpt(obj, $event)">
+              <span class="text" v-html="$filters.highlight(obj.text, godArr, 'god')"></span>
+              <span class="num" v-text="$filters.arNum(obj.localVerse)"></span>
+            </span>
+          </template>
+        </div>
         <!-- page number -->
         <div class="pageFooter">
           <div class="navBtns">
@@ -211,7 +214,9 @@
       }
     },
     updated() {
-      this.highlightVerseOfSearch();
+      if (this.$parent.$parent.highlightCurrentVerse) {
+        this.highlightVerseOfSearch();
+      }
     },
     unmounted() {
       this.$parent.$parent.readViewEnabled = false;
@@ -267,13 +272,18 @@
         }
       },
       highlightVerseOfSearch() {
+        console.warn("highlightVerseOfSearch");
         const globalVerse = this.$parent.$parent.currentVerse;
         console.warn({ globalVerse });
         if (globalVerse) {
           const verseElm = document.getElementById("verse_" + globalVerse);
           if (verseElm) {
+            verseElm.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
             verseElm.classList.add("red");
-            setTimeout(() => verseElm.classList.remove("red"), 3000);
+            setTimeout(() => {
+              verseElm.classList.remove("red");
+              this.$parent.$parent.highlightCurrentVerse = false;
+            }, 3000);
           }
         }
       },
@@ -462,7 +472,7 @@
 
         .options {
           overflow: hidden;
-          margin-bottom: 10px;
+          margin-bottom: 5px;
           padding: 5px 0;
           button {
             float: right;
@@ -500,6 +510,19 @@
               margin: 10px 10px 0 15px;
               float: right;
             }
+          }
+        }
+
+        .pageContent {
+          overflow: auto;
+          height: calc(100vh - 350px);
+          max-height: 515px;
+          padding: 10px 0;
+          box-sizing: border-box;
+          border-top: 1px solid #eee;
+          border-bottom: 1px solid #eee;
+          @media (min-width: 500px) {
+            height: calc(100vh - 280px);
           }
         }
 
@@ -678,7 +701,7 @@
           align-items: center;
           width: 100%;
           max-width: 500px;
-          margin: 25px auto 25px;
+          margin: 10px auto;
           grid-template-columns: 1fr;
           grid-gap: 20px 0;
           justify-content: center;

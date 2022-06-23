@@ -12,9 +12,11 @@
       <!-- tabs -->
       <nav>
         <ul class="scrollbar">
-          <li v-for="(item, index) in tabs" :key="index" :class="{ active: item.tab === tab, checked: item.checked }" @click="handleSelectedTabs(item)">
-            <a>{{ item.text }}</a>
-          </li>
+          <template v-for="(item, index) in tabs" :key="index">
+            <li v-if="item.tab" :class="{ active: item.tab === tab, checked: item.checked }" @click="handleSelectedTabs(item)">
+              <a>{{ item.text }}</a>
+            </li>
+          </template>
         </ul>
         <button :style="[length ? { top: '23px' } : '']" class="settingsBtn" v-html="settingsIcon" @click="settingsShown = !settingsShown"></button>
         <div class="length" v-if="length" v-arNum v-text="$filters.arNum(length) + ' نتيجة'"></div>
@@ -23,14 +25,13 @@
       <!-- todo add infinite scroll -->
       <!-- resutls -->
       <div v-if="!settingsShown && hasResults" class="results">
-        <ul @click="goTo($event)" class="scrollbar">
+        <ul @click="goTo($event)" class="scrollbar" @scroll="handleScroll($event)" ref="ul">
           <template v-if="tab === 'verse'">
             <li v-for="(item, index) of results" :key="index" :data-verse="item.page + '-' + item.globalVerse">
               <div class="verseInfo">
-                <span class="name">{{ item.name }}</span>
-                <span class="juz" v-text="$filters.juz(item.juz)"></span>
-
-                <span class="page" v-arNum>صفحة {{ item.page }}</span>
+                <span class="verseInfo__name">{{ item.name }}</span>
+                <span class="verseInfo__juz" v-text="$filters.juz(item.juz)"></span>
+                <span class="verseInfo__page" v-arNum>صفحة {{ item.page }}</span>
               </div>
               <a>
                 {{ item.text }}
@@ -41,7 +42,7 @@
           <template v-else-if="tab === 'surah'">
             <li v-for="(item, index) of results" :key="index" :data-surah="item.page + '-' + item.ayahs[0].globalVerse">
               <div class="surahInfo">
-                <span class="name">سُورَةُ {{ item.name }}</span>
+                <span class="surahInfo__name">سُورَةُ {{ item.name }}</span>
                 <!-- <span class="juz" v-text="$filters.juz(item.juz)"></span> -->
                 <!-- <span class="type">{{ item.type === "med" ? "مدنية" : "مكية" }}</span> -->
                 <!-- <span class="totalVerses" v-arNum>أياتها {{ item.verses }}</span> -->
@@ -49,9 +50,9 @@
               </div>
               <div class="versesSelectBox">
                 <label>اختر الأية</label>
-                <div class="o-select" ref="select">
-                  <select v-model="selectedVerse">
-                    <option v-for="(surah, index) in item.ayahs" :key="index" :value="surah.page + '-' + surah.globalVerse">{{ surah.localVerse }}</option>
+                <div class="o-select">
+                  <select>
+                    <option :selected="index === 0" v-for="(surah, index) in item.ayahs" :key="index" :value="surah.page + '-' + surah.globalVerse">{{ surah.localVerse }}</option>
                   </select>
                 </div>
               </div>
@@ -67,7 +68,7 @@
       <div v-if="settingsShown" class="settings">
         <div class="settingsItems">
           <template v-for="(item, index) in tabs" :key="index">
-            <label v-if="item.tab !== 'surah' && item.tab !== 'verse'">
+            <label v-if="!item.tab || (item.tab !== 'surah' && item.tab !== 'verse')">
               {{ item.text }}
               <input type="checkbox" class="o-switch-btn" :checked="item.checked" @click="handleCheckedTabs(item)" />
             </label>
@@ -91,6 +92,7 @@
           { text: "سورة", tab: "surah", checked: true },
           { text: "صفحة", tab: "page", checked: false },
           { text: "جزء", tab: "part", checked: false },
+          { text: "عرض تلقائى للنتائج", checked: false, id: "infiniteScroll" },
         ],
         tab: "verse",
         input: "",
@@ -100,26 +102,45 @@
         results: [],
         resultsHint: "",
         length: 0,
-        selectedVerse: null,
-        error: {
-          status: false,
-          text: "",
-        },
+        hasMore: false,
+        resultsCounter: 1,
+        scrollLimit: 30,
       };
     },
     mounted() {
-      const tabs = JSON.parse(localStorage.getItem("tabs")) || [
-        { text: "أية", tab: "verse", checked: true },
-        { text: "سورة", tab: "surah", checked: true },
-        { text: "صفحة", tab: "page", checked: false },
-        { text: "جزء", tab: "part", checked: false },
-      ];
+      const tabs = JSON.parse(localStorage.getItem("tabs")) || this.tabs;
       this.tabs = tabs;
-
       this.$parent.$parent.$parent.currentVerse = null; // reset
       this.$refs.engine.focus();
     },
     methods: {
+      handleScroll(e) {
+        const elm = e.target;
+        const reachedEnd = elm.scrollTop >= elm.scrollHeight - elm.offsetHeight;
+        const isInfiniteScroll = this.tabs.find(item => (item.id && item.id === "infiniteScroll" ? item : null));
+        if (!isInfiniteScroll || !isInfiniteScroll.checked) return;
+
+        if (reachedEnd && isInfiniteScroll && isInfiniteScroll.checked) {
+          console.warn("reached end of scroll");
+          console.warn(this.tab, this.hasMore);
+
+          if (this.tab === "verse") {
+            if (this.hasMore && this.results.length !== this.length) {
+              this.resultsCounter += 1;
+              const obj = this.searchForVerse(this.input, this.scrollLimit * this.resultsCounter + 1);
+              console.log(obj.results);
+              this.results = obj.results;
+            }
+          } else if (this.tab === "surah") {
+            if (this.hasMore && this.results.length !== this.length) {
+              this.resultsCounter += 1;
+              const obj = this.searchForSurah(this.input, this.scrollLimit * this.resultsCounter + 1);
+              console.log(obj.results);
+              this.results = obj.results;
+            }
+          }
+        }
+      },
       handleCheckedTabs(item) {
         item.checked = !item.checked;
         // update tabs options
@@ -130,6 +151,9 @@
         this.results = [];
         this.length = 0;
         this.resultsHint = "";
+        this.resultsCounter = 1;
+        this.hasMore = false;
+        this.$refs.engine.focus();
       },
       searchForVerse(str, limit = 30) {
         str = str.replace(/ى/g, "ي"); // because all reltaive letters in ref.json are "ي"
@@ -140,40 +164,56 @@
           return { length: resultsArr.length, results: firstChunck };
         }
       },
-      searchForSurah(str) {
+      searchForSurah(str, limit = 30) {
         str = str.replace(/ى/g, "ي"); // because all reltaive letters in ref.json are "ي"
         str = str.replace(/ٱ|آ|إ|أ/g, "ا");
         if (window.surahs) {
           const resultsArr = window.surahs.filter(obj => this.$filters.normalize(obj.name).trim().includes(str));
-          return { length: resultsArr.length, results: resultsArr };
+          const firstChunck = resultsArr.slice(0, limit);
+          return { length: resultsArr.length, results: firstChunck };
         }
+      },
+      reset() {
+        this.resultsCounter = 1;
+        this.hasMore = false;
+        const ul = this.$refs.ul;
+        if (ul) ul.scrollTo(0, 0);
       },
       search(e) {
         if (this.tab === "verse") {
           if (this.input !== "" && e.keyCode === 13) {
-            const obj = this.searchForVerse(this.input);
+            this.reset();
+            const obj = this.searchForVerse(this.input, this.scrollLimit + 1);
             if (obj.length) {
               this.results = obj.results;
               this.hasResults = true;
+              if (obj.results.length === this.scrollLimit + 1) this.hasMore = true;
+              else this.hasMore = false;
             } else {
               this.hasResults = false;
               this.resultsHint = "لايوجد نتائج";
+              this.hasMore = false;
             }
             this.length = obj.length;
+            console.log(obj.results);
             console.log(obj);
           }
         } else if (this.tab === "surah") {
           if (this.input !== "" && e.keyCode === 13) {
-            const obj = this.searchForSurah(this.input);
+            this.reset();
+            const obj = this.searchForSurah(this.input, this.scrollLimit + 1);
             if (obj.length) {
               this.results = obj.results;
               this.hasResults = true;
+              if (obj.results.length === this.scrollLimit + 1) this.hasMore = true;
+              else this.hasMore = false;
             } else {
               this.hasResults = false;
               this.resultsHint = "لايوجد نتائج";
+              this.hasMore = false;
             }
-            this.selectedVerse = null;
             this.length = obj.length;
+            console.log(obj.results);
             console.log(obj);
           }
         } else if (this.tab === "page") {
@@ -221,6 +261,7 @@
             console.log({ page, globalVerse });
             this.$parent.hideModal();
             this.$parent.$parent.$parent.currentVerse = globalVerse;
+            this.$parent.$parent.$parent.highlightCurrentVerse = true;
             if (this.$parent.$parent.$parent.readViewEnabled) {
               if (readViewComp) readViewComp.setPage(page);
               else console.warn("readViewComp is NOT defined");
@@ -228,28 +269,20 @@
               this.$router.push("/read/" + page);
             }
           } else if (hasAttr("data-surah")) {
-            if (this.selectedVerse) {
-              const [page, verse] = this.selectedVerse.split("-");
+            // return console.warn(e.target);
+            const select = e.target.querySelector("select");
+            if (select) {
+              const [page, verse] = select.selectedOptions[0].value.split("-");
               console.log({ page, verse });
-              console.warn(this.selectedVerse);
               this.$parent.hideModal();
               this.$parent.$parent.$parent.currentVerse = verse;
+              this.$parent.$parent.$parent.highlightCurrentVerse = true;
               if (this.$parent.$parent.$parent.readViewEnabled) {
                 if (readViewComp) readViewComp.setPage(page);
                 else console.warn("readViewComp is NOT defined");
               } else {
                 this.$router.push("/read/" + page);
               }
-            } else {
-              // if (readViewComp) {
-              //   readViewComp.notifyShown = true;
-              //   readViewComp.notifyDesc = "برجاء اختيار أية";
-              //   setTimeout(() => {
-              //     readViewComp.notifyShown = false;
-              //   }, 1000);
-              // } else {
-              alert("برجاء اختيار أية");
-              // }
             }
           }
         }
@@ -435,25 +468,6 @@
               padding-bottom: 0;
             }
 
-            &:hover {
-              a,
-              .name {
-                background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                transition: background 0.1s ease;
-                .verseNum {
-                  background: #5fd068 !important;
-                  color: white !important;
-                  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%) !important;
-                  background-clip: initial !important;
-                  -webkit-background-clip: initial !important;
-                  -webkit-text-fill-color: white !important;
-                }
-              }
-            }
-
             .verseInfo {
               pointer-events: none;
               span {
@@ -462,14 +476,14 @@
                 color: #666;
                 font-family: "Kitab-Regular2";
               }
-              .name {
+              &__name {
                 float: left;
               }
-              .juz {
+              &__juz {
                 float: right;
                 margin-left: 10px;
               }
-              .page {
+              &__page {
               }
             }
 
@@ -482,14 +496,15 @@
                 color: #666;
                 font-family: "Kitab-Regular2";
               }
-              .name {
-                font-size: 20px;
+              &__name {
+                font-size: 20px !important;
               }
             }
 
             .versesSelectBox {
-              width: 130px;
+              width: 140px;
               float: left;
+              padding: 3px;
               label {
                 margin-bottom: 10px;
                 font-family: "Tajawal", Helvetica, Arial, sans-serif;
@@ -503,6 +518,25 @@
                 display: inline-block;
                 margin-right: 10px;
                 min-width: 70px;
+              }
+            }
+
+            &:hover {
+              a,
+              .surahInfo__name {
+                background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                transition: background 0.1s ease;
+                .verseNum {
+                  background: #5fd068 !important;
+                  color: white !important;
+                  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%) !important;
+                  background-clip: initial !important;
+                  -webkit-background-clip: initial !important;
+                  -webkit-text-fill-color: white !important;
+                }
               }
             }
           }

@@ -1,0 +1,118 @@
+#o-alert,
+#o-confirm {
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 99999999;
+  &.dark {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  .o-popup {
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    text-align: center;
+    background: white;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1;
+    box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.05), -1px -1px 3px 1px rgba(0, 0, 0, 0.05);
+    animation: scale 0.3s ease-in-out;
+    article {
+      h3,
+      p {
+        margin: 0 0 10px;
+      }
+      h3 {
+        color: #333;
+      }
+      p {
+        color: #666;
+        overflow: auto;
+        max-height: 50vh;
+        line-height: 25px;
+      }
+    }
+    section {
+      margin-top: 20px;
+      overflow: hidden;
+      padding: 5px;
+      button {
+        min-width: 30px;
+        height: 35px;
+        margin: 0;
+        padding: 0 20px;
+        outline: none;
+        box-shadow: none;
+        box-sizing: border-box;
+        cursor: pointer;
+        border-radius: 20px;
+        border: 1px solid #1f6eca;
+        transition: all 0.3s ease;
+        background: #3584e2;
+        color: white;
+
+        &:hover {
+          background: #619fe8;
+        }
+
+        &:active {
+          background: #1c6bc7;
+          border-color: #1c6bc7;
+          color: white;
+        }
+
+        &:focus {
+          box-shadow: 0 0 0px 2px #8eb9ff;
+          border-color: #8eb9ff;
+        }
+
+        &.okBtn {
+          float: right;
+          &.removeFloat {
+            float: none;
+          }
+        }
+        &.cancelBtn {
+          float: left;
+          background: transparent;
+          color: #3584e2;
+          border-color: transparent;
+        }
+      }
+    }
+    &.dark {
+      border: 1px solid #666;
+      background: #333;
+
+      article {
+        h3 {
+          color: white;
+        }
+        p {
+          color: white;
+        }
+      }
+    }
+    @media (min-width: 500px) {
+      max-width: 500px;
+    }
+  }
+}
+
+@keyframes scale {
+  from {
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
