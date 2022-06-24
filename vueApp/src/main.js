@@ -1,5 +1,7 @@
 // todo add سجدة/حزب
 //todo engine options["tashkil", "extact match", "limit"]
+// todo add tab in home for ختمة
+// todo add guide for initial use of the app
 // start global
 import book from "./services/book";
 window.book = book;

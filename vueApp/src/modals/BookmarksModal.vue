@@ -1,5 +1,5 @@
 <template>
-  <ModalSlot name="bookmark">
+  <ModalSlot name="bookmark" :hide="hide">
     <div class="bookmarkInnerWrapper">
       <!-- menu -->
       <nav>
@@ -19,21 +19,28 @@
             <li v-for="(item, index) of highlightedVerses" :key="index" :data-verse="item.page + '-' + item.globalVerse">
               <div class="verseInfo">
                 <span class="verseInfo__name">{{ item.name }}</span>
+                <span class="verseInfo__juz">{{ $filters.juz(item.juz) }}</span>
+                <span class="verseInfo__separator">-</span>
                 <span class="verseInfo__page" v-arNum>صفحة {{ item.page }}</span>
               </div>
               <a>
                 {{ item.text }}
                 <span class="verseNum" v-arNum>{{ item.localVerse }}</span>
+                <button class="o-btn remove" @click="removeVerse(item)" v-html="closeIcon"></button>
               </a>
             </li>
+            <div class="emptyBookmarks" v-if="!highlightedVerses.length">لايوجد أيات محفوظة</div>
           </template>
+
           <template v-else-if="tab === 'page'">
             <li v-for="(item, index) of bookmarks" :key="index" :data-page="item.page">
               <div class="surahInfo">
+                <span class="surahInfo__page" v-arNum>{{ item.page }}</span>
                 <span class="surahInfo__name">سُورَةُ {{ item.name }}</span>
-                <span class="surahInfo__page">صفحة {{ item.page }}</span>
               </div>
+              <button class="o-btn remove" @click="removePage(item)" v-html="closeIcon"></button>
             </li>
+            <div class="emptyBookmarks" v-if="!bookmarks.length">لايوجد صفحات محفوظة</div>
           </template>
         </ul>
       </div>
@@ -42,12 +49,13 @@
 </template>
 
 <script>
-  // todo complete missing stuff + delete button and color change
   import ModalSlot from "../components/modalSlot.vue";
+  import icons from "../services/icons";
   export default {
     components: { ModalSlot },
     data() {
       return {
+        hide: false,
         tabs: [
           { text: "أية", tab: "verse", checked: true },
           { text: "صفحة", tab: "page", checked: true },
@@ -55,6 +63,7 @@
         tab: "verse",
         bookmarks: [],
         highlightedVerses: [],
+        closeIcon: icons.close,
       };
     },
     beforeMount() {
@@ -62,32 +71,36 @@
       this.highlightedVerses = JSON.parse(localStorage.getItem("highlightedVerses")) || [];
     },
     mounted() {
-      // oConfirm({
-      //   dark: false,
-      //   title: "popup title",
-      //   desc: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo, ex!",
-      //   btns: { cancel: { exists: true, text: "Cancel" }, okay: { text: "Okay" } },
-      // }).then(res => {
-      //   if (res) {
-      //     console.log("ok");
-      //   } else {
-      //     console.log("cancel");
-      //   }
-      // });
-      // oAlert({
-      //   dark: false,
-      //   title: "popup title",
-      //   desc: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo, ex!",
-      //   okay: { text: "Okay" },
-      // }).then(res => {
-      //   if (res) {
-      //     console.log("ok");
-      //   } else {
-      //     console.log("cancel");
-      //   }
-      // });
+      this.hide = false;
+    },
+    unmounted() {
+      this.hide = false;
     },
     methods: {
+      removeVerse(obj) {
+        oConfirm({
+          title: "المفضلة",
+          desc: "هل تريد حذف هذه الأية؟",
+          btns: { cancel: { exists: true, text: "الغاء" }, okay: { text: "نعم" } },
+        }).then(res => {
+          if (res) {
+            this.highlightedVerses = this.highlightedVerses.filter(item => item.globalVerse !== obj.globalVerse);
+            localStorage.setItem("highlightedVerses", JSON.stringify(this.highlightedVerses));
+          }
+        });
+      },
+      removePage(obj) {
+        oConfirm({
+          title: "المفضلة",
+          desc: "هل تريد حذف هذه الصفحة؟",
+          btns: { cancel: { exists: true, text: "الغاء" }, okay: { text: "نعم" } },
+        }).then(res => {
+          if (res) {
+            this.bookmarks = this.bookmarks.filter(item => item.page !== obj.page);
+            localStorage.setItem("bookmarks", JSON.stringify(this.bookmarks));
+          }
+        });
+      },
       handleSelectedTabs(item) {
         this.tab = item.tab;
       },
@@ -97,12 +110,10 @@
           if (hasAttr("data-verse")) {
             const [page, globalVerse] = hasAttr("data-verse").split("-");
             console.log({ page, globalVerse });
-            // this.$parent.hideModal();
-            return console.warn(this.$parent);
-
-            this.$parent.$parent.$parent.currentVerse = globalVerse;
-            this.$parent.$parent.$parent.highlightCurrentVerse = true;
-            if (this.$parent.$parent.$parent.readViewEnabled) {
+            this.hide = true; // hide modal
+            this.$parent.currentVerse = globalVerse;
+            this.$parent.highlightCurrentVerse = true;
+            if (this.$parent.readViewEnabled) {
               if (readViewComp) readViewComp.setPage(page);
               else console.warn("readViewComp is NOT defined");
             } else {
@@ -111,11 +122,10 @@
           } else if (hasAttr("data-page")) {
             const page = hasAttr("data-page");
             console.log({ page });
-            // this.$parent.hideModal();
-            return console.warn(this.$parent);
-            this.$parent.$parent.$parent.currentVerse = verse;
-            this.$parent.$parent.$parent.highlightCurrentVerse = true;
-            if (this.$parent.$parent.$parent.readViewEnabled) {
+            this.hide = true; // hide modal
+            this.$parent.currentVerse = null;
+            this.$parent.highlightCurrentVerse = null;
+            if (this.$parent.readViewEnabled) {
               if (readViewComp) readViewComp.setPage(page);
               else console.warn("readViewComp is NOT defined");
             } else {
@@ -128,7 +138,7 @@
   };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .bookmarkInnerWrapper {
     width: 100%;
     min-height: 70px;
@@ -186,44 +196,6 @@
           }
         }
       }
-
-      .settingsBtn {
-        width: 25px;
-        height: 25px;
-        background: transparent;
-        border: 0;
-        outline: none !important;
-        padding: 0;
-        position: absolute;
-        left: 10px;
-        cursor: pointer;
-        top: 50%;
-        transform: translateY(-50%);
-        svg {
-          width: 100%;
-          height: 100%;
-          color: #666;
-        }
-        &:hover {
-          svg {
-            transition: color 0.3s ease;
-            color: #2f70ec;
-          }
-        }
-        &:active {
-          transform: translateY(-50%) perspective(1px) translateZ(-0.04px);
-          transition: 200ms cubic-bezier(0.12, 0.8, 0.32, 1);
-        }
-      }
-
-      .length {
-        font-size: 12px;
-        color: #666;
-        font-family: "Tajawal", Helvetica, Arial, sans-serif;
-        letter-spacing: 1px;
-        margin-top: 5px;
-        font-weight: bold;
-      }
     }
     .results {
       ul {
@@ -232,6 +204,11 @@
         list-style-type: none;
         overflow: auto;
         height: calc(100vh - 170px);
+        .emptyBookmarks {
+          text-align: center;
+          margin: 10px 0;
+          color: #666;
+        }
         li {
           border-bottom: 1px solid #eee;
           padding: 10px 0;
@@ -278,22 +255,47 @@
             padding-bottom: 0;
           }
 
+          button.remove {
+            width: 35px;
+            height: 35px;
+            pointer-events: auto;
+            padding: 0;
+            border-radius: 50%;
+            position: relative;
+            top: -4px;
+            border-color: transparent;
+            position: relative;
+            background: #ff7272;
+            svg {
+              width: 20px;
+              height: 20px;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              color: white;
+            }
+          }
+
           .verseInfo {
             pointer-events: none;
+            overflow: hidden;
             span {
               font-size: 12px;
               font-weight: bold;
               color: #666;
               font-family: "Kitab-Regular2";
-            }
-            &__name {
               float: left;
             }
-            &__juz {
-              float: right;
-              margin-left: 10px;
+            &__page,
+            &__juz,
+            &__separator {
+              float: right !important;
+              margin-left: 5px;
             }
-            &__page {
+            &__juz {
+            }
+            &__separator {
             }
           }
 
@@ -301,18 +303,31 @@
             pointer-events: none;
             float: right;
             span {
-              font-size: 12px;
+              font-size: 20px !important;
               font-weight: bold;
               color: #666;
               font-family: "Kitab-Regular2";
             }
-            &__name {
-              font-size: 20px !important;
-            }
             &__page {
-              margin-right: 10px;
+              margin-left: 10px;
+              width: 35px;
+              height: 35px;
+              padding: 0;
+              border-radius: 50%;
+              position: relative;
+              border-color: transparent;
+              background: #5fd068;
+              float: right;
+              text-align: center;
+              color: white !important;
+              line-height: 38px;
+            }
+            & ~ button.remove {
+              top: auto;
+              float: left;
             }
           }
+
           &:hover {
             a,
             .surahInfo__name {

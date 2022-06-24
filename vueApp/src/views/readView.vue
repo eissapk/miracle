@@ -29,7 +29,7 @@
           </label>
         </div>
 
-        <div class="pageContent scrollbar">
+        <div class="pageContent scrollbar" ref="page" :style="{ left: pageLeft + 'px' }">
           <!-- content -->
           <template v-for="(obj, index) of currentPage" :key="index">
             <!-- header -->
@@ -98,6 +98,7 @@
     components: { NotFound, NotifyModal, OptionsRect },
     data() {
       return {
+        pageLeft: 0,
         optionsData: {
           coords: {
             top: 0,
@@ -231,23 +232,33 @@
         var walkX;
         let direction;
         let distance;
-        let toggler = true;
-        document.body.ontouchstart = dragStart;
+        let threshold = 150;
+        const page = this.$refs.page;
+        if (!page) return;
+
+        page.ontouchstart = dragStart;
         function dragStart(e) {
           e.stopPropagation();
           isDown = true;
           e = e || window.event;
           startX = Math.round(e.touches[0].clientX);
-          document.body.addEventListener("touchmove", dragMove);
-          document.body.addEventListener("touchend", dragEnd);
+          page.addEventListener("touchmove", dragMove);
+          page.addEventListener("touchend", dragEnd);
 
           function dragEnd() {
             // reset
             isDown = false;
-            toggler = true;
 
-            document.body.removeEventListener("touchmove", dragMove);
-            document.body.removeEventListener("touchend", dragEnd);
+            if (distance >= threshold) {
+              if (direction === "left") $this.prev();
+              else $this.next();
+              $this.pageLeft = 0;
+            } else if (distance < threshold) {
+              $this.pageLeft = 0; // reset
+            }
+
+            page.removeEventListener("touchmove", dragMove);
+            page.removeEventListener("touchend", dragEnd);
           }
 
           function dragMove(e) {
@@ -258,15 +269,10 @@
               walkX = currentX - startX;
               if (walkX > 0) direction = "right";
               else direction = "left";
-              // get distance as positive value
               distance = walkX < 0 ? walkX * -1 : walkX;
 
-              if (distance >= 50 && toggler) {
-                toggler = false;
-                if (direction === "right") $this.next();
-                else $this.prev();
-              }
-              console.warn({ direction, distance });
+              // console.warn(distance);
+              if (distance <= threshold) $this.pageLeft = walkX;
             }
           }
         }
@@ -514,16 +520,8 @@
         }
 
         .pageContent {
-          overflow: auto;
-          height: calc(100vh - 350px);
-          max-height: 515px;
-          padding: 10px 0;
-          box-sizing: border-box;
-          border-top: 1px solid #eee;
-          border-bottom: 1px solid #eee;
-          @media (min-width: 500px) {
-            height: calc(100vh - 280px);
-          }
+          position: relative;
+          transition: 0.3s ease;
         }
 
         .head {

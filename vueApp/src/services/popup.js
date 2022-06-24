@@ -45,7 +45,7 @@ function oConfirm(data) {
       const okBtn = confirmElm.querySelector(".okBtn");
       const cancelBtn = confirmElm.querySelector(".cancelBtn");
       if (okBtn) {
-        okBtn.focus();
+        setTimeout(() => okBtn.focus(), 100);
         okBtn.onclick = function (e) {
           confirmElm.remove();
           resolve(true);
@@ -106,7 +106,7 @@ function oAlert(data) {
       const okBtn = alertElm.querySelector(".okBtn");
       const cancelBtn = alertElm.querySelector(".cancelBtn");
       if (okBtn) {
-        okBtn.focus();
+        setTimeout(() => okBtn.focus(), 100);
         okBtn.onclick = function (e) {
           alertElm.remove();
           resolve(true);

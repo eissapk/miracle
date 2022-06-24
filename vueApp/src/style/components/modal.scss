@@ -19,8 +19,11 @@
     border: 1px solid #eee;
     padding: 10px;
     box-shadow: 1px 1px 6px 1px rgba(0, 0, 0, 0.05), -1px -1px 6px 1px rgba(0, 0, 0, 0.05);
-
-    >nav {
+    &.pauseAnimation {
+      animation: none !important;
+      transition: top 0.3s ease;
+    }
+    > nav {
       overflow: hidden;
       margin-bottom: 15px;
       .close {
