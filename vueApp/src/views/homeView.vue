@@ -5,7 +5,7 @@
       <router-link :to="'/read/' + lastRead.page" class="router-link"></router-link>
       <img src="img/book.png" alt="book" />
       <p class="lastRead">
-        <span class="icon" v-html="solid_book_open"></span>
+        <span class="icon" v-html="bookIcon"></span>
         اخر قراءة
       </p>
       <p class="surah">سُورَةُ {{lastRead.name}}</p>
@@ -16,14 +16,13 @@
         </p>
       </p>
       <button v-if="percent === 100" @click="saveCompletion()" class="saveCompletion o-btn">احفظ الختمة</button>
-      <button v-if="percent === 100" @click="showModal('doaa')" class="doaa o-btn">دعاء</button>
     </div>
     
     <!-- search -->
     <div class="search tab">
       <a class="router-link" @click="showModal('search')"></a>
       <p>
-        <span class="icon" v-html="solid_search"></span>
+        <span class="icon" v-html="searchIcon"></span>
         <span class="text">بحث</span>
       </p>
     </div>
@@ -32,34 +31,77 @@
     <div class="bookmarks tab">
       <a class="router-link" @click="showModal('bookmarks')"></a>
       <p>
-        <span class="icon" v-html="solid_bookmark"></span>
+        <span class="icon" v-html="bookmarkIcon"></span>
         <span class="text">المفضلة</span>
       </p>
     </div>
     
-        <!-- ختمات -->
+    <!-- doaa -->
+    <div class="doaa tab">
+      <a class="router-link" @click="showModal('doaa')"></a>
+      <p>
+        <span class="icon" v-html="azkarIcon"></span>
+        <span class="text">دعاء ختم القرآن</span>
+      </p>
+    </div>
+    
+    <!-- اذكار -->
+    <div class="azkar tab">
+      <a class="router-link" @click="showModal('azkar')"></a>
+      <p>
+        <span class="icon" v-html="azkarIcon"></span>
+        <span class="text">اذكار</span>
+      </p>
+    </div>
+    
+    <!-- تسبيح -->
+    <div class="tasbih tab">
+      <a class="router-link" @click="showModal('tasbih')"></a>
+      <p>
+        <span class="icon" v-html="tasbihIcon"></span>
+        <span class="text">تسبيح</span>
+      </p>
+    </div>
+    
+    <!-- ختمات -->
     <div class="completion tab">
       <a class="router-link" @click="showModal('completion')"></a>
       <p>
-        <span class="icon" v-html="solid_book_open"></span>
+        <span class="icon" v-html="bookIcon"></span>
         <span class="text">الختمات</span>
       </p>
     </div>
+
+    
+    <!-- settings -->
+    <!-- <div class="settings tab">
+      <a class="router-link" @click="showModal('settings')"></a>
+      <p>
+        <span class="icon" v-html="settingsIcon"></span>
+        <span class="text">الاعدادات</span>
+      </p>
+    </div> -->
 
   </div>
 </template>
 
 <script>
 import solid_book_open from "olum-icons/dist/fa/solid_book_open";
-import solid_bookmark from "olum-icons/dist/fa/solid_bookmark";
 import solid_search from "olum-icons/dist/fa/solid_search";
+import solid_bookmark from "olum-icons/dist/fa/solid_bookmark";
+import solid_hands from "olum-icons/dist/fa/solid_hands";
+import solid_cog from "olum-icons/dist/fa/solid_cog";
+import icons from "../services/icons";
 
 export default {
   data() {
     return {
-      solid_book_open,
-      solid_bookmark,
-      solid_search,
+      bookIcon: solid_book_open,
+      bookmarkIcon: solid_bookmark,
+      searchIcon: solid_search,
+      azkarIcon: solid_hands,
+      settingsIcon: solid_cog,
+      tasbihIcon: icons.tasbih,
       percent: 0,
       lastRead: null,
     };
@@ -202,26 +244,23 @@ export default {
   }
 
   .bookmarks,
-  .search ,.completion{
+  .search ,.completion,.azkar,.tasbih,.settings,.doaa{
     padding: 15px 10px;
     p {
       font-weight: bold;
       margin: 0;
       .icon {
-        display: block;
-        overflow: hidden;
-        margin-bottom: 20px;
+        float: right;
+        margin-left: 10px;
         svg {
-          width: 40px;
+          width: 20px;
+          height: 20px;
           fill: white;
-          margin: 0 auto;
           display: block;
         }
       }
       .text {
-            display: block;
-    text-align: center;
-    font-size: 20px;
+        vertical-align: sub;
       }
     }
   }
@@ -235,11 +274,26 @@ export default {
     grid-column: 2/3;
   }
   
-    .completion {
+    .doaa {
     grid-row: 3/4;
     grid-column: 1/3;
   }
+  
+    .azkar {
+    grid-row: 4/5;
+    grid-column: 1/2;
+  }
+  
+  .tasbih {
+    grid-row: 4/5;
+    grid-column: 2/3;
+  }
 
+  .completion {
+    grid-row: 5/6;
+    grid-column: 1/3;
+  }
+  
   .router-link {
     position: absolute;
     left: 0;

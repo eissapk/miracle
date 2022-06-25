@@ -647,7 +647,7 @@
             position: absolute;
             left: 0;
             text-align: center;
-            transform: translateY(calc(-100% + -15px));
+            transform: translateY(-100%);
             svg {
               display: block;
               margin: 0 auto;

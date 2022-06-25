@@ -8,6 +8,9 @@
   <ExplanationModal v-if="modal.name === 'explanation'" />
   <Completion v-if="modal.name === 'completion'" />
   <Doaa v-if="modal.name === 'doaa'" />
+  <Azkar v-if="modal.name === 'azkar'" />
+  <Tasbih v-if="modal.name === 'tasbih'" />
+  <!-- <Settings v-if="modal.name === 'settings'" /> -->
 
   <LoaderView v-if="isLoading" />
 </template>
@@ -19,8 +22,12 @@
   import Completion from "./modals/Completion.vue";
   import TransModal from "./modals/TransModal.vue";
   import Doaa from "./modals/Doaa.vue";
+  import Azkar from "./modals/Azkar.vue";
+  import Tasbih from "./modals/Tasbih.vue";
+  // import Settings from "./modals/Settings.vue";
   import ExplanationModal from "./modals/ExplanationModal.vue";
   import handlePages from "./services/fetch";
+
   export default {
     components: {
       LoaderView,
@@ -29,7 +36,10 @@
       TransModal,
       ExplanationModal,
       Completion,
-      Doaa
+      Doaa,
+      Azkar,
+      Tasbih,
+      // Settings,
     },
     data() {
       return {
