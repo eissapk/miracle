@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "android": "cordova platforms add android@9.0.0",
-    "build": "cordova build android"
+    "build": "cordova build android && mv platforms/android/app/build/outputs/apk/debug/app-debug.apk miracle.apk"
   },
   "keywords": [
     "ecosystem:cordova"

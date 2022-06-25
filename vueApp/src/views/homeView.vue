@@ -16,6 +16,7 @@
         </p>
       </p>
       <button v-if="percent === 100" @click="saveCompletion()" class="saveCompletion o-btn">احفظ الختمة</button>
+      <button v-if="percent === 100" @click="showModal('doaa')" class="doaa o-btn">دعاء</button>
     </div>
     
     <!-- search -->
@@ -23,7 +24,7 @@
       <a class="router-link" @click="showModal('search')"></a>
       <p>
         <span class="icon" v-html="solid_search"></span>
-        بحث
+        <span class="text">بحث</span>
       </p>
     </div>
     
@@ -32,7 +33,16 @@
       <a class="router-link" @click="showModal('bookmarks')"></a>
       <p>
         <span class="icon" v-html="solid_bookmark"></span>
-        المفضلة
+        <span class="text">المفضلة</span>
+      </p>
+    </div>
+    
+        <!-- ختمات -->
+    <div class="completion tab">
+      <a class="router-link" @click="showModal('completion')"></a>
+      <p>
+        <span class="icon" v-html="solid_book_open"></span>
+        <span class="text">الختمات</span>
       </p>
     </div>
 
@@ -73,7 +83,16 @@ export default {
   },
   methods: {
     saveCompletion() {
-      console.log("saveCompletion");
+      // set storage of completion
+      const arr = JSON.parse(localStorage.getItem("completion")) || [];
+      const obj = {id: new Date().getTime(), time: new Date().toISOString()}
+      arr.push(obj);
+      localStorage.setItem("completion", JSON.stringify(arr));
+      // reset
+      this.percent = 0;
+      const lastRead = {juz: 1,page: 1,name: "ٱلْفَاتِحَةِ",type: "mec",surah: 1,verses: 7};
+      localStorage.setItem("lastRead", JSON.stringify(lastRead));
+      this.lastRead = lastRead;
     },
     showModal(name) {
       this.$parent.$parent.modal = { name };
@@ -86,6 +105,7 @@ export default {
 .home {
   display: grid;
   grid-gap: 10px;
+  user-select: none;
   .tab {
     position: relative;
     padding: 10px;
@@ -130,6 +150,7 @@ export default {
 
     .surah {
       font-weight: bold;
+      font-size: 18px;
       font-family: "Kitab-Regular2" !important;
     }
 
@@ -159,7 +180,7 @@ export default {
         }
       }
     }
-    .saveCompletion {
+    .saveCompletion,.doaa {
       pointer-events: initial !important;
       padding-left: 10px;
       padding-right: 10px;
@@ -170,6 +191,10 @@ export default {
       font-size: 12px;
       color: #666;
       line-height: 35px;
+      margin-left: 5px;
+      &:last-of-type {
+        margin-left: 0px;
+      }
       &:active{
         color: white;
       }
@@ -177,20 +202,26 @@ export default {
   }
 
   .bookmarks,
-  .search {
+  .search ,.completion{
     padding: 15px 10px;
     p {
       font-weight: bold;
       margin: 0;
       .icon {
-        display: inline-block;
-        margin-left: 5px;
-        vertical-align: middle;
+        display: block;
+        overflow: hidden;
+        margin-bottom: 20px;
         svg {
-          float: right;
-          width: 20px;
+          width: 40px;
           fill: white;
+          margin: 0 auto;
+          display: block;
         }
+      }
+      .text {
+            display: block;
+    text-align: center;
+    font-size: 20px;
       }
     }
   }
@@ -202,6 +233,11 @@ export default {
   .bookmarks {
     grid-row: 2/3;
     grid-column: 2/3;
+  }
+  
+    .completion {
+    grid-row: 3/4;
+    grid-column: 1/3;
   }
 
   .router-link {

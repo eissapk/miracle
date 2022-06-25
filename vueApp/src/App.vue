@@ -6,6 +6,8 @@
   <BookmarksModal v-if="modal.name === 'bookmarks'" />
   <TransModal v-if="modal.name === 'trans'" />
   <ExplanationModal v-if="modal.name === 'explanation'" />
+  <Completion v-if="modal.name === 'completion'" />
+  <Doaa v-if="modal.name === 'doaa'" />
 
   <LoaderView v-if="isLoading" />
 </template>
@@ -14,7 +16,9 @@
   import LoaderView from "./components/LoaderView.vue";
   import SearchModal from "./modals/SearchModal.vue";
   import BookmarksModal from "./modals/BookmarksModal.vue";
+  import Completion from "./modals/Completion.vue";
   import TransModal from "./modals/TransModal.vue";
+  import Doaa from "./modals/Doaa.vue";
   import ExplanationModal from "./modals/ExplanationModal.vue";
   import handlePages from "./services/fetch";
   export default {
@@ -24,6 +28,8 @@
       BookmarksModal,
       TransModal,
       ExplanationModal,
+      Completion,
+      Doaa
     },
     data() {
       return {

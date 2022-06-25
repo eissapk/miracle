@@ -208,6 +208,7 @@
           text-align: center;
           margin: 10px 0;
           color: #666;
+          user-select: none;
         }
         li {
           border-bottom: 1px solid #eee;
@@ -237,7 +238,7 @@
               line-height: 35px;
               border-radius: 50%;
               display: inline-block;
-              font-size: 15px;
+              font-size: 14px;
               text-align: center;
               margin: 0 8px;
               user-select: none;
@@ -280,7 +281,9 @@
           .verseInfo {
             pointer-events: none;
             overflow: hidden;
+            user-select: none;
             span {
+              user-select: none;
               font-size: 12px;
               font-weight: bold;
               color: #666;
@@ -302,13 +305,19 @@
           .surahInfo {
             pointer-events: none;
             float: right;
+            user-select: none;
             span {
-              font-size: 20px !important;
+              user-select: none;
               font-weight: bold;
               color: #666;
+            }
+            &__name {
               font-family: "Kitab-Regular2";
+              font-size: 20px;
             }
             &__page {
+              font-size: 14px;
+              font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
               margin-left: 10px;
               width: 35px;
               height: 35px;

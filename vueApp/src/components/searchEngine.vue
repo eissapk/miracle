@@ -548,8 +548,10 @@
         color: #666;
         font-size: 14px;
         letter-spacing: initial;
+        user-select: none;
       }
       .settings {
+        user-select: none;
         .settingsItems {
           padding: 0 10px;
           label {

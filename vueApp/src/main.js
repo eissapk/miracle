@@ -1,7 +1,8 @@
-// todo add سجدة/حزب
-//todo engine options["tashkil", "extact match", "limit"]
-// todo add tab in home for ختمة
+// todo add حزب
+// todo سبحة
+// todo اذكار
 // todo add guide for initial use of the app
+
 // start global
 import book from "./services/book";
 window.book = book;
@@ -18,14 +19,14 @@ app.use(router);
 app.mount('#app');
 
 // mixins
-app.mixin({
-  data() {
-    return {
-    }
-  },
-  methods: {
-  }
-})
+// app.mixin({
+//   data() {
+//     return {
+//     }
+//   },
+//   methods: {
+//   }
+// })
 
 // filters
 app.config.globalProperties.$filters = {

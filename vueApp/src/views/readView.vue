@@ -29,7 +29,7 @@
           </label>
         </div>
 
-        <div class="pageContent scrollbar" ref="page" :style="{ left: pageLeft + 'px' }">
+        <div :class="['pageContent scrollbar', hasSajda ? 'hasSajda' : '']" ref="page" :style="{ left: pageLeft + 'px' }">
           <!-- content -->
           <template v-for="(obj, index) of currentPage" :key="index">
             <!-- header -->
@@ -52,6 +52,10 @@
             <span :id="'verse_' + obj.globalVerse" :class="[isHighlightedVerse(obj) ? isHighlightedVerse(obj) : '', 'verse']" @click="showVerseOpt(obj, $event)">
               <span class="text" v-html="$filters.highlight(obj.text, godArr, 'god')"></span>
               <span class="num" v-text="$filters.arNum(obj.localVerse)"></span>
+              <div v-if="obj.sajda" class="sajda">
+                <span v-html="sajdaIcon"></span>
+                <span>سجدة</span>
+              </div>
             </span>
           </template>
         </div>
@@ -128,12 +132,14 @@
         homeIcon: icons.home,
         playIcon: icons.playSolid,
         pauseIcon: icons.pause,
+        sajdaIcon: icons.sajda,
         pageNum: null,
         currentPage: null,
         isLoading: true,
         interval: null,
+        hasSajda: false,
         start: "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ",
-        godArr: ["اله", "واحد", "هو", "لله", "الله", "رب", "ربهم", "ربكم", "ربك", "ربه", "ربنا", "لرب", "ربي", "ربها", "لربك", "ربكما", "ربهما", "ربها"],
+        godArr: ["اللهم", "اله", "واحد", "هو", "لله", "الله", "رب", "ربهم", "ربكم", "ربك", "ربه", "ربنا", "لرب", "ربي", "ربها", "لربك", "ربكما", "ربهما", "ربها"],
       };
     },
     created() {
@@ -148,6 +154,7 @@
         console.log("currentPage", this.currentPage);
 
         if (this.currentPage) {
+          this.hasSajda = !!this.currentPage.find(item => item.sajda);
           const obj = this.getLastReadObj(this.currentPage);
           localStorage.setItem("lastRead", JSON.stringify(obj));
           this.isLoading = false;
@@ -232,7 +239,8 @@
         var walkX;
         let direction;
         let distance;
-        let threshold = 150;
+        let toggler = false;
+        let threshold = 50;
         const page = this.$refs.page;
         if (!page) return;
 
@@ -250,13 +258,18 @@
             isDown = false;
 
             if (distance >= threshold) {
+              console.warn("foo");
+              page.classList.add("pauseAnimation");
+              $this.pageLeft = 0;
               if (direction === "left") $this.prev();
               else $this.next();
-              $this.pageLeft = 0;
             } else if (distance < threshold) {
+              page.classList.remove("pauseAnimation");
               $this.pageLeft = 0; // reset
             }
-
+            // reset
+            distance = null;
+            direction = "";
             page.removeEventListener("touchmove", dragMove);
             page.removeEventListener("touchend", dragEnd);
           }
@@ -343,6 +356,7 @@
         if (this.pageNum < 604) this.pageNum++;
         else return (this.pageNum = 604);
         this.currentPage = window.pages[this.pageNum];
+        this.hasSajda = !!this.currentPage.find(item => item.sajda);
 
         location.hash = "#read/" + this.pageNum; // update hash
         this.optionsRectShown = false;
@@ -354,6 +368,8 @@
         if (this.pageNum > 1 && this.pageNum <= 604) this.pageNum--;
         else return (this.pageNum = 1);
         this.currentPage = window.pages[this.pageNum];
+        this.hasSajda = !!this.currentPage.find(item => item.sajda);
+
         location.hash = "#read/" + this.pageNum; // update hash
         this.optionsRectShown = false;
         console.log(this.currentPage);
@@ -363,6 +379,9 @@
       setPage(num) {
         this.pageNum = num;
         this.currentPage = window.pages[num];
+
+        this.hasSajda = !!this.currentPage.find(item => item.sajda);
+
         location.hash = "#read/" + num; // update hash
         this.optionsRectShown = false;
         console.log(this.currentPage);
@@ -425,7 +444,7 @@
           this.notifyShown = false;
           this.notifyDesc = "";
           this.isBookmarkDisabled = false;
-        }, 3000);
+        }, 1000);
       },
     },
   };
@@ -521,7 +540,23 @@
 
         .pageContent {
           position: relative;
-          transition: 0.3s ease;
+          transition: left 0.3s ease;
+          &.hasSajda {
+            padding-left: 40px;
+            &:before {
+              content: "";
+              left: 35px;
+              top: 0;
+              position: absolute;
+              width: 1px;
+              height: 100%;
+              background: #d8d8d8;
+            }
+          }
+          &.pauseAnimation {
+            transition: none !important;
+            animation: none !important;
+          }
         }
 
         .head {
@@ -586,7 +621,6 @@
           padding: 16px 7px 11px 0px;
           .text {
             font-size: 25px;
-            // font-family: "Kitab-Regular";
             font-family: "Kitab-Regular2";
             letter-spacing: initial;
             color: #333;
@@ -608,6 +642,24 @@
             text-align: center;
             margin: 0 8px;
             user-select: none;
+          }
+          .sajda {
+            position: absolute;
+            left: 0;
+            text-align: center;
+            transform: translateY(calc(-100% + -15px));
+            svg {
+              display: block;
+              margin: 0 auto;
+              margin-bottom: 2.5px;
+            }
+            span {
+              display: block;
+              font-size: 10px;
+              font-family: "Tajawal", Helvetica, Arial, sans-serif;
+              font-weight: bold;
+              color: #666;
+            }
           }
 
           @mixin selected {

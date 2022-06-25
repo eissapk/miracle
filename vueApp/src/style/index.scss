@@ -11,7 +11,6 @@ body {
   padding: 0;
   margin: 0;
   font-family: "Tajawal", Helvetica, Arial, sans-serif;
-  // letter-spacing: 1px;
   background-color: white;
   box-sizing: border-box;
   *,
@@ -22,6 +21,8 @@ body {
 }
 
 body {
+  overscroll-behavior-y: none !important;
+
   &.overflow {
     overflow: hidden;
   }

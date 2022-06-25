@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
     <div class="container" ref="container">
-      <nav>
+      <nav ref="nav">
         <button class="o-btn close" @click="hideModal()"></button>
       </nav>
       <div class="content scrollbar">
@@ -46,17 +46,18 @@
         let direction;
         let distance;
         let threshold = 150;
+        const nav = this.$refs.nav;
         const container = this.$refs.container;
-        if (!container) return;
+        if (!nav || !container) return;
 
-        container.ontouchstart = dragStart;
+        nav.ontouchstart = dragStart;
         function dragStart(e) {
           e.stopPropagation();
           isDown = true;
           e = e || window.event;
           startY = Math.round(e.touches[0].clientY);
-          container.addEventListener("touchmove", dragMove);
-          container.addEventListener("touchend", dragEnd);
+          nav.addEventListener("touchmove", dragMove);
+          nav.addEventListener("touchend", dragEnd);
 
           function dragEnd() {
             // reset
@@ -69,8 +70,8 @@
               container.style.top = "5vh"; // reset
             }
 
-            container.removeEventListener("touchmove", dragMove);
-            container.removeEventListener("touchend", dragEnd);
+            nav.removeEventListener("touchmove", dragMove);
+            nav.removeEventListener("touchend", dragEnd);
           }
 
           function dragMove(e) {
