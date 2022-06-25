@@ -52,7 +52,7 @@
                 <label>اختر الأية</label>
                 <div class="o-select">
                   <select>
-                    <option :selected="index === 0" v-for="(surah, index) in item.ayahs" :key="index" :value="surah.page + '-' + surah.globalVerse">{{ surah.localVerse }}</option>
+                    <option :selected="index === 0" v-for="(surah, index) in item.ayahs" :key="index" :value="surah.page + '-' + surah.globalVerse">{{ $filters.arNum(surah.localVerse) }}</option>
                   </select>
                 </div>
               </div>

@@ -105,6 +105,7 @@
 </script>
 <style lang="scss">
   .azkarInnerWrapper {
+    padding-bottom: 5px;
     h3 {
       margin: 0;
       border-bottom: 2px solid #6a11cb;
@@ -139,7 +140,7 @@
         font-family: "Kitab-Regular2", "Tajawal", Helvetica, Arial, sans-serif;
       }
       .hint {
-        font-size: 12px;
+        font-size: 10px;
         padding: 0 10px;
         background: #718096;
         border-radius: 3px;
