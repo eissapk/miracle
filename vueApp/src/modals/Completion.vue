@@ -93,7 +93,7 @@
             border-radius: 50%;
             position: relative;
             border-color: transparent;
-            background: #ff7272;
+            background: #f94c66;
             float: left;
             svg {
               width: 20px;

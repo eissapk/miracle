@@ -266,7 +266,7 @@
             top: -4px;
             border-color: transparent;
             position: relative;
-            background: #ff7272;
+            background: #f94c66;
             svg {
               width: 20px;
               height: 20px;

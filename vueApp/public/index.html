@@ -9,10 +9,7 @@
     <script>
       document.addEventListener("deviceready", e => {
         console.warn("deviceready");
-        if (navigator.splashscreen) {
-          navigator.splashscreen.hide();
-          console.warn("hide splashscreen");
-        }
+        if (navigator.splashscreen) setTimeout(() => navigator.splashscreen.hide(), 1000);
       },false);
     </script>
     <script defer src="cordova.js"></script>

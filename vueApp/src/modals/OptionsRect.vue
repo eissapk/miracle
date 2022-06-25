@@ -64,6 +64,7 @@
     props: ["options", "audio", "shown"],
     methods: {
       reciteVerse(obj) {
+        if (this.isOffline()) return this.showNetworkHint();
         if (verses) {
           obj = verses[obj.globalVerse - 1]; // get full obj data
           console.log(obj);
@@ -114,6 +115,7 @@
         }
       },
       getVerseExplanation(obj) {
+        if (this.isOffline()) return this.showNetworkHint();
         const url = "http://api.alquran.cloud/ayah/" + obj.surah + ":" + obj.localVerse + "/editions/ar." + this.options.explainer;
         fetch(url)
           .then(res => res.json())
@@ -132,7 +134,32 @@
             };
           });
       },
+      showNetworkHint() {
+        this.$parent.notifyDesc = "انت غير متصل بالانترنت";
+        this.$parent.notifyShown = true;
+        this.$parent.notifyClass = "alert";
+        setTimeout(() => {
+          this.$parent.notifyDesc = "";
+          this.$parent.notifyShown = false;
+        }, 2000);
+      },
+      isOffline() {
+        if (navigator) {
+          if (cordova) {
+            if (navigator.connection && navigator.connection.type) {
+              if (navigator.connection.type === "none") return true;
+              else return false;
+            } else {
+              return true;
+            }
+          } else {
+            return navigator.onLine;
+          }
+        }
+        return true;
+      },
       getVerseTrans(obj) {
+        if (this.isOffline()) return this.showNetworkHint();
         const url = "http://api.alquran.cloud/v1/ayah/" + obj.surah + ":" + obj.localVerse + "/en." + this.options.translator;
         fetch(url)
           .then(res => res.json())
@@ -154,7 +181,11 @@
       copyText(obj) {
         const text = this.$filters.normalize(obj.text);
         console.log(text);
-        navigator.clipboard.writeText(text);
+        if (cordova && cordova.plugins && cordova.plugins.clipboard && cordova.plugins.clipboard.copy) {
+          cordova.plugins.clipboard.copy(text);
+        } else {
+          navigator.clipboard.writeText(text);
+        }
         this.$emit("textCopied");
       },
       highlight(obj, e) {

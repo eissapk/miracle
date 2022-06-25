@@ -67,9 +67,6 @@
     },
     mounted() {
       this.audioInstance = new Audio();
-      document.body.ontouchstart = function (e) {
-        e.preventDefault();
-      };
     },
   };
 </script>
