@@ -64,6 +64,7 @@
     props: ["options", "audio", "shown"],
     methods: {
       reciteVerse(obj) {
+        console.log(this.isOffline());
         if (this.isOffline()) return this.showNetworkHint();
         if (verses) {
           obj = verses[obj.globalVerse - 1]; // get full obj data
@@ -144,8 +145,8 @@
         }, 2000);
       },
       isOffline() {
-        if (navigator) {
-          if (cordova) {
+        if (typeof navigator !== "undefined") {
+          if (typeof cordova !== "undefined") {
             if (navigator.connection && navigator.connection.type) {
               if (navigator.connection.type === "none") return true;
               else return false;
@@ -153,7 +154,7 @@
               return true;
             }
           } else {
-            return navigator.onLine;
+            return !navigator.onLine;
           }
         }
         return true;
@@ -181,9 +182,9 @@
       copyText(obj) {
         const text = this.$filters.normalize(obj.text);
         console.log(text);
-        if (cordova && cordova.plugins && cordova.plugins.clipboard && cordova.plugins.clipboard.copy) {
+        try {
           cordova.plugins.clipboard.copy(text);
-        } else {
+        } catch (err) {
           navigator.clipboard.writeText(text);
         }
         this.$emit("textCopied");

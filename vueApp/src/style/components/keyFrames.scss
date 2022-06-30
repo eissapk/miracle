@@ -9,15 +9,15 @@
 
 @keyframes slideToUp {
   from {
-    top: 100vh;
+    transform: translate3d(0,100vh,0);
   }
   to {
-    top: 5vh;
+    transform: translate3d(0,5vh,0);
   }
 }
 
 @keyframes slideToDown {
   to {
-    top: 100vh;
+    transform: translate3d(0,100vh,0);
   }
 }

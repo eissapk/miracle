@@ -3,7 +3,7 @@
     <!-- bar -->
     <div class="bar">
       <div class="o-search">
-        <input type="text" class="o-input" v-model.trim="input" ref="engine" @keyup="search" required />
+        <input type="text" class="o-input" v-model.trim="input" ref="engine" @keyup="search" @keypress="search" required />
         <button class="o-close" @click="input = ''"></button>
       </div>
     </div>
@@ -197,6 +197,7 @@
             this.length = obj.length;
             console.log(obj.results);
             console.log(obj);
+            this.$refs.engine.blur();
           }
         } else if (this.tab === "surah") {
           if (this.input !== "" && e.keyCode === 13) {
@@ -215,6 +216,7 @@
             this.length = obj.length;
             console.log(obj.results);
             console.log(obj);
+            this.$refs.engine.blur();
           }
         } else if (this.tab === "page") {
           if (this.input !== "" && e.keyCode === 13) {

@@ -34,7 +34,7 @@
       hideModal() {
         if (this.$el) {
           this.$el.classList.add("hide");
-          setTimeout(() => (this.$parent.$parent.modal = { name: "", data: null }), 400);
+          setTimeout(() => (this.$parent.$parent.modal = { name: "", data: null }), 200);
         }
       },
       enableSwipe() {
@@ -45,39 +45,54 @@
         var walkY;
         let direction;
         let distance;
-        let threshold = 150;
+        let threshold = Math.round(window.innerHeight / 3);
         const nav = this.$refs.nav;
         const container = this.$refs.container;
         if (!nav || !container) return;
 
         nav.ontouchstart = dragStart;
+        nav.onmousedown = dragStart;
         function dragStart(e) {
+          nav.classList.add("addLayer");
           e.stopPropagation();
           isDown = true;
           e = e || window.event;
-          startY = Math.round(e.touches[0].clientY);
+          console.warn(e);
+          if (e.type.includes("mouse")) startY = e.clientY;
+          else startY = Math.round(e.touches[0].clientY);
+
+          nav.addEventListener("mousemove", dragMove);
+          nav.addEventListener("mouseup", dragEnd);
+          nav.addEventListener("mouseleave", reset);
           nav.addEventListener("touchmove", dragMove);
           nav.addEventListener("touchend", dragEnd);
 
-          function dragEnd() {
-            // reset
+          function reset() {
+            nav.classList.remove("addLayer");
             isDown = false;
 
             if (distance >= threshold && direction === "bottom") {
               container.classList.remove("pauseAnimation");
               $this.hideModal();
             } else if (distance < threshold) {
-              container.style.top = "5vh"; // reset
+              container.style.transform = "translate3d(0,5vh,0)";
             }
 
             nav.removeEventListener("touchmove", dragMove);
             nav.removeEventListener("touchend", dragEnd);
+            nav.removeEventListener("mousemove", dragMove);
+            nav.removeEventListener("mouseup", dragEnd);
+          }
+
+          function dragEnd() {
+            reset();
           }
 
           function dragMove(e) {
             e = e || window.event;
             if (isDown) {
-              currentX = Math.round(e.touches[0].clientY);
+              if (e.type.includes("mouse")) currentX = e.clientY;
+              else currentX = Math.round(e.touches[0].clientY);
               // get direction
               walkY = currentX - startY;
               if (walkY > 0) direction = "bottom";
@@ -86,7 +101,7 @@
               console.warn({ distance, direction });
               if (distance <= threshold && direction === "bottom") {
                 if (!container.classList.contains("pauseAnimation")) container.classList.add("pauseAnimation");
-                container.style.top = `calc(5vh + ${walkY}px)`;
+                container.style.transform = `translate3d(0,calc(5vh + ${walkY}px), 0)`;
               }
             }
           }
