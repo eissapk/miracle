@@ -10,8 +10,8 @@
         <!-- bar -->
         <div class="bar">
           <span class="name" v-text="currentPage[0].name"></span>
-          <!-- <div class="pageNum" v-text="$filters.arNum(pageNum)"></div> -->
-          <span class="juz" v-text="$filters.juz(currentPage[0].juz) + ' - صفحة ' + $filters.arNum(pageNum)"></span>
+          <div class="pageNum" v-text="$filters.arNum(pageNum)"></div>
+          <span class="juz" v-text="$filters.juz(currentPage[0].juz)"></span>
         </div>
 
         <!-- options -->
@@ -59,8 +59,11 @@
             </span>
           </template>
         </div>
+
         <!-- page number -->
         <div class="pageFooter">
+          <div class="pageNum" v-text="$filters.arNum(pageNum)"></div>
+
           <div class="navBtns">
             <button class="o-btn" @click="next()" v-html="nextIcon"></button>
             <button class="o-btn" @click="prev()" v-html="prevIcon"></button>
@@ -102,6 +105,7 @@
     components: { NotFound, NotifyModal, OptionsRect },
     data() {
       return {
+        isScrolling: false,
         pageLeft: 0,
         optionsData: {
           coords: {
@@ -212,6 +216,11 @@
 
       // navigate to pages
       if (this.$parent.$parent.readViewEnabled) {
+        window.onscroll = () => {
+          this.isScrolling = true;
+          console.log(this.isScrolling);
+        };
+
         // keyboard
         document.body.onkeydown = e => {
           if (e.keyCode === 39) this.next();
@@ -239,7 +248,6 @@
         var walkX;
         let direction;
         let distance;
-        let toggler = false;
         let threshold = 50;
         const page = this.$refs.page;
         if (!page) return;
@@ -254,6 +262,7 @@
           page.addEventListener("touchend", dragEnd);
 
           function dragEnd() {
+            $this.isScrolling = false;
             // reset
             isDown = false;
 
@@ -272,6 +281,7 @@
             direction = "";
             page.removeEventListener("touchmove", dragMove);
             page.removeEventListener("touchend", dragEnd);
+            console.log($this.isScrolling);
           }
 
           function dragMove(e) {
@@ -285,7 +295,7 @@
               distance = walkX < 0 ? walkX * -1 : walkX;
 
               // console.warn(distance);
-              if (distance <= threshold) $this.pageLeft = walkX;
+              if (distance <= threshold && !$this.isScrolling) $this.pageLeft = walkX;
             }
           }
         }
@@ -459,6 +469,7 @@
           overflow: hidden;
           padding: 5px 0;
           margin-bottom: 20px;
+          position: relative;
           span {
             font-size: 12px;
             font-weight: bold;
@@ -484,14 +495,15 @@
             height: 40px;
             line-height: 40px;
             border-radius: 50%;
-            // background: #f94c66;
-            background: linear-gradient(90deg, #6a11cb, #2f70ec);
-            filter: grayscale(1);
+            background: #f94c66;
             text-align: center;
             color: white;
-            display: inline-block;
-            margin-right: 20px;
             box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
+            margin: 0 auto;
+            position: absolute;
+            letter-spacing: 1px;
+            left: 50%;
+            transform: translateX(-50%);
           }
         }
 
@@ -764,6 +776,30 @@
             grid-gap: 0 30px;
           }
 
+          .pageNum {
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            background: #f94c66;
+            text-align: center;
+            color: white;
+            display: inline-block;
+            margin: 0;
+            box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
+            letter-spacing: 1px;
+            text-align: center;
+            text-indent: 0;
+            @media (min-width: 500px) {
+              grid-column: 1/4;
+              grid-row: 1/2;
+              margin-bottom: 10px;
+            }
+          }
+
           .navBtns {
             button {
               float: right;
@@ -790,7 +826,7 @@
 
             @media (min-width: 500px) {
               grid-column: 1/4;
-              grid-row: 1/2;
+              grid-row: 2/3;
               margin-bottom: 20px;
             }
           }
@@ -798,13 +834,13 @@
           .sound {
             @media (min-width: 500px) {
               grid-column: 1/3;
-              grid-row: 2/3;
+              grid-row: 3/4;
             }
           }
           .explanation {
             @media (min-width: 500px) {
               grid-column: 3/4;
-              grid-row: 2/3;
+              grid-row: 3/4;
             }
           }
           .sound,
