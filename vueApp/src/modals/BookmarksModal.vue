@@ -263,10 +263,10 @@
             padding: 0;
             border-radius: 50%;
             position: relative;
-            top: -4px;
+            top: -5px;
             border-color: transparent;
-            position: relative;
             background: #f94c66;
+            margin: 0;
             svg {
               width: 20px;
               height: 20px;
@@ -340,18 +340,21 @@
           &:hover {
             a,
             .surahInfo__name {
-              background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
-              background-clip: text;
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
-              transition: background 0.1s ease;
+              // background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+              // background-clip: text;
+              // -webkit-background-clip: text;
+              // -webkit-text-fill-color: transparent;
+              // transition: background 0.1s ease;
+              color: #647eff !important;
+              transition: all 0.1s ease;
+
               .verseNum {
                 background: #5fd068 !important;
                 color: white !important;
                 box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%) !important;
-                background-clip: initial !important;
-                -webkit-background-clip: initial !important;
-                -webkit-text-fill-color: white !important;
+                // background-clip: initial !important;
+                // -webkit-background-clip: initial !important;
+                // -webkit-text-fill-color: white !important;
               }
             }
           }

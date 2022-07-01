@@ -33,74 +33,74 @@ app.config.globalProperties.$filters = {
   normalize(input) {
     return input
       // remove signs
-      .replaceAll("\u0610", "") //ARABIC SIGN SALLALLAHOU ALAYHE WA SALLAM
-      .replaceAll("\u0611", "") //ARABIC SIGN ALAYHE ASSALLAM
-      .replaceAll("\u0612", "") //ARABIC SIGN RAHMATULLAH ALAYHE
-      .replaceAll("\u0613", "") //ARABIC SIGN RADI ALLAHOU ANHU
-      .replaceAll("\u0614", "") //ARABIC SIGN TAKHALLUS
+      .replace(/\u0610/g, "") //ARABIC SIGN SALLALLAHOU ALAYHE WA SALLAM
+      .replace(/\u0611/g, "") //ARABIC SIGN ALAYHE ASSALLAM
+      .replace(/\u0612/g, "") //ARABIC SIGN RAHMATULLAH ALAYHE
+      .replace(/\u0613/g, "") //ARABIC SIGN RADI ALLAHOU ANHU
+      .replace(/\u0614/g, "") //ARABIC SIGN TAKHALLUS
 
       // Remove koranic anotation
-      .replaceAll("\u0615", "") //ARABIC SMALL HIGH TAH
-      .replaceAll("\u0616", "") //ARABIC SMALL HIGH LIGATURE ALEF WITH LAM WITH YEH
-      .replaceAll("\u0617", "") //ARABIC SMALL HIGH ZAIN
-      .replaceAll("\u0618", "") //ARABIC SMALL FATHA
-      .replaceAll("\u0619", "") //ARABIC SMALL DAMMA
-      .replaceAll("\u061A", "") //ARABIC SMALL KASRA
-      .replaceAll("\u06D6", "") //ARABIC SMALL HIGH LIGATURE SAD WITH LAM WITH ALEF MAKSURA
-      .replaceAll("\u06D7", "") //ARABIC SMALL HIGH LIGATURE QAF WITH LAM WITH ALEF MAKSURA
-      .replaceAll("\u06D8", "") //ARABIC SMALL HIGH MEEM INITIAL FORM
-      .replaceAll("\u06D9", "") //ARABIC SMALL HIGH LAM ALEF
-      .replaceAll("\u06DA", "") //ARABIC SMALL HIGH JEEM
-      .replaceAll("\u06DB", "") //ARABIC SMALL HIGH THREE DOTS
-      .replaceAll("\u06DC", "") //ARABIC SMALL HIGH SEEN
-      .replaceAll("\u06DD", "") //ARABIC END OF AYAH
-      .replaceAll("\u06DE", "") //ARABIC START OF RUB EL HIZB
-      .replaceAll("\u06DF", "") //ARABIC SMALL HIGH ROUNDED ZERO
-      .replaceAll("\u06E0", "") //ARABIC SMALL HIGH UPRIGHT RECTANGULAR ZERO
-      .replaceAll("\u06E1", "") //ARABIC SMALL HIGH DOTLESS HEAD OF KHAH
-      .replaceAll("\u06E2", "") //ARABIC SMALL HIGH MEEM ISOLATED FORM
-      .replaceAll("\u06E3", "") //ARABIC SMALL LOW SEEN
-      .replaceAll("\u06E4", "") //ARABIC SMALL HIGH MADDA
-      .replaceAll("\u06E5", "") //ARABIC SMALL WAW
-      .replaceAll("\u06E6", "") //ARABIC SMALL YEH
-      .replaceAll("\u06E7", "") //ARABIC SMALL HIGH YEH
-      .replaceAll("\u06E8", "") //ARABIC SMALL HIGH NOON
-      .replaceAll("\u06E9", "") //ARABIC PLACE OF SAJDAH
-      .replaceAll("\u06EA", "") //ARABIC EMPTY CENTRE LOW STOP
-      .replaceAll("\u06EB", "") //ARABIC EMPTY CENTRE HIGH STOP
-      .replaceAll("\u06EC", "") //ARABIC ROUNDED HIGH STOP WITH FILLED CENTRE
-      .replaceAll("\u06ED", "") //ARABIC SMALL LOW MEEM
+      .replace(/\u0615/g, "") //ARABIC SMALL HIGH TAH
+      .replace(/\u0616/g, "") //ARABIC SMALL HIGH LIGATURE ALEF WITH LAM WITH YEH
+      .replace(/\u0617/g, "") //ARABIC SMALL HIGH ZAIN
+      .replace(/\u0618/g, "") //ARABIC SMALL FATHA
+      .replace(/\u0619/g, "") //ARABIC SMALL DAMMA
+      .replace(/\u061A/g, "") //ARABIC SMALL KASRA
+      .replace(/\u06D6/g, "") //ARABIC SMALL HIGH LIGATURE SAD WITH LAM WITH ALEF MAKSURA
+      .replace(/\u06D7/g, "") //ARABIC SMALL HIGH LIGATURE QAF WITH LAM WITH ALEF MAKSURA
+      .replace(/\u06D8/g, "") //ARABIC SMALL HIGH MEEM INITIAL FORM
+      .replace(/\u06D9/g, "") //ARABIC SMALL HIGH LAM ALEF
+      .replace(/\u06DA/g, "") //ARABIC SMALL HIGH JEEM
+      .replace(/\u06DB/g, "") //ARABIC SMALL HIGH THREE DOTS
+      .replace(/\u06DC/g, "") //ARABIC SMALL HIGH SEEN
+      .replace(/\u06DD/g, "") //ARABIC END OF AYAH
+      .replace(/\u06DE/g, "") //ARABIC START OF RUB EL HIZB
+      .replace(/\u06DF/g, "") //ARABIC SMALL HIGH ROUNDED ZERO
+      .replace(/\u06E0/g, "") //ARABIC SMALL HIGH UPRIGHT RECTANGULAR ZERO
+      .replace(/\u06E1/g, "") //ARABIC SMALL HIGH DOTLESS HEAD OF KHAH
+      .replace(/\u06E2/g, "") //ARABIC SMALL HIGH MEEM ISOLATED FORM
+      .replace(/\u06E3/g, "") //ARABIC SMALL LOW SEEN
+      .replace(/\u06E4/g, "") //ARABIC SMALL HIGH MADDA
+      .replace(/\u06E5/g, "") //ARABIC SMALL WAW
+      .replace(/\u06E6/g, "") //ARABIC SMALL YEH
+      .replace(/\u06E7/g, "") //ARABIC SMALL HIGH YEH
+      .replace(/\u06E8/g, "") //ARABIC SMALL HIGH NOON
+      .replace(/\u06E9/g, "") //ARABIC PLACE OF SAJDAH
+      .replace(/\u06EA/g, "") //ARABIC EMPTY CENTRE LOW STOP
+      .replace(/\u06EB/g, "") //ARABIC EMPTY CENTRE HIGH STOP
+      .replace(/\u06EC/g, "") //ARABIC ROUNDED HIGH STOP WITH FILLED CENTRE
+      .replace(/\u06ED/g, "") //ARABIC SMALL LOW MEEM
 
       //Remove tatweel
-      .replaceAll("\u0640", "")
+      .replace(/\u0640/g, "")
 
       //Remove tashkeel
-      .replaceAll("\u064B", "") //ARABIC FATHATAN
-      .replaceAll("\u064C", "") //ARABIC DAMMATAN
-      .replaceAll("\u064D", "") //ARABIC KASRATAN
-      .replaceAll("\u064E", "") //ARABIC FATHA
-      .replaceAll("\u064F", "") //ARABIC DAMMA
-      .replaceAll("\u0650", "") //ARABIC KASRA
-      .replaceAll("\u0651", "") //ARABIC SHADDA
-      .replaceAll("\u0652", "") //ARABIC SUKUN
-      .replaceAll("\u0653", "") //ARABIC MADDAH ABOVE
-      .replaceAll("\u0654", "") //ARABIC HAMZA ABOVE
-      .replaceAll("\u0655", "") //ARABIC HAMZA BELOW
-      .replaceAll("\u0656", "") //ARABIC SUBSCRIPT ALEF
-      .replaceAll("\u0657", "") //ARABIC INVERTED DAMMA
-      .replaceAll("\u0658", "") //ARABIC MARK NOON GHUNNA
-      .replaceAll("\u0659", "") //ARABIC ZWARAKAY
-      .replaceAll("\u065A", "") //ARABIC VOWEL SIGN SMALL V ABOVE
-      .replaceAll("\u065B", "") //ARABIC VOWEL SIGN INVERTED SMALL V ABOVE
-      .replaceAll("\u065C", "") //ARABIC VOWEL SIGN DOT BELOW
-      .replaceAll("\u065D", "") //ARABIC REVERSED DAMMA
-      .replaceAll("\u065E", "") //ARABIC FATHA WITH TWO DOTS
-      .replaceAll("\u065F", "") //ARABIC WAVY HAMZA BELOW
-      .replaceAll("\u0670", "") //ARABIC LETTER SUPERSCRIPT ALEF
-      .replaceAll("ࣰ", "")
-      .replaceAll("ࣱ", "")
-      .replaceAll("ࣲ", "")
-      .replaceAll("ࣳ", "")
+      .replace(/\u064B/g, "") //ARABIC FATHATAN
+      .replace(/\u064C/g, "") //ARABIC DAMMATAN
+      .replace(/\u064D/g, "") //ARABIC KASRATAN
+      .replace(/\u064E/g, "") //ARABIC FATHA
+      .replace(/\u064F/g, "") //ARABIC DAMMA
+      .replace(/\u0650/g, "") //ARABIC KASRA
+      .replace(/\u0651/g, "") //ARABIC SHADDA
+      .replace(/\u0652/g, "") //ARABIC SUKUN
+      .replace(/\u0653/g, "") //ARABIC MADDAH ABOVE
+      .replace(/\u0654/g, "") //ARABIC HAMZA ABOVE
+      .replace(/\u0655/g, "") //ARABIC HAMZA BELOW
+      .replace(/\u0656/g, "") //ARABIC SUBSCRIPT ALEF
+      .replace(/\u0657/g, "") //ARABIC INVERTED DAMMA
+      .replace(/\u0658/g, "") //ARABIC MARK NOON GHUNNA
+      .replace(/\u0659/g, "") //ARABIC ZWARAKAY
+      .replace(/\u065A/g, "") //ARABIC VOWEL SIGN SMALL V ABOVE
+      .replace(/\u065B/g, "") //ARABIC VOWEL SIGN INVERTED SMALL V ABOVE
+      .replace(/\u065C/g, "") //ARABIC VOWEL SIGN DOT BELOW
+      .replace(/\u065D/g, "") //ARABIC REVERSED DAMMA
+      .replace(/\u065E/g, "") //ARABIC FATHA WITH TWO DOTS
+      .replace(/\u065F/g, "") //ARABIC WAVY HAMZA BELOW
+      .replace(/\u0670/g, "") //ARABIC LETTER SUPERSCRIPT ALEF
+      .replace(/ࣰ/g, "")
+      .replace(/ࣱ/g, "")
+      .replace(/ࣲ/g, "")
+      .replace(/ࣳ/g, "")
 
       // handle special letter
       .replace(/ی|ى/g, "ي") // here two letters look the same but actually they are not

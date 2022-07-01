@@ -665,18 +665,21 @@
           @mixin selected {
             background: #f7f7f7 !important;
             border-radius: 5px !important;
-            transition: background 0.1s ease-in-out !important;
+            // transition: background 0.1s ease-in-out !important;
+            transition: all 0.1s ease-in-out !important;
             .text {
-              transition: all 0.1s ease-in-out !important;
-              background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff) !important;
-              background-clip: text !important;
-              -webkit-background-clip: text !important;
-              -webkit-text-fill-color: transparent !important;
-              color: transparent !important;
+              color: #647eff !important;
+              // transition: all 0.1s ease-in-out !important;
+              // background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff) !important;
+              // background-clip: text !important;
+              // -webkit-background-clip: text !important;
+              // -webkit-text-fill-color: transparent !important;
+              // color: transparent !important;
               .god,
               .hizb {
-                -webkit-text-fill-color: transparent !important;
-                color: transparent !important;
+                color: #647eff !important;
+                // -webkit-text-fill-color: transparent !important;
+                // color: transparent !important;
               }
             }
             .num {
