@@ -108,3 +108,125 @@ svg {
     border-radius: 5px;
   }
 }
+
+// todo complete dark style for modals and so on
+// darkmode styles
+body.dark {
+  background-color: #011240 !important;
+
+  .OptionsRect {
+    background: #011240;
+    box-shadow: 1px 1px 1px 0px rgba(255, 255, 255, 0.5), -1px -1px 1px 0px rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    .trans,
+    .copyText,
+    .explain,
+    .sound {
+      button {
+        background: transparent !important;
+        svg {
+          color: white !important;
+        }
+        &:hover {
+          svg {
+            color: #2f70ec !important;
+          }
+        }
+      }
+    }
+  }
+  .home .tab {
+    background: #6a11cb !important;
+  }
+  .readView .container .page {
+    .bar {
+      .juz,
+      .name {
+        color: white !important;
+        border-color: #6a11cb !important;
+      }
+
+      .name {
+      }
+    }
+    .options {
+      .o-btn {
+        background: #6a11cb !important;
+        border-color: #101d4c !important;
+        &:focus {
+          border-color: #6a11cb !important;
+        }
+      }
+      .autoReciting {
+        color: white !important;
+        input {
+          background: #222e5b !important;
+          &:checked {
+            background: #6a11cb !important;
+          }
+        }
+      }
+    }
+    .pageContent {
+      .head {
+        background: #6a11cb !important;
+      }
+      .verse {
+        .sajda span {
+          color: white !important;
+        }
+        &.selected {
+          background-color: #101d4c !important;
+        }
+        &.purple,
+        &.orange,
+        &.red,
+        &.blue {
+          .num {
+            background: #101d4c !important;
+            color: white !important;
+          }
+        }
+        .text {
+          color: white !important;
+          .god {
+            color: #ffeb3b !important;
+          }
+        }
+        .num {
+          background: #6a11cb !important;
+        }
+        &:hover {
+          background: #222e5b !important;
+          .text {
+            color: white !important;
+            .god,
+            .hizb {
+              color: white !important;
+            }
+          }
+          .num {
+            background: #6a11cb !important;
+          }
+        }
+      }
+    }
+    .pageFooter {
+      .navBtns {
+        .o-btn {
+          background: #6a11cb !important;
+          border-color: #101d4c !important;
+          &:focus {
+            border-color: #6a11cb !important;
+          }
+        }
+      }
+      .sound,
+      .explanation {
+        label {
+          color: white !important;
+        }
+      }
+    }
+  }
+}

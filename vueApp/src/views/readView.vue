@@ -10,7 +10,7 @@
         <!-- bar -->
         <div class="bar">
           <span class="name" v-text="currentPage[0].name"></span>
-          <div class="pageNum" v-text="$filters.arNum(pageNum)"></div>
+          <div v-if="pageNumPos == 'top'" class="pageNum" v-text="$filters.arNum(pageNum)"></div>
           <span class="juz" v-text="$filters.juz(currentPage[0].juz)"></span>
         </div>
 
@@ -29,7 +29,7 @@
           </label>
         </div>
 
-        <div :class="['pageContent scrollbar', hasSajda ? 'hasSajda' : '']" ref="page" :style="{ left: pageLeft + 'px' }">
+        <div :class="['pageContent', hasSajda ? 'hasSajda' : '']" ref="page" :style="{ left: pageLeft + 'px' }">
           <!-- content -->
           <template v-for="(obj, index) of currentPage" :key="index">
             <!-- header -->
@@ -62,7 +62,7 @@
 
         <!-- page number -->
         <div class="pageFooter">
-          <div class="pageNum" v-text="$filters.arNum(pageNum)"></div>
+          <div v-if="pageNumPos == 'bottom'" class="pageNum" v-text="$filters.arNum(pageNum)"></div>
 
           <div class="navBtns">
             <button class="o-btn" @click="next()" v-html="nextIcon"></button>
@@ -142,6 +142,7 @@
         isLoading: true,
         interval: null,
         hasSajda: false,
+        pageNumPos: "top",
         start: "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ",
         godArr: ["اللهم", "اله", "واحد", "هو", "لله", "الله", "رب", "ربهم", "ربكم", "ربك", "ربه", "ربنا", "لرب", "ربي", "ربها", "لربك", "ربكما", "ربهما", "ربها"],
       };
@@ -218,7 +219,17 @@
       if (this.$parent.$parent.readViewEnabled) {
         window.onscroll = () => {
           this.isScrolling = true;
-          console.log(this.isScrolling);
+          // console.log(this.isScrolling);
+
+          // todo handle this part
+          const reachedPageEnd = window.scrollY >= document.body.scrollHeight;
+          const reachedPagetop = window.scrollY <= 50;
+          if (reachedPageEnd) {
+            this.pageNumPos = "bottom";
+          } else if (reachedPagetop) {
+            this.pageNumPos = "top";
+          }
+          console.log({ reachedPageEnd,reachedPagetop });
         };
 
         // keyboard
@@ -373,6 +384,7 @@
         console.log(this.currentPage);
         const obj = this.getLastReadObj(this.currentPage);
         localStorage.setItem("lastRead", JSON.stringify(obj));
+        window.scrollTo({ top: 0, left: 0 });
       },
       prev() {
         if (this.pageNum > 1 && this.pageNum <= 604) this.pageNum--;
@@ -385,6 +397,7 @@
         console.log(this.currentPage);
         const obj = this.getLastReadObj(this.currentPage);
         localStorage.setItem("lastRead", JSON.stringify(obj));
+        window.scrollTo({ top: 0, left: 0 });
       },
       setPage(num) {
         this.pageNum = num;
@@ -397,6 +410,7 @@
         console.log(this.currentPage);
         const obj = this.getLastReadObj(this.currentPage);
         localStorage.setItem("lastRead", JSON.stringify(obj));
+        window.scrollTo({ top: 0, left: 0 });
       },
       showModal(name) {
         this.$parent.$parent.modal = { name };

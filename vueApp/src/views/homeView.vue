@@ -74,13 +74,13 @@
 
     
     <!-- settings -->
-    <!-- <div class="settings tab">
+    <div class="settings tab">
       <a class="router-link" @click="showModal('settings')"></a>
       <p>
         <span class="icon" v-html="settingsIcon"></span>
         <span class="text">الاعدادات</span>
       </p>
-    </div> -->
+    </div>
 
   </div>
 </template>
