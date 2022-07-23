@@ -229,4 +229,250 @@ body.dark {
       }
     }
   }
+
+  .modal {
+    .container {
+      background-color: #011240 !important;
+      border: 1px solid #222 !important;
+      > nav {
+        .close {
+        }
+        &::before {
+          background-color: #fff !important;
+        }
+      }
+
+      .content {
+        .settingsInnerWrapper {
+          h3 {
+            color: white !important;
+            border-bottom: 2px solid #3584e2 !important;
+          }
+          .text {
+            color: white !important;
+          }
+          .darkMode {
+            color: white !important;
+          }
+        }
+        .tasbihInnerWrapper {
+          h3 {
+            color: white !important;
+            border-bottom: 2px solid #3584e2 !important;
+          }
+          .text {
+            color: white !important;
+          }
+        }
+        .doneInnerWrapper {
+          .time,
+          .emptyMsg {
+            color: white !important;
+          }
+        }
+        .azkarInnerWrapper {
+          h3 {
+            color: white !important;
+            border-bottom: 2px solid #3584e2 !important;
+          }
+          .text {
+            color: white !important;
+          }
+          .start {
+            color: white !important;
+          }
+          .god {
+            color: #ffeb3b !important;
+          }
+        }
+        .doaaInnerWrapper {
+          h3 {
+            color: white !important;
+            border-bottom: 2px solid #3584e2 !important;
+          }
+          p {
+            color: white !important;
+          }
+          .text {
+            color: white !important;
+          }
+          .start {
+            color: white !important;
+          }
+          .god {
+            color: #ffeb3b !important;
+          }
+        }
+        .bookmarkInnerWrapper {
+          border: 1px solid #eee !important;
+
+          nav {
+            border-bottom: 1px solid #eee !important;
+            background: #011240 !important;
+
+            ul {
+              li {
+                border: 1px solid #eee !important;
+
+                a {
+                  color: white !important;
+                }
+                &.active {
+                  a {
+                    color: white;
+                  }
+                }
+              }
+            }
+          }
+          .results {
+            ul {
+              .emptyBookmarks {
+                color: #fff !important;
+              }
+              li {
+                a {
+                  color: #fff !important;
+
+                  .verseNum {
+                    background: #5fd068;
+                    color: white;
+                    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
+                  }
+                }
+
+                button.remove {
+                  background: #f94c66;
+
+                  svg {
+                    color: white;
+                  }
+                }
+
+                .verseInfo {
+                  span {
+                    color: #fff !important;
+                  }
+                }
+
+                .surahInfo {
+                  span {
+                    color: #fff !important;
+                  }
+                  &__name {
+                  }
+                  &__page {
+                    background: #5fd068;
+
+                    color: white !important;
+                  }
+                  & ~ button.remove {
+                  }
+                }
+
+                &:hover {
+                  a,
+                  .surahInfo__name {
+                    color: #647eff !important;
+                    transition: all 0.1s ease;
+
+                    .verseNum {
+                      background: #5fd068 !important;
+                      color: white !important;
+                      box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%) !important;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .searchEngine {
+          .bar {
+            .o-search {
+              input {
+              }
+              .o-close {
+              }
+            }
+          }
+
+          .innerWrapper {
+            border: 1px solid #d8d8d8;
+
+            nav {
+              border-bottom: 1px solid #d8d8d8;
+
+              ul {
+                li {
+
+                  a {
+                  }
+                }
+              }
+
+              .settingsBtn {
+              }
+
+              .length {
+                color: #666;
+              }
+            }
+
+            .results {
+              ul {
+                li {
+                  a {
+                    color: white !important;
+
+                    .verseNum {
+                      background: #5fd068;
+                      color: white;
+                      box-shadow: 0 0 3px 1px rgba(0, 0, 0, 15%);
+                    }
+                  }
+
+                  .verseInfo {
+                    span {
+                      color: white !important;
+                    }
+                  }
+
+                  .surahInfo {
+                    span {
+                      color: white !important;
+                    }
+                  }
+
+                  .versesSelectBox {
+                    label {
+                      color: white !important;
+                    }
+                    .o-select {
+                    }
+                  }
+                }
+              }
+            }
+            .noResultsHint {
+              color: white !important;
+            }
+            .settings {
+              .settingsItems {
+                label {
+                  color: white !important;
+                }
+              }
+              .settingsBtns {
+                background: #eee;
+                button {
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

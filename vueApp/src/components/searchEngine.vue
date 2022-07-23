@@ -526,11 +526,12 @@
             &:hover {
               a,
               .surahInfo__name {
-                background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                transition: background 0.1s ease;
+                background: #647eff;
+                a {
+                  color: #647eff !important;
+                  
+                }
+
                 .verseNum {
                   background: #5fd068 !important;
                   color: white !important;
@@ -539,6 +540,9 @@
                   -webkit-background-clip: initial !important;
                   -webkit-text-fill-color: white !important;
                 }
+              }
+              a {
+                color: #647eff !important;
               }
             }
           }

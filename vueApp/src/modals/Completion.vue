@@ -95,6 +95,7 @@
             border-color: transparent;
             background: #f94c66;
             float: left;
+            margin: 2px;
             svg {
               width: 20px;
               height: 20px;

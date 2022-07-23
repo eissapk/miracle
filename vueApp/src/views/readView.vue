@@ -5,10 +5,10 @@
 
     <OptionsRect v-show="!isLoading && optionsRectShown" @update="handlePlaying(e, $event)" @textCopied="textCopied()" :options="optionsData" :audio="audioInstance" />
 
-    <div class="container" v-if="!isLoading && currentPage">
+    <div class="container" v-if="!isLoading && currentPage" ref="page" :style="{ left: pageLeft + 'px' }">
       <div class="page">
         <!-- bar -->
-        <div class="bar">
+        <div class="bar" ref="bar">
           <span class="name" v-text="currentPage[0].name"></span>
           <div v-if="pageNumPos == 'top'" class="pageNum" v-text="$filters.arNum(pageNum)"></div>
           <span class="juz" v-text="$filters.juz(currentPage[0].juz)"></span>
@@ -29,7 +29,7 @@
           </label>
         </div>
 
-        <div :class="['pageContent', hasSajda ? 'hasSajda' : '']" ref="page" :style="{ left: pageLeft + 'px' }">
+        <div :class="['pageContent', hasSajda ? 'hasSajda' : '']">
           <!-- content -->
           <template v-for="(obj, index) of currentPage" :key="index">
             <!-- header -->
@@ -221,16 +221,22 @@
           this.isScrolling = true;
           // console.log(this.isScrolling);
 
-          // todo handle this part
-          const reachedPageEnd = window.scrollY >= document.body.scrollHeight;
-          const reachedPagetop = window.scrollY <= 50;
-          if (reachedPageEnd) {
-            this.pageNumPos = "bottom";
-          } else if (reachedPagetop) {
-            this.pageNumPos = "top";
+          const bar = this.$refs.bar;
+          if (bar) {
+            let y = window.pageYOffset;
+            let offsetBottom = bar.offsetTop - window.innerHeight;
+            let offsetTop = bar.offsetTop;
+            let height = bar.clientHeight;
+            let total = offsetTop + height;
+            if (y >= offsetTop && y <= total) {
+              this.pageNumPos = "top";
+            } else if (y >= offsetBottom) {
+              this.pageNumPos = "bottom";
+            }
           }
-          console.log({ reachedPageEnd,reachedPagetop });
         };
+
+        window.onresize = () => this.resetPagNumPos();
 
         // keyboard
         document.body.onkeydown = e => {
@@ -259,7 +265,7 @@
         var walkX;
         let direction;
         let distance;
-        let threshold = 50;
+        let threshold = 150;
         const page = this.$refs.page;
         if (!page) return;
 
@@ -373,6 +379,10 @@
         };
         return obj;
       },
+      resetPagNumPos() {
+        const hasScrollBar = document.body.scrollHeight - window.innerHeight > 0;
+        if (hasScrollBar) this.pageNumPos = "top";
+      },
       next() {
         if (this.pageNum < 604) this.pageNum++;
         else return (this.pageNum = 604);
@@ -385,6 +395,7 @@
         const obj = this.getLastReadObj(this.currentPage);
         localStorage.setItem("lastRead", JSON.stringify(obj));
         window.scrollTo({ top: 0, left: 0 });
+        this.resetPagNumPos();
       },
       prev() {
         if (this.pageNum > 1 && this.pageNum <= 604) this.pageNum--;
@@ -398,6 +409,7 @@
         const obj = this.getLastReadObj(this.currentPage);
         localStorage.setItem("lastRead", JSON.stringify(obj));
         window.scrollTo({ top: 0, left: 0 });
+        this.resetPagNumPos();
       },
       setPage(num) {
         this.pageNum = num;
@@ -411,6 +423,7 @@
         const obj = this.getLastReadObj(this.currentPage);
         localStorage.setItem("lastRead", JSON.stringify(obj));
         window.scrollTo({ top: 0, left: 0 });
+        this.resetPagNumPos();
       },
       showModal(name) {
         this.$parent.$parent.modal = { name };
@@ -477,6 +490,12 @@
 <style lang="scss">
   .readView {
     .container {
+      position: relative;
+      transition: left 0.3s ease;
+      &.pauseAnimation {
+        transition: none !important;
+        animation: none !important;
+      }
       .page {
         .bar {
           user-select: none;

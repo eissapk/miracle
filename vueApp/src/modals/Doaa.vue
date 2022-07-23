@@ -37,6 +37,7 @@
 </script>
 <style lang="scss">
   .doaaInnerWrapper {
+    padding-left: 10px;
     h3 {
       margin: 0;
       border-bottom: 2px solid #6a11cb;
