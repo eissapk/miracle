@@ -101,6 +101,8 @@ app.config.globalProperties.$filters = {
       .replace(/ࣱ/g, "")
       .replace(/ࣲ/g, "")
       .replace(/ࣳ/g, "")
+      .replace(/ﱢ/g, "")
+      .replace(/ﱠ/g, "")
 
       // handle special letter
       .replace(/ی|ى/g, "ي") // here two letters look the same but actually they are not
