@@ -526,7 +526,7 @@
             &:hover {
               a,
               .surahInfo__name {
-                background: #647eff;
+                color: #647eff;
                 a {
                   color: #647eff !important;
                   

@@ -325,7 +325,7 @@
               border-radius: 50%;
               position: relative;
               border-color: transparent;
-              background: #5fd068;
+              background: #2f70ec;
               float: right;
               text-align: center;
               color: white !important;

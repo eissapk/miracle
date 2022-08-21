@@ -10,7 +10,7 @@
   <Doaa v-if="modal.name === 'doaa'" />
   <Azkar v-if="modal.name === 'azkar'" />
   <Tasbih v-if="modal.name === 'tasbih'" />
-  <Settings v-if="modal.name === 'settings'" />
+  <!-- <Settings v-if="modal.name === 'settings'" /> -->
 
   <LoaderView v-if="isLoading" />
 </template>
@@ -24,7 +24,7 @@
   import Doaa from "./modals/Doaa.vue";
   import Azkar from "./modals/Azkar.vue";
   import Tasbih from "./modals/Tasbih.vue";
-  import Settings from "./modals/Settings.vue";
+  // import Settings from "./modals/Settings.vue";
   import ExplanationModal from "./modals/ExplanationModal.vue";
   import handlePages from "./services/fetch";
 
@@ -39,7 +39,7 @@
       Doaa,
       Azkar,
       Tasbih,
-      Settings,
+      // Settings,
     },
     data() {
       return {
