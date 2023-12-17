@@ -1,6 +1,8 @@
+import * as Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+
 // todo add حزب
-// todo سبحة
-// todo اذكار
 // todo add guide for initial use of the app
 
 // start global
@@ -11,12 +13,11 @@ window.oConfirm = popup.oConfirm;
 window.oAlert = popup.oAlert;
 // end global
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-const app = createApp(App);
-app.use(router);
-app.mount('#app');
+const app = Vue.createApp(App)
+app.use(router)
+app.mount('#app')
+
+// Now the app has started!
 
 // mixins
 // app.mixin({

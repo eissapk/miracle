@@ -3,7 +3,7 @@
     <!-- read -->
     <div class="read tab">
       <router-link :to="'/read/' + lastRead.page" class="router-link"></router-link>
-      <img src="img/book.png" alt="book" />
+      <img src="../../src/assets/book.png" alt="book" />
       <p class="lastRead">
         <span class="icon" v-html="bookIcon"></span>
         اخر قراءة
@@ -92,6 +92,7 @@ import solid_bookmark from "olum-icons/dist/fa/solid_bookmark";
 import solid_hands from "olum-icons/dist/fa/solid_hands";
 import solid_cog from "olum-icons/dist/fa/solid_cog";
 import icons from "../services/icons";
+import bookImg from "../../public/img/book.png"
 
 export default {
   data() {
