@@ -106,7 +106,7 @@ export default function ReadPage() {
     if (!trackRef.current || !containerRef.current) return;
     const w = containerRef.current.offsetWidth;
     trackRef.current.style.transition = 'none';
-    trackRef.current.style.transform = `translateX(${-w}px)`;
+    trackRef.current.style.transform = `translateX(${w}px)`;
   }, []);
 
   const loadSliderPages = useCallback((num) => {
@@ -158,7 +158,7 @@ export default function ReadPage() {
     if (num < 1 || num > 604) return;
     isAnimatingRef.current = true;
     const w = containerRef.current?.offsetWidth || 0;
-    const targetX = direction === 'next' ? 0 : -2 * w;
+    const targetX = direction === 'next' ? 0 : 2 * w;
     if (trackRef.current) {
       trackRef.current.style.transition = 'transform 0.32s ease';
       trackRef.current.style.transform = `translateX(${targetX}px)`;
@@ -234,7 +234,7 @@ export default function ReadPage() {
       decidedAxis = false;
       track.style.transition = 'none';
       const w = container.offsetWidth;
-      track.style.transform = `translateX(${-w}px)`;
+      track.style.transform = `translateX(${w}px)`;
     };
 
     const onTouchMove = (e) => {
@@ -250,7 +250,7 @@ export default function ReadPage() {
       const w = container.offsetWidth;
       const n = pageNum.current;
       const atEdge = (dx > 0 && n >= 604) || (dx < 0 && n <= 1);
-      track.style.transform = `translateX(${-w + (atEdge ? dx * 0.12 : dx)}px)`;
+      track.style.transform = `translateX(${w - (atEdge ? dx * 0.12 : dx)}px)`;
     };
 
     const onTouchEnd = (e) => {
@@ -266,7 +266,7 @@ export default function ReadPage() {
         goToPage(n - 1, 'prev');
       } else {
         track.style.transition = 'transform 0.28s ease';
-        track.style.transform = `translateX(${-w}px)`;
+        track.style.transform = `translateX(${w}px)`;
       }
     };
 
@@ -422,16 +422,15 @@ export default function ReadPage() {
             <div
               ref={trackRef}
               className="h-full"
-              style={{ display: 'flex', width: '300%', willChange: 'transform', transform: 'translateX(-33.333%)' }}
+              style={{ display: 'flex', width: '300%', willChange: 'transform', transform: 'translateX(33.333%)' }}
             >
               {/* left slot → next page (revealed on swipe-right) */}
               <div className="h-full" style={{ width: '33.333%', flex: '0 0 33.333%', ...cardBg }}>
                 <SidePageView pageData={sliderPages[0]} isDark={isDark} />
               </div>
 
-              {/* center slot → current page */}
-              <div className="h-full" style={{ width: '33.333%', flex: '0 0 33.333%', ...cardBg }}>
-                <div ref={pageScrollRef} className="page h-full px-4 pt-4 pb-4 overflow-y-auto scrollbar">
+              {/* center slot → current page (flex item is the scrollable; height from stretch, not from h-full chain) */}
+              <div ref={pageScrollRef} className="page scrollbar px-4 pt-4 pb-4" style={{ width: '33.333%', flex: '0 0 33.333%', overflowY: 'auto', minHeight: 0, ...cardBg }}>
 
                   {/* bar */}
                   <div className="select-none overflow-hidden py-[5px] mb-[20px] relative" ref={barRef}>
@@ -536,7 +535,6 @@ export default function ReadPage() {
                     </div>
                   </div>
 
-                </div>
               </div>
 
               {/* right slot → prev page (revealed on swipe-left) */}

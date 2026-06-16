@@ -299,7 +299,7 @@ export default function LandingPage() {
             <h1 className="text-5xl md:text-6xl font-black leading-tight mb-6">
               <span style={{ color: T.heroText }}>اقرأ القرآن</span>
               <br />
-              <span style={GT}>بتجربة لا مثيل لها</span>
+              <span style={GT} className='pt-2'>بتجربة لا مثيل لها</span>
             </h1>
 
             <p className="text-base mb-8 leading-relaxed max-w-md mx-auto lg:mx-0 lg:mr-auto" style={{ color: T.muted }}>
