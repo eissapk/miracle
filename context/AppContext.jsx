@@ -12,15 +12,19 @@ export function AppProvider({ children }) {
   const [readViewEnabled, setReadViewEnabled] = useState(false);
   const [currentVerse, setCurrentVerse] = useState(null);
   const [highlightCurrentVerse, setHighlightCurrentVerse] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const audioRef = useRef(null);
   const readViewRef = useRef(null);
 
   useEffect(() => {
-    const isDark = JSON.parse(localStorage.getItem('isDark'));
-    if (isDark) document.body.classList.add('dark');
+    const savedDark = JSON.parse(localStorage.getItem('isDark'));
+    if (savedDark) {
+      setIsDark(true);
+      document.body.classList.add('dark');
+      document.documentElement.classList.add('dark');
+    }
 
     audioRef.current = new Audio();
-
     window.book = book;
     window.oConfirm = popup.oConfirm;
     window.oAlert = popup.oAlert;
@@ -36,6 +40,19 @@ export function AppProvider({ children }) {
       .catch(console.error);
   }, []);
 
+  const toggleDark = () => {
+    const newDark = !isDark;
+    setIsDark(newDark);
+    localStorage.setItem('isDark', JSON.stringify(newDark));
+    if (newDark) {
+      document.body.classList.add('dark');
+      document.documentElement.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
   return (
     <AppContext.Provider value={{
       modal, setModal,
@@ -45,6 +62,7 @@ export function AppProvider({ children }) {
       highlightCurrentVerse, setHighlightCurrentVerse,
       audioRef,
       readViewRef,
+      isDark, toggleDark,
     }}>
       {children}
     </AppContext.Provider>
