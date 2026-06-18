@@ -58,7 +58,8 @@ export default function OptionsRect({ options, onUpdate, onTextCopied, onClose, 
     audio.onended = () => {
       if (onUpdate) onUpdate({ isPlaying: false, isInitialPlaying: true });
       deselectVerses();
-      if (isAutoRef.current && globalVerse < 6236) {
+      const autoNow = JSON.parse(localStorage.getItem('autoReciting')) || false;
+      if (autoNow && globalVerse < 6236) {
         reciteVerseRef.current?.({ globalVerse: globalVerse + 1 });
       }
     };

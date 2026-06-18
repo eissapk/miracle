@@ -1,26 +1,48 @@
-'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useApp } from '../../../context/AppContext';
-import NotFound from '../../../components/NotFound';
-import OptionsRect from '../../../components/modals/OptionsRect';
-import icons from '../../../services/icons';
-import { arNum, juz, surahType, highlight } from '../../../services/filters';
+"use client";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useApp } from "../../../context/AppContext";
+import NotFound from "../../../components/NotFound";
+import OptionsRect from "../../../components/modals/OptionsRect";
+import icons from "../../../services/icons";
+import { arNum, juz, surahType, highlight } from "../../../services/filters";
 
-const START = 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ';
-const GOD_ARR = ['اللهم','اله','واحد','هو','لله','الله','رب','ربهم','ربكم','ربك','ربه','ربنا','لرب','ربي','ربها','لربك','ربكما','ربهما','ربها'];
+const START = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ";
+const GOD_ARR = [
+  "اللهم",
+  "اله",
+  "واحد",
+  "هو",
+  "لله",
+  "الله",
+  "رب",
+  "ربهم",
+  "ربكم",
+  "ربك",
+  "ربه",
+  "ربنا",
+  "لرب",
+  "ربي",
+  "ربها",
+  "لربك",
+  "ربكما",
+  "ربهما",
+  "ربها",
+];
 
-const defaultOptions = { reciter: 'mahermuaiqly', explainer: 'muyassar', translator: 'ahmedraza' };
+const defaultOptions = { reciter: "mahermuaiqly", explainer: "muyassar", translator: "ahmedraza" };
 
 const MOON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"/></svg>`;
 const SUN = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/></svg>`;
 
-const optBtnBase = 'opt-btn float-right w-10 h-10 bg-gradient-to-r from-[#c8952a] to-[#e8b85a] mx-[5px] rounded-full border-0 outline-none cursor-pointer active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]';
+const optBtnBase =
+  "opt-btn float-right w-10 h-10 bg-gradient-to-r from-[#c8952a] to-[#e8b85a] mx-[5px] rounded-full border-0 outline-none cursor-pointer active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]";
 
 export default function ReadPage() {
   const { page: pageParam } = useParams();
   const router = useRouter();
-  const { setModal, setReadViewEnabled, audioRef, readViewRef, currentVerse, highlightCurrentVerse, setHighlightCurrentVerse, isDark, toggleDark } = useApp();
+  const { setModal, setReadViewEnabled, audioRef, readViewRef, currentVerse, highlightCurrentVerse, setHighlightCurrentVerse, isDark, toggleDark } =
+    useApp();
 
   const pageNum = useRef(+pageParam);
   const [currentPage, setCurrentPage] = useState(null);
@@ -39,19 +61,21 @@ export default function ReadPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isInitialPlaying, setIsInitialPlaying] = useState(false);
   const [notifyShown, setNotifyShown] = useState(false);
-  const [notifyDesc, setNotifyDesc] = useState('');
-  const [notifyClass, setNotifyClass] = useState('');
+  const [notifyDesc, setNotifyDesc] = useState("");
+  const [notifyClass, setNotifyClass] = useState("");
   const [isBookmarkDisabled, setIsBookmarkDisabled] = useState(false);
   const [displayNum, setDisplayNum] = useState(pageNum.current);
   const [playingVerse, setPlayingVerse] = useState(null);
+  const [quickMenuOpen, setQuickMenuOpen] = useState(false);
 
-  const containerRef = useRef(null);   // overflow-hidden slider viewport
-  const pageScrollRef = useRef(null);  // scrollable page card — also receives slide transform
+  const containerRef = useRef(null); // overflow-hidden slider viewport
+  const pageScrollRef = useRef(null); // scrollable page card — also receives slide transform
   const barRef = useRef(null);
   const intervalRef = useRef(null);
   const notifyTimerRef = useRef(null);
   const scrollUpdateCleanupRef = useRef(null);
   const slideNavRef = useRef({ next: () => {}, prev: () => {} });
+  const quickMenuRef = useRef(null);
 
   const getLastReadObj = (arr) => {
     const f = arr[0];
@@ -59,9 +83,9 @@ export default function ReadPage() {
   };
 
   const getSurahName = useCallback((page) => {
-    if (!page || !page.length) return '';
-    const firstLens = page.filter(o => o.surah === page[0].surah).map(o => o.text.length);
-    const secondLens = page.filter(o => o.surah !== page[0].surah).map(o => o.text.length);
+    if (!page || !page.length) return "";
+    const firstLens = page.filter((o) => o.surah === page[0].surah).map((o) => o.text.length);
+    const secondLens = page.filter((o) => o.surah !== page[0].surah).map((o) => o.text.length);
     const maxFirst = firstLens.length ? Math.max(...firstLens) : 0;
     const maxSecond = secondLens.length ? Math.max(...secondLens) : 0;
     return maxFirst >= maxSecond ? page[0].name : page[page.length - 1].name;
@@ -71,8 +95,8 @@ export default function ReadPage() {
     const curr = window.pages?.[num] || null;
     setCurrentPage(curr);
     if (curr) {
-      setHasSajda(!!curr.find(item => item.sajda));
-      localStorage.setItem('lastRead', JSON.stringify(getLastReadObj(curr)));
+      setHasSajda(!!curr.find((item) => item.sajda));
+      localStorage.setItem("lastRead", JSON.stringify(getLastReadObj(curr)));
       setIsLoading(false);
     }
     if (pageScrollRef.current) pageScrollRef.current.scrollTop = 0;
@@ -80,12 +104,15 @@ export default function ReadPage() {
 
   useEffect(() => {
     const num = pageNum.current;
-    if (isNaN(num) || num < 1 || num > 604) { setIsLoading(true); return; }
+    if (isNaN(num) || num < 1 || num > 604) {
+      setIsLoading(true);
+      return;
+    }
 
-    const saved = JSON.parse(localStorage.getItem('optionsData')) || defaultOptions;
-    const savedAuto = JSON.parse(localStorage.getItem('autoReciting')) || false;
+    const saved = JSON.parse(localStorage.getItem("optionsData")) || defaultOptions;
+    const savedAuto = JSON.parse(localStorage.getItem("autoReciting")) || false;
     setIsAuto(savedAuto);
-    setOptionsData(prev => ({ ...prev, reciter: saved.reciter, explainer: saved.explainer, translator: saved.translator }));
+    setOptionsData((prev) => ({ ...prev, reciter: saved.reciter, explainer: saved.explainer, translator: saved.translator }));
 
     if (window.pages) {
       loadPage(num);
@@ -99,10 +126,15 @@ export default function ReadPage() {
         }
       }, 1);
       setTimeout(() => {
-        if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
       }, 5000);
     }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [loadPage]);
 
   const next = useCallback(() => {
@@ -110,7 +142,7 @@ export default function ReadPage() {
     if (num === pageNum.current) return;
     pageNum.current = num;
     setDisplayNum(num);
-    window.history.replaceState(null, '', '/read/' + num);
+    window.history.replaceState(null, "", "/read/" + num);
     setOptionsRectShown(false);
     loadPage(num);
   }, [loadPage]);
@@ -120,7 +152,7 @@ export default function ReadPage() {
     if (num === pageNum.current) return;
     pageNum.current = num;
     setDisplayNum(num);
-    window.history.replaceState(null, '', '/read/' + num);
+    window.history.replaceState(null, "", "/read/" + num);
     setOptionsRectShown(false);
     loadPage(num);
   }, [loadPage]);
@@ -134,12 +166,15 @@ export default function ReadPage() {
       setPage: (num) => {
         pageNum.current = num;
         setDisplayNum(num);
-        window.history.replaceState(null, '', '/read/' + num);
+        window.history.replaceState(null, "", "/read/" + num);
         setOptionsRectShown(false);
         loadPage(num);
       },
     };
-    return () => { setReadViewEnabled(false); readViewRef.current = null; };
+    return () => {
+      setReadViewEnabled(false);
+      readViewRef.current = null;
+    };
   }, [setReadViewEnabled, readViewRef, loadPage]);
 
   useEffect(() => {
@@ -148,8 +183,8 @@ export default function ReadPage() {
       if (e.keyCode === 39) next();
       else if (e.keyCode === 37) prev();
     };
-    document.body.addEventListener('keydown', handleKey);
-    return () => document.body.removeEventListener('keydown', handleKey);
+    document.body.addEventListener("keydown", handleKey);
+    return () => document.body.removeEventListener("keydown", handleKey);
   }, [currentPage, next, prev]);
 
   /* Slide effect — same approach as the hero phone */
@@ -157,12 +192,22 @@ export default function ReadPage() {
     if (!currentPage || !containerRef.current || !pageScrollRef.current) return;
     const container = containerRef.current;
     const card = pageScrollRef.current;
-    let startX = 0, startY = 0, dragging = false, isVert = false, axisDecided = false, moved = false;
+    let startX = 0,
+      startY = 0,
+      dragging = false,
+      isVert = false,
+      axisDecided = false,
+      moved = false;
 
     const startDrag = (x, y) => {
-      startX = x; startY = y;
-      dragging = true; isVert = false; axisDecided = false; moved = false;
-      card.style.transition = 'none';
+      startX = x;
+      startY = y;
+      dragging = true;
+      isVert = false;
+      axisDecided = false;
+      moved = false;
+      card.style.willChange = "transform";
+      card.style.transition = "none";
     };
 
     const moveDrag = (x, y) => {
@@ -184,7 +229,8 @@ export default function ReadPage() {
       if (!dragging) return;
       dragging = false;
       if (isVert || !axisDecided || !moved) {
-        card.style.transform = '';
+        card.style.willChange = "";
+        card.style.transform = "";
         return;
       }
       const dx = x - startX;
@@ -193,17 +239,24 @@ export default function ReadPage() {
       const THRESHOLD = w * 0.25;
 
       const slideOut = (dir, onDone) => {
-        card.style.transition = 'transform 0.22s ease-in';
+        card.style.transition = "transform 0.22s ease-in";
         card.style.transform = `translateX(${dir * w}px)`;
         setTimeout(() => {
           onDone();
-          card.style.transition = 'none';
+          card.style.transition = "none";
           card.style.transform = `translateX(${-dir * w}px)`;
-          requestAnimationFrame(() => requestAnimationFrame(() => {
-            card.style.transition = 'transform 0.3s cubic-bezier(0.16,1,0.3,1)';
-            card.style.transform = '';
-            setTimeout(() => { if (card) card.style.transition = ''; }, 300);
-          }));
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              card.style.transition = "transform 0.3s cubic-bezier(0.16,1,0.3,1)";
+              card.style.transform = "";
+              setTimeout(() => {
+                if (card) {
+                  card.style.transition = "";
+                  card.style.willChange = "";
+                }
+              }, 300);
+            })
+          );
         }, 220);
       };
 
@@ -212,9 +265,14 @@ export default function ReadPage() {
       } else if (dx < -THRESHOLD && n > 1) {
         slideOut(-1, () => slideNavRef.current.prev());
       } else {
-        card.style.transition = 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)';
-        card.style.transform = '';
-        setTimeout(() => { if (card) card.style.transition = ''; }, 350);
+        card.style.transition = "transform 0.35s cubic-bezier(0.34,1.56,0.64,1)";
+        card.style.transform = "";
+        setTimeout(() => {
+          if (card) {
+            card.style.transition = "";
+            card.style.willChange = "";
+          }
+        }, 350);
       }
     };
 
@@ -229,73 +287,93 @@ export default function ReadPage() {
     const onMouseMove = (e) => moveDrag(e.clientX, e.clientY);
     const onMouseUp = (e) => endDrag(e.clientX);
 
-    container.addEventListener('touchstart', onTouchStart, { passive: true });
-    container.addEventListener('touchmove', onTouchMove, { passive: false });
-    container.addEventListener('touchend', onTouchEnd);
-    container.addEventListener('mousedown', onMouseDown);
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
+    container.addEventListener("touchstart", onTouchStart, { passive: true });
+    container.addEventListener("touchmove", onTouchMove, { passive: false });
+    container.addEventListener("touchend", onTouchEnd);
+    container.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
 
     return () => {
-      container.removeEventListener('touchstart', onTouchStart);
-      container.removeEventListener('touchmove', onTouchMove);
-      container.removeEventListener('touchend', onTouchEnd);
-      container.removeEventListener('mousedown', onMouseDown);
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
+      container.removeEventListener("touchstart", onTouchStart);
+      container.removeEventListener("touchmove", onTouchMove);
+      container.removeEventListener("touchend", onTouchEnd);
+      container.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
     };
   }, [currentPage]);
 
   useEffect(() => {
     if (!optionsRectShown) return;
     const handleDocClick = (e) => {
-      const rect = document.querySelector('.OptionsRect');
+      const rect = document.querySelector(".OptionsRect");
       const elm = optionsData.coords.elm;
       if (rect && !rect.contains(e.target) && elm && !elm.contains(e.target)) {
         setOptionsRectShown(false);
-        document.querySelectorAll('.page .verse').forEach(v => v.classList.remove('selected'));
+        document.querySelectorAll(".page .verse").forEach((v) => v.classList.remove("selected"));
       }
     };
-    document.addEventListener('click', handleDocClick, true);
-    return () => document.removeEventListener('click', handleDocClick, true);
+    document.addEventListener("click", handleDocClick, true);
+    return () => document.removeEventListener("click", handleDocClick, true);
   }, [optionsRectShown, optionsData.coords.elm]);
 
   useEffect(() => {
+    if (!quickMenuOpen) return;
+    const handler = (e) => {
+      if (quickMenuRef.current && !quickMenuRef.current.contains(e.target)) setQuickMenuOpen(false);
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, [quickMenuOpen]);
+
+  useEffect(() => {
     if (!playingVerse) return;
-    const el = document.getElementById('verse_' + playingVerse);
-    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' }); el.classList.add('selected'); }
+    const el = document.getElementById("verse_" + playingVerse);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+      el.classList.add("selected");
+    }
   }, [playingVerse, currentPage]);
 
   useEffect(() => {
     if (!highlightCurrentVerse || !currentVerse) return;
-    const el = document.getElementById('verse_' + currentVerse);
+    const el = document.getElementById("verse_" + currentVerse);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
-      el.classList.add('red');
-      setTimeout(() => { el.classList.remove('red'); setHighlightCurrentVerse(false); }, 3000);
+      el.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+      el.classList.add("red");
+      setTimeout(() => {
+        el.classList.remove("red");
+        setHighlightCurrentVerse(false);
+      }, 3000);
     }
   }, [highlightCurrentVerse, currentVerse, currentPage]);
 
-  const showNotify = useCallback((desc, cls = '', duration = 1000) => {
+  const showNotify = useCallback((desc, cls = "", duration = 1000) => {
     if (notifyTimerRef.current) clearTimeout(notifyTimerRef.current);
-    setNotifyDesc(desc); setNotifyClass(cls); setNotifyShown(true);
+    setNotifyDesc(desc);
+    setNotifyClass(cls);
+    setNotifyShown(true);
     notifyTimerRef.current = setTimeout(() => {
-      setNotifyShown(false); setNotifyDesc(''); setNotifyClass(''); setIsBookmarkDisabled(false);
+      setNotifyShown(false);
+      setNotifyDesc("");
+      setNotifyClass("");
+      setIsBookmarkDisabled(false);
     }, duration);
   }, []);
 
   const getHighlightedVerseColor = (obj) => {
-    const arr = JSON.parse(localStorage.getItem('highlightedVerses')) || [];
-    const found = arr.find(item => item.globalVerse === obj.globalVerse);
+    const arr = JSON.parse(localStorage.getItem("highlightedVerses")) || [];
+    const found = arr.find((item) => item.globalVerse === obj.globalVerse);
     return found ? found.color : null;
   };
 
   const showVerseOpt = (obj, e) => {
     const verseElm = e.currentTarget;
-    document.querySelectorAll('.page .verse').forEach(v => v.classList.remove('selected'));
-    verseElm.classList.add('selected');
+    document.querySelectorAll(".page .verse").forEach((v) => v.classList.remove("selected"));
+    verseElm.classList.add("selected");
     const rect = verseElm.getBoundingClientRect();
-    setOptionsData(prev => ({
+    setOptionsData((prev) => ({
       ...prev,
       coords: { top: rect.top, left: rect.left, right: rect.right, width: rect.width, elm: verseElm },
       obj,
@@ -304,45 +382,63 @@ export default function ReadPage() {
     if (scrollUpdateCleanupRef.current) scrollUpdateCleanupRef.current();
     const updateTop = () => {
       const r = verseElm.getBoundingClientRect();
-      setOptionsData(prev => ({ ...prev, coords: { ...prev.coords, top: r.top } }));
+      setOptionsData((prev) => ({ ...prev, coords: { ...prev.coords, top: r.top } }));
     };
-    window.addEventListener('scroll', updateTop);
-    scrollUpdateCleanupRef.current = () => window.removeEventListener('scroll', updateTop);
+    window.addEventListener("scroll", updateTop);
+    scrollUpdateCleanupRef.current = () => window.removeEventListener("scroll", updateTop);
   };
 
   const bookmarkPage = () => {
     setIsBookmarkDisabled(true);
     const obj = {
-      juz: currentPage[0].juz, page: currentPage[0].page,
-      name: getSurahName(currentPage), type: currentPage[0].type,
-      surah: currentPage[0].surah, verses: currentPage[0].verses,
+      juz: currentPage[0].juz,
+      page: currentPage[0].page,
+      name: getSurahName(currentPage),
+      type: currentPage[0].type,
+      surah: currentPage[0].surah,
+      verses: currentPage[0].verses,
     };
-    const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-    if (!bookmarks.find(item => item.page === obj.page)) {
+    const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+    if (!bookmarks.find((item) => item.page === obj.page)) {
       bookmarks.push(obj);
-      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-      showNotify('تمت الاضافة للمفضلة');
+      localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+      showNotify("تمت الاضافة للمفضلة");
     } else {
-      showNotify('هذه الصفحة مضافة بالفعل', 'alert');
+      showNotify("هذه الصفحة مضافة بالفعل", "alert");
     }
   };
 
-  const pauseReciting = () => { audioRef.current?.pause(); setIsPlaying(false); };
-  const resumeReciting = () => { audioRef.current?.play(); setIsPlaying(true); };
+  const pauseReciting = () => {
+    audioRef.current?.pause();
+    setIsPlaying(false);
+  };
+  const resumeReciting = () => {
+    audioRef.current?.play();
+    setIsPlaying(true);
+  };
 
-  const handlePlayingUpdate = useCallback((update) => {
-    if (update.networkHint) { showNotify(update.notifyDesc || 'انت غير متصل بالانترنت', update.notifyClass || 'alert', 2000); return; }
-    if (update.isPlaying !== undefined) setIsPlaying(update.isPlaying);
-    if (update.isInitialPlaying !== undefined) setIsInitialPlaying(update.isInitialPlaying);
-  }, [showNotify]);
+  const handlePlayingUpdate = useCallback(
+    (update) => {
+      if (update.networkHint) {
+        showNotify(update.notifyDesc || "انت غير متصل بالانترنت", update.notifyClass || "alert", 2000);
+        return;
+      }
+      if (update.isPlaying !== undefined) setIsPlaying(update.isPlaying);
+      if (update.isInitialPlaying !== undefined) setIsInitialPlaying(update.isInitialPlaying);
+    },
+    [showNotify]
+  );
 
-  const handleTextCopied = () => showNotify('تم النسخ');
-  const handleHighlightChanged = () => { setOptionsRectShown(false); setHighlightTick(t => t + 1); };
+  const handleTextCopied = () => showNotify("تم النسخ");
+  const handleHighlightChanged = () => {
+    setOptionsRectShown(false);
+    setHighlightTick((t) => t + 1);
+  };
 
   const saveOptionsData = (key, value) => {
-    setOptionsData(prev => {
+    setOptionsData((prev) => {
       const updated = { ...prev, [key]: value };
-      localStorage.setItem('optionsData', JSON.stringify({ reciter: updated.reciter, explainer: updated.explainer, translator: updated.translator }));
+      localStorage.setItem("optionsData", JSON.stringify({ reciter: updated.reciter, explainer: updated.explainer, translator: updated.translator }));
       return updated;
     });
   };
@@ -350,173 +446,211 @@ export default function ReadPage() {
   const handleAutoChange = (e) => {
     const val = e.target.checked;
     setIsAuto(val);
-    localStorage.setItem('autoReciting', JSON.stringify(val));
+    localStorage.setItem("autoReciting", JSON.stringify(val));
   };
 
   if (isLoading) return <NotFound />;
   if (!currentPage) return null;
 
   const surahName = getSurahName(currentPage);
-  const cardBg = { background: isDark ? '#0c0900' : '#fdf8f0' };
+  const cardBg = { background: isDark ? "#0c0900" : "#fdf8f0" };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden font-tajawal" style={{ background: isDark ? '#050505' : '#fdfaf5' }}>
+    <div className="h-screen flex flex-col overflow-hidden font-tajawal" style={{ background: isDark ? "#050505" : "#fdfaf5" }}>
       {notifyShown && <div className={`NotifyModal ${notifyClass}`}>{notifyDesc}</div>}
 
       {optionsRectShown && (
         <OptionsRect
-          options={optionsData} isAuto={isAuto}
-          onUpdate={handlePlayingUpdate} onTextCopied={handleTextCopied}
-          onClose={handleHighlightChanged} onPlayVerse={setPlayingVerse}
+          options={optionsData}
+          isAuto={isAuto}
+          onUpdate={handlePlayingUpdate}
+          onTextCopied={handleTextCopied}
+          onClose={handleHighlightChanged}
+          onPlayVerse={setPlayingVerse}
         />
       )}
 
-      <div className="flex-1 flex justify-center px-3 pt-5 pb-5 overflow-hidden">
+      <div className="flex-1 flex justify-center px-2 py-1 overflow-hidden">
         <div className="w-full max-w-[560px] flex flex-col gap-4">
-
           {/* slider viewport — overflow-hidden clips the sliding card */}
           <div
             ref={containerRef}
             className="flex-1 rounded-3xl overflow-hidden"
             style={{
-              border: `1px solid ${isDark ? 'rgba(212,168,67,0.15)' : 'rgba(180,130,40,0.2)'}`,
-              boxShadow: isDark ? '0 8px 40px rgba(0,0,0,0.5)' : '0 8px 40px rgba(180,130,40,0.1)',
+              border: `1px solid ${isDark ? "rgba(212,168,67,0.15)" : "rgba(180,130,40,0.2)"}`,
+              boxShadow: isDark ? "0 8px 40px rgba(0,0,0,0.5)" : "0 8px 40px rgba(180,130,40,0.1)",
             }}
           >
-            <div ref={pageScrollRef} className="page scrollbar h-full px-4 pt-4 pb-4"
-              style={{ overflowY: 'auto', willChange: 'transform', ...cardBg }}>
+            <div ref={pageScrollRef} className="page scrollbar h-full px-4 pt-4 pb-4" style={{ overflowY: "auto", ...cardBg }}>
+              {/* bar */}
+              <div className="select-none overflow-hidden py-[5px] mb-[20px] relative" ref={barRef}>
+                <span className="bar-label text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-right tracking-[1px]">
+                  {juz(currentPage[0].juz)}
+                </span>
+                <span
+                  className="font-bold tabular-nums absolute left-1/2 top-1/2 mx-auto inline-block -translate-x-1/2 -translate-y-1/2 text-xs"
+                  style={{ color: isDark ? "rgba(212,168,67,0.6)" : "rgba(120,80,10,0.55)", fontFamily: "Arial,sans-serif" }}
+                >
+                  {arNum(displayNum)} / 604
+                </span>
+                <span className="bar-label text-[15px] font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-left font-kitab">
+                  {surahName}
+                </span>
+              </div>
 
-                {/* bar */}
-                <div className="select-none overflow-hidden py-[5px] mb-[20px] relative" ref={barRef}>
-                  <span className="bar-label text-[15px] font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-left font-kitab">
-                    {surahName}
-                  </span>
-                  <span className="bar-label text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-right tracking-[1px]">
-                    {juz(currentPage[0].juz)}
-                  </span>
-                </div>
+              {/* options toolbar */}
+              <div className="overflow-hidden mb-[5px] py-[5px]">
+                <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.home }} onClick={() => router.push("/")} />
+                <button
+                  className={optBtnBase}
+                  dangerouslySetInnerHTML={{ __html: icons.search }}
+                  onClick={() => setModal({ name: "search", data: null })}
+                />
+                <button
+                  disabled={isBookmarkDisabled}
+                  className={`${optBtnBase}${isBookmarkDisabled ? " disabled" : ""}`}
+                  dangerouslySetInnerHTML={{ __html: icons.bookmark }}
+                  onClick={bookmarkPage}
+                />
+                <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: isDark ? SUN : MOON }} onClick={toggleDark} />
+                {isInitialPlaying &&
+                  (isPlaying ? (
+                    <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.pause }} onClick={pauseReciting} />
+                  ) : (
+                    <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.playSolid }} onClick={resumeReciting} />
+                  ))}
+                {isInitialPlaying && (
+                  <label className="auto-label h-10 leading-[45px] font-tajawal text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] select-none inline-flex items-center justify-items-center gap-[15px] mr-[10px]">
+                    <input
+                      type="checkbox"
+                      className="o-switch-btn scale-[1.3] mx-[10px] ml-[15px] mt-[10px] float-right"
+                      checked={isAuto}
+                      onChange={handleAutoChange}
+                    />
+                    تلقائي
+                  </label>
+                )}
+              </div>
 
-                {/* options toolbar */}
-                <div className="overflow-hidden mb-[5px] py-[5px]">
-                  <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.home }} onClick={() => router.push('/')} />
-                  <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.search }} onClick={() => setModal({ name: 'search', data: null })} />
-                  <button
-                    disabled={isBookmarkDisabled}
-                    className={`${optBtnBase}${isBookmarkDisabled ? ' disabled' : ''}`}
-                    dangerouslySetInnerHTML={{ __html: icons.bookmark }}
-                    onClick={bookmarkPage}
-                  />
-                  <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: isDark ? SUN : MOON }} onClick={toggleDark} />
-                  {isInitialPlaying && (
-                    isPlaying
-                      ? <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.pause }} onClick={pauseReciting} />
-                      : <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.playSolid }} onClick={resumeReciting} />
-                  )}
-                  {isInitialPlaying && (
-                    <label className="auto-label h-10 leading-[45px] font-tajawal text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] select-none inline-flex items-center justify-items-center gap-[15px] mr-[10px]">
-                      <input type="checkbox" className="o-switch-btn scale-[1.3] mx-[10px] ml-[15px] mt-[10px] float-right" checked={isAuto} onChange={handleAutoChange} />
-                      تلقائي
-                    </label>
-                  )}
-                </div>
-
-                {/* page content */}
-                <div className={`page-content leading-relaxed relative${hasSajda ? ' has-sajda' : ''}`}>
-                  {currentPage.map((obj, index) => (
-                    <span key={index}>
-                      {obj.localVerse === 1 && (
-                        <div className="page-head text-[#1a0f00] bg-gradient-to-r from-[#c8952a] to-[#e8b85a] text-[18px] text-center mb-[10px] rounded-[50px] py-[20px] select-none max-w-[200px] mx-auto my-[20px] shadow-md shadow-amber-900/30">
-                          <p className="font-bold w-[30px] h-[30px] leading-[30px] rounded-full mx-auto mb-[10px] bg-white text-[#1a0f00] text-xs m-0" style={{ fontFamily: 'Arial,sans-serif' }}>
-                            {arNum(obj.surah)}
-                          </p>
-                          <p className="font-bold text-[20px] font-kitab m-0 mb-[5px]">سُورَةُ {obj.name}</p>
-                          <p className="m-0 font-tajawal text-xs font-bold">
-                            <span>أياتها {arNum(obj.verses)}</span>{' - '}<span>{surahType(obj.type)}</span>
-                          </p>
+              {/* page content */}
+              <div className={`page-content leading-[1.725] relative${hasSajda ? " has-sajda" : ""}`}>
+                {currentPage.map((obj, index) => (
+                  <span key={index}>
+                    {obj.localVerse === 1 && (
+                      <div className="page-head text-[#1a0f00] bg-gradient-to-r from-[#c8952a] to-[#e8b85a] text-[18px] text-center mb-[10px] rounded-[50px] py-[10px] select-none max-w-[200px] mx-auto my-[10px] shadow-md shadow-amber-900/30">
+                        <p
+                          className="font-bold w-[30px] h-[30px] leading-[30px] rounded-full mx-auto mb-[10px] bg-white text-[#1a0f00] text-xs m-0"
+                          style={{ fontFamily: "Arial,sans-serif" }}
+                        >
+                          {arNum(obj.surah)}
+                        </p>
+                        <p className="font-bold text-[20px] font-kitab m-0 mb-[5px]">سُورَةُ {obj.name}</p>
+                        <p className="m-0 font-tajawal text-xs font-bold">
+                          <span>أياتها {arNum(obj.verses)}</span>
+                          {" - "}
+                          <span>{surahType(obj.type)}</span>
+                        </p>
+                      </div>
+                    )}
+                    {obj.localVerse === 1 && ![1, 9].includes(obj.surah) && <div className="bismillah-text">{START}</div>}
+                    <span
+                      id={"verse_" + obj.globalVerse}
+                      className={[getHighlightedVerseColor(obj), "verse"].filter(Boolean).join(" ")}
+                      onClick={(e) => showVerseOpt(obj, e)}
+                    >
+                      <span className="text" dangerouslySetInnerHTML={{ __html: highlight(obj.text, GOD_ARR, "god") }} />
+                      <span className="num">{arNum(obj.localVerse)}</span>
+                      {obj.sajda && (
+                        <div className="sajda">
+                          <span dangerouslySetInnerHTML={{ __html: icons.sajda }} />
+                          <span>سجدة</span>
                         </div>
                       )}
-                      {obj.localVerse === 1 && ![1, 9].includes(obj.surah) && (
-                        <div className="bismillah-text">{START}</div>
-                      )}
-                      <span
-                        id={'verse_' + obj.globalVerse}
-                        className={[getHighlightedVerseColor(obj), 'verse'].filter(Boolean).join(' ')}
-                        onClick={(e) => showVerseOpt(obj, e)}
-                      >
-                        <span className="text" dangerouslySetInnerHTML={{ __html: highlight(obj.text, GOD_ARR, 'god') }} />
-                        <span className="num">{arNum(obj.localVerse)}</span>
-                        {obj.sajda && (
-                          <div className="sajda">
-                            <span dangerouslySetInnerHTML={{ __html: icons.sajda }} />
-                            <span>سجدة</span>
-                          </div>
-                        )}
-                      </span>
                     </span>
-                  ))}
-                </div>
-
-                {/* page footer */}
-                <div className="select-none grid justify-items-center items-center w-full max-w-[500px] mx-auto my-[10px] gap-y-[20px]">
-                  <div className='flex justify-between gap-4'>
-                    <div>
-                      <label className="page-footer-label w-full block text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] font-tajawal mb-[5px] mr-[5px]">القارئ</label>
-                      <div className="o-select">
-                        <select value={optionsData.reciter} onChange={e => saveOptionsData('reciter', e.target.value)}>
-                          <option value="mahermuaiqly">ماهر المعيقلى</option>
-                          <option value="ahmedajamy">احمد العجمى</option>
-                          <option value="husary">الحصرى</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="page-footer-label w-full block text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] font-tajawal mb-[5px] mr-[5px]">التفسير</label>
-                      <div className="o-select">
-                        <select value={optionsData.explainer} onChange={e => saveOptionsData('explainer', e.target.value)}>
-                          <option value="muyassar">الميسر</option>
-                          <option value="jalalayn">الجلالين</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {[['المفضلة','bookmarks'],['اذكار','azkar'],['تسبيح','tasbih'],['دعاء الختم','doaa'],['الختمات','completion']].map(([label, name]) => (
-                      <button key={name}
-                        onClick={() => setModal({ name, data: null })}
-                        className="text-xs font-bold px-4 py-2 rounded-full transition-all active:scale-95"
-                        style={{
-                          background: isDark ? 'rgba(212,168,67,0.07)' : 'rgba(180,130,40,0.07)',
-                          border: `1px solid ${isDark ? 'rgba(212,168,67,0.18)' : 'rgba(180,130,40,0.22)'}`,
-                          color: isDark ? '#d4a843' : '#8b5e00',
-                        }}>
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* bottom navigation */}
           <div className="flex items-center justify-between px-1 shrink-0">
             <button
-              className="nav-btn w-12 h-12 rounded-full border-0 outline-none cursor-pointer transition-all disabled:opacity-25 active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]"
-              style={{ background: 'linear-gradient(135deg,#c8952a,#e8b85a)', boxShadow: '0 4px 16px rgba(212,168,67,0.25)' }}
+              className="nav-btn !w-10 !h-10 rounded-full border-0 outline-none cursor-pointer transition-all disabled:opacity-25 active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]"
+              style={{ background: "linear-gradient(135deg,#c8952a,#e8b85a)", boxShadow: "0 4px 16px rgba(212,168,67,0.25)" }}
               dangerouslySetInnerHTML={{ __html: icons.next }}
-              onClick={next} disabled={displayNum >= 604}
-            />
-            <span className="text-sm font-bold tabular-nums" style={{ color: isDark ? 'rgba(212,168,67,0.6)' : 'rgba(120,80,10,0.55)', fontFamily: 'Arial,sans-serif' }}>
-              {arNum(displayNum)} / 604
-            </span>
-            <button
-              className="nav-btn w-12 h-12 rounded-full border-0 outline-none cursor-pointer transition-all disabled:opacity-25 active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]"
-              style={{ background: 'linear-gradient(135deg,#c8952a,#e8b85a)', boxShadow: '0 4px 16px rgba(212,168,67,0.25)' }}
-              dangerouslySetInnerHTML={{ __html: icons.prev }}
-              onClick={prev} disabled={displayNum <= 1}
-            />
-          </div>
+              onClick={next}
+              disabled={displayNum >= 604}
+            ></button>
 
+            <div className="select-none flex items-center justify-center gap-4 w-full max-w-[500px] mx-auto my-[10px]">
+              <div className="o-select !min-w-36">
+                <select value={optionsData.reciter} onChange={(e) => saveOptionsData("reciter", e.target.value)}>
+                  <option disabled value="">القارئ</option>
+                  <option value="mahermuaiqly">ماهر المعيقلى</option>
+                  <option value="ahmedajamy">احمد العجمى</option>
+                  <option value="husary">الحصرى</option>
+                </select>
+              </div>
+
+              <div className="relative" ref={quickMenuRef}>
+                <button
+                  onClick={() => setQuickMenuOpen((o) => !o)}
+                  className="text-xs font-bold px-4 py-2 rounded-full transition-all active:scale-95"
+                  style={{
+                    background: isDark ? "rgba(212,168,67,0.1)" : "rgba(180,130,40,0.08)",
+                    border: `1px solid ${isDark ? "rgba(212,168,67,0.25)" : "rgba(180,130,40,0.28)"}`,
+                    color: isDark ? "#d4a843" : "#8b5e00",
+                  }}
+                >
+                  ⋯
+                </button>
+                {quickMenuOpen && (
+                  <div
+                    className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded-2xl py-1 flex flex-col min-w-[130px] z-50"
+                    style={{
+                      background: isDark ? "#1a1200" : "#fff",
+                      border: `1px solid ${isDark ? "rgba(212,168,67,0.2)" : "rgba(180,130,40,0.18)"}`,
+                      boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+                    }}
+                  >
+                    {[
+                      ["المفضلة", "bookmarks"],
+                      ["اذكار", "azkar"],
+                      ["تسبيح", "tasbih"],
+                      ["دعاء الختم", "doaa"],
+                      ["الختمات", "completion"],
+                    ].map(([label, name]) => (
+                      <button
+                        key={name}
+                        onClick={() => { setModal({ name, data: null }); setQuickMenuOpen(false); }}
+                        className="text-xs font-bold px-4 py-2 text-right transition-all active:scale-95 hover:opacity-75"
+                        style={{ color: isDark ? "#d4a843" : "#8b5e00" }}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="o-select !min-w-36">
+                <select value={optionsData.explainer} onChange={(e) => saveOptionsData("explainer", e.target.value)}>
+                  <option disabled value="">التفسير</option>
+                  <option value="muyassar">الميسر</option>
+                  <option value="jalalayn">الجلالين</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              className="nav-btn !w-10 !h-10 rounded-full border-0 outline-none cursor-pointer transition-all disabled:opacity-25 active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]"
+              style={{ background: "linear-gradient(135deg,#c8952a,#e8b85a)", boxShadow: "0 4px 16px rgba(212,168,67,0.25)" }}
+              dangerouslySetInnerHTML={{ __html: icons.prev }}
+              onClick={prev}
+              disabled={displayNum <= 1}
+            ></button>
+          </div>
         </div>
       </div>
     </div>
