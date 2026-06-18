@@ -481,7 +481,7 @@ export default function ReadPage() {
               boxShadow: isDark ? "0 8px 40px rgba(0,0,0,0.5)" : "0 8px 40px rgba(180,130,40,0.1)",
             }}
           >
-            <div ref={pageScrollRef} className="page scrollbar h-full px-4 pt-4 pb-4" style={{ overflowY: "auto", ...cardBg }}>
+            <div ref={pageScrollRef} className="page scrollbar h-full p-3" style={{ overflowY: "auto", ...cardBg }}>
               {/* bar */}
               <div className="select-none overflow-hidden py-[5px] mb-[20px] relative" ref={barRef}>
                 <span className="bar-label text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-right tracking-[1px]">
@@ -585,7 +585,7 @@ export default function ReadPage() {
 
             <div className="select-none flex items-center justify-center gap-4 w-full max-w-[500px] mx-auto my-[10px]">
               <div className="o-select !min-w-36">
-                <select value={optionsData.reciter} onChange={(e) => saveOptionsData("reciter", e.target.value)}>
+                <select className="!bg-[#fdfaf5] dark:!bg-[#050505] dark:!text-white" value={optionsData.reciter} onChange={(e) => saveOptionsData("reciter", e.target.value)}>
                   <option disabled value="">القارئ</option>
                   <option value="mahermuaiqly">ماهر المعيقلى</option>
                   <option value="ahmedajamy">احمد العجمى</option>
@@ -624,7 +624,7 @@ export default function ReadPage() {
                       <button
                         key={name}
                         onClick={() => { setModal({ name, data: null }); setQuickMenuOpen(false); }}
-                        className="text-xs font-bold px-4 py-2 text-right transition-all active:scale-95 hover:opacity-75"
+                        className="text-xs font-bold px-4 py-2 text-center active:scale-95 hover:!text-white hover:!bg-[linear-gradient(135deg,#c8952a,#e8b85a)] rounded-md"
                         style={{ color: isDark ? "#d4a843" : "#8b5e00" }}
                       >
                         {label}
@@ -635,7 +635,7 @@ export default function ReadPage() {
               </div>
 
               <div className="o-select !min-w-36">
-                <select value={optionsData.explainer} onChange={(e) => saveOptionsData("explainer", e.target.value)}>
+                <select className="!bg-[#fdfaf5] dark:!bg-[#050505] dark:!text-white" value={optionsData.explainer} onChange={(e) => saveOptionsData("explainer", e.target.value)}>
                   <option disabled value="">التفسير</option>
                   <option value="muyassar">الميسر</option>
                   <option value="jalalayn">الجلالين</option>
