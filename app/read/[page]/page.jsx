@@ -17,39 +17,6 @@ const SUN = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="c
 
 const optBtnBase = 'opt-btn float-right w-10 h-10 bg-gradient-to-r from-[#c8952a] to-[#e8b85a] mx-[5px] rounded-full border-0 outline-none cursor-pointer active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]';
 
-/* Non-interactive preview shown in left/right slider slots */
-function SidePageView({ pageData, isDark }) {
-  if (!pageData) return null;
-  const textColor = isDark ? 'rgba(250,235,200,0.75)' : '#2a1a00';
-  return (
-    <div className="h-full px-4 pt-4 pb-4 overflow-hidden select-none pointer-events-none" dir="rtl">
-      {pageData.map((obj, i) => (
-        <span key={i}>
-          {obj.localVerse === 1 && (
-            <div className="text-center my-4">
-              <span className="inline-block text-[#1a0f00] text-[11px] font-bold rounded-full px-3 py-1"
-                style={{ background: 'linear-gradient(to left,#c8952a,#e8b85a)' }}>
-                سُورَةُ {obj.name}
-              </span>
-            </div>
-          )}
-          {obj.localVerse === 1 && ![1, 9].includes(obj.surah) && (
-            <div className="text-center text-[12px] mb-2 font-almushaf"
-              style={{ background: 'linear-gradient(to left,#c8952a,#f0c060)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              {START}
-            </div>
-          )}
-          <span className="font-kitab text-[25px] leading-[2.1]" style={{ color: textColor }}>{obj.text}</span>
-          <span className="inline-flex items-center justify-center w-[35px] h-[35px] rounded-full text-[#1a0f00] text-[15px] mx-[8px] align-middle"
-            style={{ background: 'linear-gradient(135deg,#c8952a,#e8b85a)', fontFamily: 'Arial,sans-serif' }}>
-            {arNum(obj.localVerse)}
-          </span>
-        </span>
-      ))}
-    </div>
-  );
-}
-
 export default function ReadPage() {
   const { page: pageParam } = useParams();
   const router = useRouter();
@@ -57,7 +24,6 @@ export default function ReadPage() {
 
   const pageNum = useRef(+pageParam);
   const [currentPage, setCurrentPage] = useState(null);
-  const [sliderPages, setSliderPages] = useState([null, null, null]); // [next, current, prev]
   const [isLoading, setIsLoading] = useState(true);
   const [hasSajda, setHasSajda] = useState(false);
   const [optionsRectShown, setOptionsRectShown] = useState(false);
@@ -80,13 +46,12 @@ export default function ReadPage() {
   const [playingVerse, setPlayingVerse] = useState(null);
 
   const containerRef = useRef(null);   // overflow-hidden slider viewport
-  const trackRef = useRef(null);       // 3-card flex strip
-  const pageScrollRef = useRef(null);  // scrollable inner div of center card
+  const pageScrollRef = useRef(null);  // scrollable page card — also receives slide transform
   const barRef = useRef(null);
   const intervalRef = useRef(null);
   const notifyTimerRef = useRef(null);
   const scrollUpdateCleanupRef = useRef(null);
-  const isAnimatingRef = useRef(false);
+  const slideNavRef = useRef({ next: () => {}, prev: () => {} });
 
   const getLastReadObj = (arr) => {
     const f = arr[0];
@@ -102,18 +67,8 @@ export default function ReadPage() {
     return maxFirst >= maxSecond ? page[0].name : page[page.length - 1].name;
   }, []);
 
-  const resetTrack = useCallback(() => {
-    if (!trackRef.current || !containerRef.current) return;
-    const w = containerRef.current.offsetWidth;
-    trackRef.current.style.transition = 'none';
-    trackRef.current.style.transform = `translateX(${w}px)`;
-  }, []);
-
-  const loadSliderPages = useCallback((num) => {
+  const loadPage = useCallback((num) => {
     const curr = window.pages?.[num] || null;
-    const nxt  = window.pages?.[num + 1] || null;
-    const prv  = window.pages?.[num - 1] || null;
-    setSliderPages([nxt, curr, prv]);
     setCurrentPage(curr);
     if (curr) {
       setHasSajda(!!curr.find(item => item.sajda));
@@ -121,9 +76,7 @@ export default function ReadPage() {
       setIsLoading(false);
     }
     if (pageScrollRef.current) pageScrollRef.current.scrollTop = 0;
-    // Reset track after React flushes
-    setTimeout(resetTrack, 0);
-  }, [resetTrack]);
+  }, []);
 
   useEffect(() => {
     const num = pageNum.current;
@@ -135,14 +88,14 @@ export default function ReadPage() {
     setOptionsData(prev => ({ ...prev, reciter: saved.reciter, explainer: saved.explainer, translator: saved.translator }));
 
     if (window.pages) {
-      loadSliderPages(num);
+      loadPage(num);
     } else {
       setIsLoading(true);
       intervalRef.current = setInterval(() => {
         if (window.pages) {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
-          loadSliderPages(num);
+          loadPage(num);
         }
       }, 1);
       setTimeout(() => {
@@ -150,30 +103,8 @@ export default function ReadPage() {
       }, 5000);
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [loadSliderPages]);
+  }, [loadPage]);
 
-  /* Animated navigation used by swipe */
-  const goToPage = useCallback((num, direction) => {
-    if (isAnimatingRef.current) return;
-    if (num < 1 || num > 604) return;
-    isAnimatingRef.current = true;
-    const w = containerRef.current?.offsetWidth || 0;
-    const targetX = direction === 'next' ? 0 : 2 * w;
-    if (trackRef.current) {
-      trackRef.current.style.transition = 'transform 0.32s ease';
-      trackRef.current.style.transform = `translateX(${targetX}px)`;
-    }
-    setTimeout(() => {
-      pageNum.current = num;
-      setDisplayNum(num);
-      window.history.replaceState(null, '', '/read/' + num);
-      setOptionsRectShown(false);
-      loadSliderPages(num);
-      isAnimatingRef.current = false;
-    }, 320);
-  }, [loadSliderPages]);
-
-  /* Button / keyboard navigation — instant, no animation */
   const next = useCallback(() => {
     const num = Math.min(pageNum.current + 1, 604);
     if (num === pageNum.current) return;
@@ -181,8 +112,8 @@ export default function ReadPage() {
     setDisplayNum(num);
     window.history.replaceState(null, '', '/read/' + num);
     setOptionsRectShown(false);
-    loadSliderPages(num);
-  }, [loadSliderPages]);
+    loadPage(num);
+  }, [loadPage]);
 
   const prev = useCallback(() => {
     const num = Math.max(pageNum.current - 1, 1);
@@ -191,8 +122,11 @@ export default function ReadPage() {
     setDisplayNum(num);
     window.history.replaceState(null, '', '/read/' + num);
     setOptionsRectShown(false);
-    loadSliderPages(num);
-  }, [loadSliderPages]);
+    loadPage(num);
+  }, [loadPage]);
+
+  /* keep slideNavRef fresh every render */
+  slideNavRef.current = { next, prev };
 
   useEffect(() => {
     setReadViewEnabled(true);
@@ -202,11 +136,11 @@ export default function ReadPage() {
         setDisplayNum(num);
         window.history.replaceState(null, '', '/read/' + num);
         setOptionsRectShown(false);
-        loadSliderPages(num);
+        loadPage(num);
       },
     };
     return () => { setReadViewEnabled(false); readViewRef.current = null; };
-  }, [setReadViewEnabled, readViewRef, loadSliderPages]);
+  }, [setReadViewEnabled, readViewRef, loadPage]);
 
   useEffect(() => {
     if (!currentPage) return;
@@ -218,67 +152,99 @@ export default function ReadPage() {
     return () => document.body.removeEventListener('keydown', handleKey);
   }, [currentPage, next, prev]);
 
-  /* Slider touch — horizontal drag reveals adjacent pages */
+  /* Slide effect — same approach as the hero phone */
   useEffect(() => {
-    if (!currentPage || !containerRef.current || !trackRef.current) return;
+    if (!currentPage || !containerRef.current || !pageScrollRef.current) return;
     const container = containerRef.current;
-    const track = trackRef.current;
-    let startX = 0, startY = 0, isDragging = false, isVertical = false, decidedAxis = false;
+    const card = pageScrollRef.current;
+    let startX = 0, startY = 0, dragging = false, isVert = false, axisDecided = false, moved = false;
 
-    const onTouchStart = (e) => {
-      if (isAnimatingRef.current) return;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      isDragging = true;
-      isVertical = false;
-      decidedAxis = false;
-      track.style.transition = 'none';
-      const w = container.offsetWidth;
-      track.style.transform = `translateX(${w}px)`;
+    const startDrag = (x, y) => {
+      startX = x; startY = y;
+      dragging = true; isVert = false; axisDecided = false; moved = false;
+      card.style.transition = 'none';
     };
 
-    const onTouchMove = (e) => {
-      if (!isDragging) return;
-      const dx = e.touches[0].clientX - startX;
-      const dy = e.touches[0].clientY - startY;
-      if (!decidedAxis && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
-        decidedAxis = true;
-        isVertical = Math.abs(dy) > Math.abs(dx);
+    const moveDrag = (x, y) => {
+      if (!dragging) return;
+      const dx = x - startX;
+      const dy = y - startY;
+      if (!axisDecided && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+        axisDecided = true;
+        isVert = Math.abs(dy) > Math.abs(dx);
       }
-      if (!decidedAxis || isVertical) return;
-      e.preventDefault();
-      const w = container.offsetWidth;
+      if (!axisDecided || isVert) return;
+      moved = true;
       const n = pageNum.current;
       const atEdge = (dx > 0 && n >= 604) || (dx < 0 && n <= 1);
-      track.style.transform = `translateX(${w - (atEdge ? dx * 0.12 : dx)}px)`;
+      card.style.transform = `translateX(${atEdge ? dx * 0.12 : dx * 0.75}px)`;
     };
 
-    const onTouchEnd = (e) => {
-      if (!isDragging) return;
-      isDragging = false;
-      if (isVertical || !decidedAxis) return;
-      const dx = e.changedTouches[0].clientX - startX;
+    const endDrag = (x) => {
+      if (!dragging) return;
+      dragging = false;
+      if (isVert || !axisDecided || !moved) {
+        card.style.transform = '';
+        return;
+      }
+      const dx = x - startX;
       const w = container.offsetWidth;
       const n = pageNum.current;
-      if (dx > w * 0.28 && n < 604) {
-        goToPage(n + 1, 'next');
-      } else if (dx < -(w * 0.28) && n > 1) {
-        goToPage(n - 1, 'prev');
+      const THRESHOLD = w * 0.25;
+
+      const slideOut = (dir, onDone) => {
+        card.style.transition = 'transform 0.22s ease-in';
+        card.style.transform = `translateX(${dir * w}px)`;
+        setTimeout(() => {
+          onDone();
+          card.style.transition = 'none';
+          card.style.transform = `translateX(${-dir * w}px)`;
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            card.style.transition = 'transform 0.3s cubic-bezier(0.16,1,0.3,1)';
+            card.style.transform = '';
+            setTimeout(() => { if (card) card.style.transition = ''; }, 300);
+          }));
+        }, 220);
+      };
+
+      if (dx > THRESHOLD && n < 604) {
+        slideOut(1, () => slideNavRef.current.next());
+      } else if (dx < -THRESHOLD && n > 1) {
+        slideOut(-1, () => slideNavRef.current.prev());
       } else {
-        track.style.transition = 'transform 0.28s ease';
-        track.style.transform = `translateX(${w}px)`;
+        card.style.transition = 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)';
+        card.style.transform = '';
+        setTimeout(() => { if (card) card.style.transition = ''; }, 350);
       }
     };
+
+    const onTouchStart = (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    const onTouchMove = (e) => {
+      moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+      if (moved) e.preventDefault();
+    };
+    const onTouchEnd = (e) => endDrag(e.changedTouches[0].clientX);
+
+    const onMouseDown = (e) => startDrag(e.clientX, e.clientY);
+    const onMouseMove = (e) => moveDrag(e.clientX, e.clientY);
+    const onMouseUp = (e) => endDrag(e.clientX);
 
     container.addEventListener('touchstart', onTouchStart, { passive: true });
     container.addEventListener('touchmove', onTouchMove, { passive: false });
     container.addEventListener('touchend', onTouchEnd);
+    container.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+
     return () => {
       container.removeEventListener('touchstart', onTouchStart);
       container.removeEventListener('touchmove', onTouchMove);
       container.removeEventListener('touchend', onTouchEnd);
+      container.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
     };
-  }, [currentPage, goToPage]);
+  }, [currentPage]);
 
   useEffect(() => {
     if (!optionsRectShown) return;
@@ -408,7 +374,7 @@ export default function ReadPage() {
       <div className="flex-1 flex justify-center px-3 pt-5 pb-5 overflow-hidden">
         <div className="w-full max-w-[560px] flex flex-col gap-4">
 
-          {/* slider viewport */}
+          {/* slider viewport — overflow-hidden clips the sliding card */}
           <div
             ref={containerRef}
             className="flex-1 rounded-3xl overflow-hidden"
@@ -417,103 +383,82 @@ export default function ReadPage() {
               boxShadow: isDark ? '0 8px 40px rgba(0,0,0,0.5)' : '0 8px 40px rgba(180,130,40,0.1)',
             }}
           >
-            {/* 3-card track: [next | current | prev]
-                translateX(-33.333%) = -1 card width, centers on middle card */}
-            <div
-              ref={trackRef}
-              className="h-full"
-              style={{ display: 'flex', width: '300%', willChange: 'transform', transform: 'translateX(33.333%)' }}
-            >
-              {/* left slot → next page (revealed on swipe-right) */}
-              <div className="h-full" style={{ width: '33.333%', flex: '0 0 33.333%', ...cardBg }}>
-                <SidePageView pageData={sliderPages[0]} isDark={isDark} />
-              </div>
+            <div ref={pageScrollRef} className="page scrollbar h-full px-4 pt-4 pb-4"
+              style={{ overflowY: 'auto', willChange: 'transform', ...cardBg }}>
 
-              {/* center slot → current page (flex item is the scrollable; height from stretch, not from h-full chain) */}
-              <div ref={pageScrollRef} className="page scrollbar px-4 pt-4 pb-4" style={{ width: '33.333%', flex: '0 0 33.333%', overflowY: 'auto', minHeight: 0, ...cardBg }}>
+                {/* bar */}
+                <div className="select-none overflow-hidden py-[5px] mb-[20px] relative" ref={barRef}>
+                  <span className="bar-label text-[15px] font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-left font-kitab">
+                    {surahName}
+                  </span>
+                  <span className="bar-label text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-right tracking-[1px]">
+                    {juz(currentPage[0].juz)}
+                  </span>
+                </div>
 
-                  {/* bar */}
-                  <div className="select-none overflow-hidden py-[5px] mb-[20px] relative" ref={barRef}>
-                    <span className="bar-label text-[15px] font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-left font-kitab">
-                      {surahName}
-                    </span>
-                    <div
-                      className="font-bold w-10 h-10 leading-[40px] rounded-full bg-gradient-to-br from-[#c8952a] to-[#e8b85a] text-center text-[#1a0f00] shadow-md m-auto absolute left-1/2 -translate-x-1/2 tracking-[1px]"
-                      style={{ fontFamily: 'Arial,sans-serif', fontSize: '14px' }}
-                    >
-                      {arNum(displayNum)}
-                    </div>
-                    <span className="bar-label text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-right tracking-[1px]">
-                      {juz(currentPage[0].juz)}
-                    </span>
-                  </div>
+                {/* options toolbar */}
+                <div className="overflow-hidden mb-[5px] py-[5px]">
+                  <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.home }} onClick={() => router.push('/')} />
+                  <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.search }} onClick={() => setModal({ name: 'search', data: null })} />
+                  <button
+                    disabled={isBookmarkDisabled}
+                    className={`${optBtnBase}${isBookmarkDisabled ? ' disabled' : ''}`}
+                    dangerouslySetInnerHTML={{ __html: icons.bookmark }}
+                    onClick={bookmarkPage}
+                  />
+                  <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: isDark ? SUN : MOON }} onClick={toggleDark} />
+                  {isInitialPlaying && (
+                    isPlaying
+                      ? <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.pause }} onClick={pauseReciting} />
+                      : <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.playSolid }} onClick={resumeReciting} />
+                  )}
+                  {isInitialPlaying && (
+                    <label className="auto-label h-10 leading-[45px] font-tajawal text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] select-none inline-flex items-center justify-items-center gap-[15px] mr-[10px]">
+                      <input type="checkbox" className="o-switch-btn scale-[1.3] mx-[10px] ml-[15px] mt-[10px] float-right" checked={isAuto} onChange={handleAutoChange} />
+                      تلقائي
+                    </label>
+                  )}
+                </div>
 
-                  {/* options toolbar */}
-                  <div className="overflow-hidden mb-[5px] py-[5px]">
-                    <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.home }} onClick={() => router.push('/')} />
-                    <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.search }} onClick={() => setModal({ name: 'search', data: null })} />
-                    <button
-                      disabled={isBookmarkDisabled}
-                      className={`${optBtnBase}${isBookmarkDisabled ? ' disabled' : ''}`}
-                      dangerouslySetInnerHTML={{ __html: icons.bookmark }}
-                      onClick={bookmarkPage}
-                    />
-                    <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: isDark ? SUN : MOON }} onClick={toggleDark} />
-                    {isInitialPlaying && (
-                      isPlaying
-                        ? <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.pause }} onClick={pauseReciting} />
-                        : <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.playSolid }} onClick={resumeReciting} />
-                    )}
-                    {isInitialPlaying && (
-                      <label className="auto-label inline-block h-10 leading-[45px] font-tajawal text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] select-none">
-                        <input type="checkbox" className="o-switch-btn scale-[1.3] mx-[10px] ml-[15px] mt-[10px] float-right" checked={isAuto} onChange={handleAutoChange} />
-                        تلقائي
-                      </label>
-                    )}
-                  </div>
-
-                  {/* page content */}
-                  <div className={`page-content relative${hasSajda ? ' has-sajda' : ''}`}>
-                    {currentPage.map((obj, index) => (
-                      <span key={index}>
-                        {obj.localVerse === 1 && (
-                          <div className="page-head text-[#1a0f00] bg-gradient-to-r from-[#c8952a] to-[#e8b85a] text-[18px] text-center mb-[10px] rounded-[50px] py-[20px] select-none max-w-[200px] mx-auto my-[20px] shadow-md shadow-amber-900/30">
-                            <p className="font-bold w-[30px] h-[30px] leading-[30px] rounded-full mx-auto mb-[10px] bg-white text-[#1a0f00] text-xs m-0" style={{ fontFamily: 'Arial,sans-serif' }}>
-                              {arNum(obj.surah)}
-                            </p>
-                            <p className="font-bold text-[20px] font-kitab m-0 mb-[5px]">سُورَةُ {obj.name}</p>
-                            <p className="m-0 font-tajawal text-xs font-bold">
-                              <span>أياتها {arNum(obj.verses)}</span>{' - '}<span>{surahType(obj.type)}</span>
-                            </p>
+                {/* page content */}
+                <div className={`page-content leading-relaxed relative${hasSajda ? ' has-sajda' : ''}`}>
+                  {currentPage.map((obj, index) => (
+                    <span key={index}>
+                      {obj.localVerse === 1 && (
+                        <div className="page-head text-[#1a0f00] bg-gradient-to-r from-[#c8952a] to-[#e8b85a] text-[18px] text-center mb-[10px] rounded-[50px] py-[20px] select-none max-w-[200px] mx-auto my-[20px] shadow-md shadow-amber-900/30">
+                          <p className="font-bold w-[30px] h-[30px] leading-[30px] rounded-full mx-auto mb-[10px] bg-white text-[#1a0f00] text-xs m-0" style={{ fontFamily: 'Arial,sans-serif' }}>
+                            {arNum(obj.surah)}
+                          </p>
+                          <p className="font-bold text-[20px] font-kitab m-0 mb-[5px]">سُورَةُ {obj.name}</p>
+                          <p className="m-0 font-tajawal text-xs font-bold">
+                            <span>أياتها {arNum(obj.verses)}</span>{' - '}<span>{surahType(obj.type)}</span>
+                          </p>
+                        </div>
+                      )}
+                      {obj.localVerse === 1 && ![1, 9].includes(obj.surah) && (
+                        <div className="bismillah-text">{START}</div>
+                      )}
+                      <span
+                        id={'verse_' + obj.globalVerse}
+                        className={[getHighlightedVerseColor(obj), 'verse'].filter(Boolean).join(' ')}
+                        onClick={(e) => showVerseOpt(obj, e)}
+                      >
+                        <span className="text" dangerouslySetInnerHTML={{ __html: highlight(obj.text, GOD_ARR, 'god') }} />
+                        <span className="num">{arNum(obj.localVerse)}</span>
+                        {obj.sajda && (
+                          <div className="sajda">
+                            <span dangerouslySetInnerHTML={{ __html: icons.sajda }} />
+                            <span>سجدة</span>
                           </div>
                         )}
-                        {obj.localVerse === 1 && ![1, 9].includes(obj.surah) && (
-                          <div className="bismillah-text">{START}</div>
-                        )}
-                        <span
-                          id={'verse_' + obj.globalVerse}
-                          className={[getHighlightedVerseColor(obj), 'verse'].filter(Boolean).join(' ')}
-                          onClick={(e) => showVerseOpt(obj, e)}
-                        >
-                          <span className="text" dangerouslySetInnerHTML={{ __html: highlight(obj.text, GOD_ARR, 'god') }} />
-                          <span className="num">{arNum(obj.localVerse)}</span>
-                          {obj.sajda && (
-                            <div className="sajda">
-                              <span dangerouslySetInnerHTML={{ __html: icons.sajda }} />
-                              <span>سجدة</span>
-                            </div>
-                          )}
-                        </span>
                       </span>
-                    ))}
-                  </div>
+                    </span>
+                  ))}
+                </div>
 
-                  {/* page footer */}
-                  <div className="select-none grid justify-items-center items-center w-full max-w-[500px] mx-auto my-[10px] gap-y-[20px]">
-                    <div className="font-bold w-10 h-10 leading-[40px] rounded-full bg-gradient-to-br from-[#c8952a] to-[#e8b85a] text-center text-[#1a0f00] inline-block m-0 shadow-md tracking-[1px]"
-                      style={{ fontFamily: 'Arial,sans-serif', fontSize: '14px' }}>
-                      {arNum(displayNum)}
-                    </div>
+                {/* page footer */}
+                <div className="select-none grid justify-items-center items-center w-full max-w-[500px] mx-auto my-[10px] gap-y-[20px]">
+                  <div className='flex justify-between gap-4'>
                     <div>
                       <label className="page-footer-label w-full block text-xs font-bold text-[#8b5e00] dark:text-[#d4a843] font-tajawal mb-[5px] mr-[5px]">القارئ</label>
                       <div className="o-select">
@@ -534,13 +479,22 @@ export default function ReadPage() {
                       </div>
                     </div>
                   </div>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {[['المفضلة','bookmarks'],['اذكار','azkar'],['تسبيح','tasbih'],['دعاء الختم','doaa'],['الختمات','completion']].map(([label, name]) => (
+                      <button key={name}
+                        onClick={() => setModal({ name, data: null })}
+                        className="text-xs font-bold px-4 py-2 rounded-full transition-all active:scale-95"
+                        style={{
+                          background: isDark ? 'rgba(212,168,67,0.07)' : 'rgba(180,130,40,0.07)',
+                          border: `1px solid ${isDark ? 'rgba(212,168,67,0.18)' : 'rgba(180,130,40,0.22)'}`,
+                          color: isDark ? '#d4a843' : '#8b5e00',
+                        }}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-              </div>
-
-              {/* right slot → prev page (revealed on swipe-left) */}
-              <div className="h-full" style={{ width: '33.333%', flex: '0 0 33.333%', ...cardBg }}>
-                <SidePageView pageData={sliderPages[2]} isDark={isDark} />
-              </div>
             </div>
           </div>
 

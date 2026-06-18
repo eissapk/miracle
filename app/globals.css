@@ -94,10 +94,17 @@ input[type="checkbox"].o-switch-btn:checked::before { left: calc(100% - 18px); }
 .addLayer::after { position: fixed; content: ""; left: 0; top: 0; width: 100%; height: 100vh; background-color: transparent; z-index: 999999; }
 
 /* ---- verse — JS manipulates .selected .orange .purple .blue .red ---- */
-.verse { cursor: pointer; padding: 16px 7px 11px 0; position: relative; }
+.verse { cursor: pointer; padding: 16px 7px 11px 0; }
 .verse .text { font-size: 25px; font-family: "Kitab-Regular2"; letter-spacing: initial; color: #2a1a00; pointer-events: none; user-select: none; }
 .verse .num { pointer-events: none; font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; width: 35px; height: 35px; line-height: 35px; border-radius: 50%; background: linear-gradient(135deg, #c8952a, #e8b85a); color: #1a0f00; box-shadow: 0 0 3px 1px rgba(0,0,0,0.15); display: inline-block; font-size: 15px; text-align: center; margin: 0 8px; user-select: none; }
-.verse .sajda { position: absolute; left: 0; text-align: center; transform: translateY(-100%); }
+.verse .sajda {
+    position: absolute;
+    left: -10px;
+    width: 40px;
+    top: 50%;
+    text-align: center;
+    transform: translateY(-50%);
+}
 .verse .sajda svg { display: block; margin: 0 auto; margin-bottom: 2.5px; }
 .verse .sajda span { display: block; font-size: 10px; font-family: "Tajawal", Helvetica, Arial, sans-serif; font-weight: bold; color: #666; }
 .verse.selected, .verse:hover { background: rgba(212,168,67,0.08) !important; border-radius: 5px !important; transition: all 0.1s ease-in-out !important; }
@@ -151,6 +158,132 @@ input[type="checkbox"].o-switch-btn:checked::before { left: calc(100% - 18px); }
 .o-popup.dark article p { color: white; }
 @media (min-width: 500px) { .o-popup { max-width: 500px; } }
 
+/* ---- landing page theme tokens ---- */
+:root {
+  --lp-bg: #fdfaf5;
+  --lp-bg-alt: #f2e8d5;
+  --lp-text: #1a1006;
+  --lp-muted: rgba(40,20,0,0.55);
+  --lp-faint: rgba(40,20,0,0.35);
+  --lp-gold: #d4a843;
+  --lp-gold-accent: #8b5e00;
+  --lp-card-bg: rgba(180,130,40,0.08);
+  --lp-card-border: rgba(180,130,40,0.24);
+  --lp-hero-bg: linear-gradient(160deg,#fdfaf5,#f5e8cc,#fdfaf5);
+  --lp-dot: rgba(180,130,40,0.09);
+  --lp-glow1: rgba(212,168,67,0.18);
+  --lp-glow2: rgba(180,120,20,0.13);
+  --lp-ticker-bg: #e8dcc0;
+  --lp-ticker-border: rgba(180,130,40,0.2);
+  --lp-ticker-name: rgba(120,80,10,0.5);
+  --lp-ticker-star: rgba(120,80,10,0.22);
+  --lp-header-bg: rgba(253,250,245,0.95);
+  --lp-header-border: rgba(180,130,40,0.18);
+  --lp-footer-bg: #e8dcc0;
+  --lp-footer-border: rgba(180,130,40,0.18);
+  --lp-footer-text: rgba(40,20,0,0.45);
+  --lp-footer-gold: rgba(140,90,0,0.45);
+  --lp-btn-outline-border: rgba(140,90,0,0.3);
+  --lp-btn-outline-color: rgba(120,75,0,0.75);
+  --lp-progress-bg: rgba(180,130,40,0.12);
+  --lp-perk-bg: rgba(180,130,40,0.07);
+  --lp-perk-border: rgba(180,130,40,0.2);
+  --lp-perk-text: rgba(40,20,0,0.5);
+  --lp-scroll-hint: rgba(120,80,10,0.22);
+  --lp-step-border: rgba(180,130,40,0.35);
+  --lp-icon-bg: rgba(180,130,40,0.1);
+  --lp-icon-border: rgba(180,130,40,0.28);
+  --lp-large-card-bg: rgba(180,130,40,0.06);
+  --lp-large-card-border: rgba(180,130,40,0.26);
+  --lp-link-bg: rgba(180,130,40,0.1);
+  --lp-link-border: rgba(180,130,40,0.3);
+  --lp-link-color: #7a5200;
+  --lp-chip-bg: rgba(180,130,40,0.08);
+  --lp-chip-border: rgba(180,130,40,0.25);
+  --lp-faq-border: rgba(180,130,40,0.22);
+  --lp-verse-bg: #1a0e00;
+  --lp-cta-dot: rgba(180,130,40,0.07);
+  --lp-cta-glow: rgba(180,130,40,0.1);
+  --lp-cta-muted: rgba(40,20,0,0.45);
+  --lp-cta-fine: rgba(140,90,0,0.35);
+  --lp-toggle-bg: rgba(180,130,40,0.1);
+  --lp-toggle-border: rgba(180,130,40,0.28);
+  --lp-toggle-color: #7a5200;
+  --lp-nav-btn-bg: rgba(180,130,40,0.08);
+  --lp-nav-btn-border: rgba(180,130,40,0.25);
+  --lp-nav-btn-color: #8b5e00;
+  --lp-carousel-num: rgba(120,80,10,0.5);
+  --lp-book-opacity: 0.06;
+}
+html.dark {
+  --lp-bg: #050505;
+  --lp-bg-alt: #080808;
+  --lp-text: #ffffff;
+  --lp-muted: rgba(250,240,220,0.62);
+  --lp-faint: rgba(250,240,220,0.62);
+  --lp-gold: #d4a843;
+  --lp-gold-accent: #d4a843;
+  --lp-card-bg: rgba(212,168,67,0.055);
+  --lp-card-border: rgba(212,168,67,0.15);
+  --lp-hero-bg: linear-gradient(160deg,#050505,#0a0700,#050505);
+  --lp-dot: rgba(212,168,67,0.12);
+  --lp-glow1: rgba(212,168,67,0.12);
+  --lp-glow2: rgba(160,100,20,0.09);
+  --lp-ticker-bg: #0a0800;
+  --lp-ticker-border: rgba(212,168,67,0.1);
+  --lp-ticker-name: rgba(212,168,67,0.72);
+  --lp-ticker-star: rgba(212,168,67,0.35);
+  --lp-header-bg: rgba(5,5,5,0.9);
+  --lp-header-border: rgba(212,168,67,0.1);
+  --lp-footer-bg: #030303;
+  --lp-footer-border: rgba(212,168,67,0.08);
+  --lp-footer-text: rgba(250,240,220,0.52);
+  --lp-footer-gold: rgba(212,168,67,0.5);
+  --lp-btn-outline-border: rgba(212,168,67,0.22);
+  --lp-btn-outline-color: rgba(212,168,67,0.65);
+  --lp-progress-bg: rgba(212,168,67,0.12);
+  --lp-perk-bg: rgba(212,168,67,0.04);
+  --lp-perk-border: rgba(212,168,67,0.1);
+  --lp-perk-text: rgba(250,240,220,0.78);
+  --lp-scroll-hint: rgba(212,168,67,0.22);
+  --lp-step-border: rgba(212,168,67,0.35);
+  --lp-icon-bg: rgba(212,168,67,0.09);
+  --lp-icon-border: rgba(212,168,67,0.2);
+  --lp-large-card-bg: rgba(212,168,67,0.07);
+  --lp-large-card-border: rgba(212,168,67,0.2);
+  --lp-link-bg: rgba(212,168,67,0.1);
+  --lp-link-border: rgba(212,168,67,0.28);
+  --lp-link-color: #d4a843;
+  --lp-chip-bg: rgba(212,168,67,0.08);
+  --lp-chip-border: rgba(212,168,67,0.2);
+  --lp-faq-border: rgba(212,168,67,0.14);
+  --lp-verse-bg: #050505;
+  --lp-cta-dot: rgba(212,168,67,0.045);
+  --lp-cta-glow: rgba(212,168,67,0.07);
+  --lp-cta-muted: rgba(250,240,220,0.38);
+  --lp-cta-fine: rgba(212,168,67,0.6);
+  --lp-toggle-bg: rgba(212,168,67,0.08);
+  --lp-toggle-border: rgba(212,168,67,0.2);
+  --lp-toggle-color: #d4a843;
+  --lp-nav-btn-bg: rgba(212,168,67,0.08);
+  --lp-nav-btn-border: rgba(212,168,67,0.2);
+  --lp-nav-btn-color: #d4a843;
+  --lp-carousel-num: rgba(212,168,67,0.42);
+  --lp-book-opacity: 0.035;
+}
+
+/* ---- landing page utility classes ---- */
+.lp-faq-trigger { color: rgba(26,16,6,0.8); }
+.lp-faq-trigger:hover { color: var(--lp-gold-accent); text-decoration: none; }
+.lp-faq-trigger svg { color: rgba(139,94,0,0.6); }
+html.dark .lp-faq-trigger { color: rgba(255,255,255,0.8); }
+html.dark .lp-faq-trigger:hover { color: var(--lp-gold); text-decoration: none; }
+html.dark .lp-faq-trigger svg { color: rgba(212,168,67,0.6); }
+.lp-faq-content { color: rgba(26,16,6,0.55); }
+html.dark .lp-faq-content { color: rgba(255,255,255,0.45); }
+.lp-quick-btn { color: #2a1500; }
+html.dark .lp-quick-btn { color: #ffffff; }
+
 /* ---- dark mode overrides ---- */
 body.dark .tab-card { background: linear-gradient(135deg, #c8952a, #e8b85a) !important; }
 body.dark .modal-inner-box { background-color: #0a0800 !important; border-color: rgba(212,168,67,0.15) !important; }
@@ -201,3 +334,8 @@ body.dark .azkar-start { color: #d4a843 !important; }
 body.dark .azkar-god { color: #ffeb3b !important; }
 body.dark .doaa-god { color: #ffeb3b !important; }
 body.dark .doaa-text { color: rgba(250,240,220,0.88) !important; }
+
+.noColor::after {
+  left: 15px !important;
+  top: 11px !important;
+}
