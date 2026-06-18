@@ -4,6 +4,15 @@ import { useApp } from '../../context/AppContext';
 import icons from '../../services/icons';
 import { normalize } from '../../services/filters';
 
+const fetchWithCache = async (cacheName, url) => {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(url);
+  if (cached) return cached.json();
+  const response = await fetch(url);
+  await cache.put(url, response.clone());
+  return response.json();
+};
+
 export default function OptionsRect({ options, onUpdate, onTextCopied, onClose, isAuto, onPlayVerse }) {
   const { setModal, audioRef, readViewRef } = useApp();
   const rectRef = useRef(null);
@@ -33,7 +42,7 @@ export default function OptionsRect({ options, onUpdate, onTextCopied, onClose, 
     document.querySelectorAll('.page .verse').forEach(el => el.classList.remove('selected'));
   };
 
-  const reciteVerse = (obj) => {
+  const reciteVerse = async (obj) => {
     if (isOffline()) return showNetworkHint();
     const audio = audioRef.current;
     if (!audio) return;
@@ -53,7 +62,23 @@ export default function OptionsRect({ options, onUpdate, onTextCopied, onClose, 
     deselectVerses();
 
     const globalVerse = obj.globalVerse;
-    audio.src = `https://cdn.islamic.network/quran/audio/64/ar.${options.reciter}/${globalVerse}.mp3`;
+    const proxyUrl = `/api/audio?reciter=${options.reciter}&verse=${globalVerse}`;
+
+    try {
+      const cache = await caches.open('quran-audio');
+      const cached = await cache.match(proxyUrl);
+      if (cached) {
+        const blob = await cached.blob();
+        audio.src = URL.createObjectURL(blob);
+      } else {
+        const response = await fetch(proxyUrl);
+        await cache.put(proxyUrl, response.clone());
+        const blob = await response.blob();
+        audio.src = URL.createObjectURL(blob);
+      }
+    } catch {
+      audio.src = proxyUrl;
+    }
 
     audio.onended = () => {
       if (onUpdate) onUpdate({ isPlaying: false, isInitialPlaying: true });
@@ -72,26 +97,26 @@ export default function OptionsRect({ options, onUpdate, onTextCopied, onClose, 
 
   reciteVerseRef.current = reciteVerse;
 
-  const getVerseExplanation = (obj) => {
+  const getVerseExplanation = async (obj) => {
     if (isOffline()) return showNetworkHint();
     const url = `https://api.alquran.cloud/v1/ayah/${obj.surah}:${obj.localVerse}/editions/ar.${options.explainer}`;
-    fetch(url)
-      .then(r => r.json())
-      .then(res => {
-        setModal({ name: 'explanation', data: { text: res.data[0].text, explainer: options.explainer } });
-      })
-      .catch(() => setModal({ name: 'explanation', data: { error: true } }));
+    try {
+      const res = await fetchWithCache('quran-api', url);
+      setModal({ name: 'explanation', data: { text: res.data[0].text, explainer: options.explainer } });
+    } catch {
+      setModal({ name: 'explanation', data: { error: true } });
+    }
   };
 
-  const getVerseTrans = (obj) => {
+  const getVerseTrans = async (obj) => {
     if (isOffline()) return showNetworkHint();
     const url = `https://api.alquran.cloud/v1/ayah/${obj.surah}:${obj.localVerse}/en.${options.translator}`;
-    fetch(url)
-      .then(r => r.json())
-      .then(res => {
-        setModal({ name: 'trans', data: { text: res.data.text, translator: options.translator } });
-      })
-      .catch(() => setModal({ name: 'trans', data: { error: true } }));
+    try {
+      const res = await fetchWithCache('quran-api', url);
+      setModal({ name: 'trans', data: { text: res.data.text, translator: options.translator } });
+    } catch {
+      setModal({ name: 'trans', data: { error: true } });
+    }
   };
 
   const copyText = (obj) => {
