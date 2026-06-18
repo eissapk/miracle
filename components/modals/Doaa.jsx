@@ -22,7 +22,7 @@ export default function Doaa() {
   return (
     <ModalSlot name="doaa">
       <div className="pl-[10px]">
-        <h3 className="modal-heading m-0 border-b-2 border-[#6a11cb] inline-block pb-[5px] mb-[20px] text-[#333]">
+        <h3 className="modal-heading m-0 border-b-2 border-[#c8952a] inline-block pb-[5px] mb-[20px] text-[#2a1a00]">
           دعاء ختم القرآن
         </h3>
         <div>

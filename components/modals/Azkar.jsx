@@ -53,13 +53,13 @@ export default function Azkar() {
   return (
     <ModalSlot name="azkar">
       <div className="pb-[5px] pl-[10px]">
-        <h3 className="modal-heading m-0 border-b-2 border-[#6a11cb] inline-block pb-[5px] mb-[20px] text-[#333]">
+        <h3 className="modal-heading m-0 border-b-2 border-[#c8952a] inline-block pb-[5px] mb-[20px] text-[#2a1a00]">
           اذكار الصباح والمساء
         </h3>
         {array.map((obj, index) => (
-          <div key={index} className="mb-[15px] border-b border-[#d8d8d8] pb-[15px] last:border-0 last:mb-0 last:pb-0">
+          <div key={index} className="mb-[15px] border-b border-[#e8dcc8] pb-[15px] last:border-0 last:mb-0 last:pb-0">
             {obj.start && (
-              <p className="azkar-start text-center mb-[10px] text-[25px] text-[#2d3748] font-kitab">
+              <p className="azkar-start text-center mb-[10px] text-[25px] text-[#2a1a00] font-kitab">
                 بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ
               </p>
             )}
@@ -68,7 +68,7 @@ export default function Azkar() {
               dangerouslySetInnerHTML={{ __html: highlight(arNum(obj.text), godArr, 'god') }}
             />
             {obj.hint && (
-              <p className="text-[10px] px-[10px] bg-[#718096] rounded-[3px] mt-[10px] font-tajawal inline-block text-white font-bold">
+              <p className="text-[10px] px-2 py-1 bg-[#8c7055] rounded-[3px] mt-[10px] font-tajawal inline-block text-[#fdf8f0] font-bold">
                 {obj.hint}
               </p>
             )}

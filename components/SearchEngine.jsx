@@ -196,15 +196,15 @@ export default function SearchEngine({ onHideModal }) {
         </div>
       </div>
 
-      <div className="search-inner w-full min-h-[70px] mt-[5px] rounded-[3px] border border-[#d8d8d8]">
-        <nav className="px-[10px] pl-[35px] pb-[5px] pt-[10px] border-b border-[#d8d8d8] relative bg-white">
+      <div className="search-inner w-full min-h-[70px] mt-[5px] rounded-[3px] border border-[#e8dcc8]">
+        <nav className="px-[10px] pl-[35px] pb-[5px] pt-[10px] border-b border-[#e8dcc8] relative bg-[#fdf8f0]">
           <ul className="m-0 p-0 pb-[5px] pl-[5px] list-none flex whitespace-nowrap overflow-auto scrollbar">
             {tabs.map((item, index) => item.tab && (
               <li
                 key={index}
                 className={[
                   'hidden cursor-pointer px-[10px] pt-[5px] pb-[2.5px] rounded-[50px] ml-[10px] border border-[#eee] select-none last:ml-0',
-                  item.tab === tab ? 'bg-[#2f70ec] border-[#2f70ec] [&>a]:text-white [&>a]:font-bold' : '',
+                  item.tab === tab ? 'bg-gradient-to-r from-[#c8952a] to-[#e8b85a] border-[#c8952a] [&>a]:text-[#1a0f00] [&>a]:font-bold' : '',
                   item.checked ? '!inline-block' : '',
                 ].join(' ')}
                 onClick={() => handleSelectedTabs(item)}
@@ -217,7 +217,7 @@ export default function SearchEngine({ onHideModal }) {
           </ul>
           <button
             style={length ? { top: '23px' } : {}}
-            className="w-[25px] h-[25px] bg-transparent border-0 outline-none p-0 absolute left-[10px] cursor-pointer top-1/2 -translate-y-1/2 hover:[&>svg]:text-[#2f70ec] active:[-translate-y-1/2_perspective(1px)_translateZ(-0.04px)] [&>svg]:w-full [&>svg]:h-full [&>svg]:text-[#666]"
+            className="w-[25px] h-[25px] bg-transparent border-0 outline-none p-0 absolute left-[10px] cursor-pointer top-1/2 -translate-y-1/2 hover:[&>svg]:text-[#c8952a] active:[-translate-y-1/2_perspective(1px)_translateZ(-0.04px)] [&>svg]:w-full [&>svg]:h-full [&>svg]:text-[#666]"
             dangerouslySetInnerHTML={{ __html: icons.settings }}
             onClick={() => setSettingsShown(s => !s)}
           />
@@ -243,7 +243,7 @@ export default function SearchEngine({ onHideModal }) {
                   </div>
                   <a className="block font-kitab text-[20px] font-bold text-[#666] no-underline px-[5px] py-[10px] rounded-[3px] transition-[background_0.1s_ease] select-none pointer-events-none">
                     {item.text}
-                    <span className="pointer-events-none font-[Arial,sans-serif] w-[35px] h-[35px] leading-[35px] rounded-full inline-block text-[15px] text-center mx-[8px] select-none bg-[#5fd068] text-white shadow-[0_0_3px_1px_rgba(0,0,0,0.15)]">
+                    <span className="pointer-events-none font-[Arial,sans-serif] w-[35px] h-[35px] leading-[35px] rounded-full inline-block text-[15px] text-center mx-[8px] select-none bg-gradient-to-br from-[#c8952a] to-[#e8b85a] text-[#1a0f00] shadow-[0_0_3px_1px_rgba(0,0,0,0.15)]">
                       {arNum(item.localVerse)}
                     </span>
                   </a>
@@ -288,7 +288,7 @@ export default function SearchEngine({ onHideModal }) {
               {tabs.map((item, index) => (!item.tab || (item.tab !== 'surah' && item.tab !== 'verse')) && (
                 <label
                   key={index}
-                  className="search-settings-label flex w-full mb-[5px] border-b border-[#eee] py-[10px] text-[#666] text-[14px] font-bold last:border-b-0 last:mb-0 items-center justify-between"
+                  className="search-settings-label flex w-full mb-[5px] border-b border-[#e8dcc8] py-[10px] text-[#5a4030] text-[14px] font-bold last:border-b-0 last:mb-0 items-center justify-between"
                 >
                   {item.text}
                   <input
@@ -300,7 +300,7 @@ export default function SearchEngine({ onHideModal }) {
                 </label>
               ))}
             </div>
-            <div className="bg-[#eee] p-[10px]">
+            <div className="search-settings-footer bg-[#f0e4c8] p-[10px]">
               <button
                 className="o-btn font-tajawal leading-[35px] font-bold px-[20px]"
                 onClick={() => setSettingsShown(false)}

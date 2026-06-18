@@ -80,15 +80,15 @@ export default function BookmarksModal() {
 
   return (
     <ModalSlot name="bookmark" hide={hide}>
-      <div className="bookmark-inner w-full min-h-[70px] mt-[5px] rounded-[3px] border border-[#d8d8d8]">
-        <nav className="bookmark-nav px-[10px] pl-[35px] pb-[5px] pt-[10px] border-b border-[#d8d8d8] relative bg-white">
+      <div className="bookmark-inner w-full min-h-[70px] mt-[5px] rounded-[3px] border border-[#e8dcc8]">
+        <nav className="bookmark-nav px-[10px] pl-[35px] pb-[5px] pt-[10px] border-b border-[#e8dcc8] relative bg-[#fdf8f0]">
           <ul className="m-0 p-0 pb-[5px] pl-[5px] list-none flex whitespace-nowrap overflow-auto scrollbar">
             {tabs.map((item, index) => item.tab && (
               <li
                 key={index}
                 className={[
                   'hidden cursor-pointer px-[10px] pt-[5px] pb-[2.5px] rounded-[50px] ml-[10px] border border-[#eee] select-none last:ml-0',
-                  item.tab === tab ? 'bg-[#2f70ec] border-[#2f70ec] [&>a]:text-white [&>a]:font-bold' : '',
+                  item.tab === tab ? 'bg-gradient-to-r from-[#c8952a] to-[#e8b85a] border-[#c8952a] [&>a]:text-[#1a0f00] [&>a]:font-bold' : '',
                   item.checked ? '!inline-block' : '',
                 ].join(' ')}
                 onClick={() => setTab(item.tab)}
@@ -119,7 +119,7 @@ export default function BookmarksModal() {
                     </div>
                     <a className="block font-kitab text-[20px] font-bold text-[#666] no-underline px-[5px] py-[10px] rounded-[3px] transition-[background_0.1s_ease] select-none pointer-events-none">
                       {item.text}
-                      <span className="pointer-events-none font-[Arial,sans-serif] w-[35px] h-[35px] leading-[35px] rounded-full inline-block text-[14px] text-center mx-[8px] select-none bg-[#5fd068] text-white shadow-[0_0_3px_1px_rgba(0,0,0,0.15)]">
+                      <span className="pointer-events-none font-[Arial,sans-serif] w-[35px] h-[35px] leading-[35px] rounded-full inline-block text-[14px] text-center mx-[8px] select-none bg-gradient-to-br from-[#c8952a] to-[#e8b85a] text-[#1a0f00] shadow-[0_0_3px_1px_rgba(0,0,0,0.15)]">
                         {arNum(item.localVerse)}
                       </span>
                       <button
@@ -144,7 +144,7 @@ export default function BookmarksModal() {
                     data-page={item.page}
                   >
                     <div className="pointer-events-none float-right select-none">
-                      <span className="surahInfo__page select-none font-bold text-[#666] font-[Arial,sans-serif] text-[14px] ml-[10px] w-[35px] h-[35px] p-0 rounded-full relative border-transparent bg-[#2f70ec] float-right text-center text-white leading-[38px]">
+                      <span className="surahInfo__page select-none font-bold font-[Arial,sans-serif] text-[14px] ml-[10px] w-[35px] h-[35px] p-0 rounded-full relative border-transparent float-right text-center leading-[38px] bg-gradient-to-br from-[#c8952a] to-[#e8b85a] text-[#1a0f00]">
                         {arNum(item.page)}
                       </span>
                       <span className="surahInfo__name select-none font-bold text-[#666] font-kitab text-[20px]">

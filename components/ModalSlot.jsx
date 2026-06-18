@@ -90,15 +90,15 @@ export default function ModalSlot({ name, hide, children }) {
       ref={elmRef}
     >
       <div
-        className="modal-box modal-inner-box relative bg-white h-[95vh] w-full left-0 rounded-t-[30px] border border-[#eee] px-[10px] pb-[10px] pt-0 shadow-sm"
+        className="modal-box modal-inner-box relative bg-[#fdf8f0] h-[95vh] w-full left-0 rounded-t-[30px] border border-[#e8dcc8] px-[10px] pb-[10px] pt-0 shadow-sm max-w-[560px] mx-auto"
         style={{ transform: 'translate3d(0,5vh,0)' }}
         ref={containerRef}
       >
         <nav
-          className="relative overflow-hidden pb-[15px] pt-[10px] cursor-grab before:absolute before:content-[''] before:left-0 before:right-0 before:mx-auto before:w-[50px] before:h-[3px] before:bg-[#666] before:rounded-[5px]"
+          className="relative overflow-hidden pb-[15px] pt-[10px] cursor-grab before:absolute before:content-[''] before:left-0 before:right-0 before:mx-auto before:w-[50px] before:h-[3px] before:bg-[#c8b090] before:rounded-[5px]"
           ref={navRef}
         >
-          <button className="o-btn close z-[9999] float-left mt-[5px] ml-[5px]" onClick={hideModal} />
+          {/* <button className="o-btn close z-[9999] float-left mt-[5px] ml-[5px]" onClick={hideModal} /> */}
         </nav>
         <div className="clear-both h-[calc(100%-50px)] overflow-auto mx-[10px] scrollbar">
           {children}

@@ -87,6 +87,9 @@ input[type="checkbox"].o-switch-btn:checked::before { left: calc(100% - 18px); }
 .o-select::before { position: absolute; content: ""; width: 20px; height: 28px; z-index: 1; left: 1px; border-radius: 4px 0 0 4px; top: 1px; pointer-events: none; background: linear-gradient(135deg, #c8952a, #e8b85a); }
 .o-select::after { position: absolute; content: url("data:image/svg+xml,%3Csvg viewBox='0 0 23 36' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.1924 0.70711C11.583 0.316586 12.2161 0.316585 12.6066 0.70711L14.0209 2.12132C14.4114 2.51185 14.4114 3.14501 14.0209 3.53554L4.0128 13.5436C3.62228 13.9341 2.98911 13.9341 2.59859 13.5436L1.18437 12.1294C0.793848 11.7389 0.793848 11.1057 1.18437 10.7152L11.1924 0.70711Z' fill='%23ffffff'/%3E%3Cpath d='M22.5436 10.7152C22.9342 11.1057 22.9342 11.7389 22.5436 12.1294L21.1294 13.5436C20.7389 13.9341 20.1057 13.9341 19.7152 13.5436L9.70714 3.53554C9.31662 3.14501 9.31662 2.51185 9.70714 2.12132L11.1214 0.707108C11.5119 0.316584 12.145 0.316584 12.5356 0.707108L22.5436 10.7152Z' fill='%23ffffff'/%3E%3Cpath d='M12.5356 35.1294C12.1451 35.5199 11.5119 35.5199 11.1214 35.1294L9.70717 33.7152C9.31664 33.3246 9.31664 32.6915 9.70717 32.3009L19.7152 22.2929C20.1058 21.9024 20.7389 21.9024 21.1294 22.2929L22.5437 23.7071C22.9342 24.0976 22.9342 24.7308 22.5437 25.1213L12.5356 35.1294Z' fill='%23ffffff'/%3E%3Cpath d='M1.1844 25.1213C0.793875 24.7308 0.793875 24.0976 1.1844 23.7071L2.59861 22.2929C2.98914 21.9024 3.6223 21.9024 4.01283 22.2929L14.0209 32.301C14.4114 32.6915 14.4114 33.3246 14.0209 33.7152L12.6067 35.1294C12.2161 35.5199 11.583 35.5199 11.1925 35.1294L1.1844 25.1213Z' fill='%23ffffff'/%3E%3C/svg%3E"); width: 10px; height: 15px; z-index: 1; left: 6.5px; top: 50%; transform: translateY(-50%); pointer-events: none; }
 
+/* ---- modal content ---- */
+.modal-heading { color: #2a1a00; }
+
 /* ---- modal animations — JS adds/removes .hide, .pauseAnimation, .addLayer ---- */
 .modal-box { animation: slideToUp 0.2s linear forwards; }
 .modal-root.hide .modal-box { animation: slideToDown 0.2s linear forwards !important; }
@@ -286,8 +289,8 @@ html.dark .lp-quick-btn { color: #ffffff; }
 
 /* ---- dark mode overrides ---- */
 body.dark .tab-card { background: linear-gradient(135deg, #c8952a, #e8b85a) !important; }
-body.dark .modal-inner-box { background-color: #0a0800 !important; border-color: rgba(212,168,67,0.15) !important; }
-body.dark .modal-inner-box > nav::before { background-color: rgba(212,168,67,0.4) !important; }
+body.dark .modal-inner-box { background-color: #0c0900 !important; border-color: rgba(212,168,67,0.15) !important; }
+body.dark .modal-inner-box > nav::before { background-color: rgba(212,168,67,0.45) !important; }
 body.dark .modal-heading { color: #d4a843 !important; border-bottom-color: #c8952a !important; }
 body.dark .modal-text { color: rgba(250,240,220,0.75) !important; }
 body.dark .opt-btn { background: linear-gradient(135deg, #c8952a, #e8b85a) !important; border-color: rgba(212,168,67,0.3) !important; }
@@ -312,7 +315,7 @@ body.dark .OptionsRect .opts-rect-btn { background: transparent !important; }
 body.dark .OptionsRect .opts-rect-btn svg { color: rgba(250,240,220,0.75) !important; }
 body.dark .OptionsRect .opts-rect-btn:hover svg { color: #d4a843 !important; }
 body.dark .page-footer-label { color: #d4a843 !important; }
-body.dark .bookmark-nav { background: #0a0800 !important; border-bottom-color: rgba(212,168,67,0.2) !important; }
+body.dark .bookmark-nav { background: #0a0700 !important; border-bottom-color: rgba(212,168,67,0.2) !important; }
 body.dark .bookmark-nav ul li { border-color: rgba(212,168,67,0.2) !important; }
 body.dark .bookmark-nav ul li a { color: rgba(250,240,220,0.75) !important; }
 body.dark .bookmark-inner { border-color: rgba(212,168,67,0.2) !important; }
@@ -321,8 +324,12 @@ body.dark .result-item .verseInfo span { color: rgba(250,240,220,0.75) !importan
 body.dark .result-item .surahInfo span { color: rgba(250,240,220,0.75) !important; }
 body.dark .empty-msg { color: rgba(250,240,220,0.6) !important; }
 body.dark .search-no-results { color: rgba(250,240,220,0.6) !important; }
-body.dark .search-settings-label { color: rgba(250,240,220,0.75) !important; }
+body.dark .search-settings-label { color: rgba(250,240,220,0.75) !important; border-bottom-color: rgba(212,168,67,0.15) !important; }
 body.dark .search-inner { border-color: rgba(212,168,67,0.15) !important; }
+body.dark .search-inner > nav { background: #0a0700 !important; border-bottom-color: rgba(212,168,67,0.2) !important; }
+body.dark .search-inner > nav ul li { border-color: rgba(212,168,67,0.2) !important; }
+body.dark .search-inner > nav ul li a { color: rgba(250,240,220,0.75) !important; }
+body.dark .search-settings-footer { background: #1a1000 !important; }
 body.dark .search-result-item a { color: rgba(250,240,220,0.75) !important; }
 body.dark .search-result-item .verseInfo span { color: rgba(250,240,220,0.75) !important; }
 body.dark .search-result-item .surahInfo span { color: rgba(250,240,220,0.75) !important; }
