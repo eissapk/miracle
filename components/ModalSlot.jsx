@@ -100,7 +100,7 @@ export default function ModalSlot({ name, hide, children }) {
         >
           {/* <button className="o-btn close z-[9999] float-left mt-[5px] ml-[5px]" onClick={hideModal} /> */}
         </nav>
-        <div className="clear-both h-[calc(100%-50px)] overflow-auto mx-[10px] scrollbar">
+        <div className="clear-both h-[calc(100%-45px)] overflow-auto mx-[10px] scrollbar">
           {children}
         </div>
       </div>

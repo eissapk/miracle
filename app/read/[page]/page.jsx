@@ -65,6 +65,7 @@ export default function ReadPage() {
   const [notifyClass, setNotifyClass] = useState("");
   const [isBookmarkDisabled, setIsBookmarkDisabled] = useState(false);
   const [displayNum, setDisplayNum] = useState(pageNum.current);
+  const [pageInputStr, setPageInputStr] = useState(String(pageNum.current));
   const [playingVerse, setPlayingVerse] = useState(null);
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
 
@@ -76,6 +77,7 @@ export default function ReadPage() {
   const scrollUpdateCleanupRef = useRef(null);
   const slideNavRef = useRef({ next: () => {}, prev: () => {} });
   const quickMenuRef = useRef(null);
+  const pageInputTimerRef = useRef(null);
 
   const getLastReadObj = (arr) => {
     const f = arr[0];
@@ -159,6 +161,29 @@ export default function ReadPage() {
 
   /* keep slideNavRef fresh every render */
   slideNavRef.current = { next, prev };
+
+  useEffect(() => { setPageInputStr(String(displayNum)); }, [displayNum]);
+
+  const handlePageInputChange = (e) => {
+    const val = e.target.value;
+    setPageInputStr(val);
+    clearTimeout(pageInputTimerRef.current);
+    pageInputTimerRef.current = setTimeout(() => {
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num >= 1 && num <= 604) {
+        pageNum.current = num;
+        setDisplayNum(num);
+        window.history.replaceState(null, "", "/read/" + num);
+        setOptionsRectShown(false);
+        loadPage(num);
+      }
+    }, 350);
+  };
+
+  const handlePageInputBlur = () => {
+    const num = parseInt(pageInputStr, 10);
+    if (isNaN(num) || num < 1 || num > 604) setPageInputStr(String(displayNum));
+  };
 
   useEffect(() => {
     setReadViewEnabled(true);
@@ -362,6 +387,14 @@ export default function ReadPage() {
     }, duration);
   }, []);
 
+  const saveKhatma = useCallback(() => {
+    const existing = JSON.parse(localStorage.getItem("completion")) || [];
+    const record = { id: Date.now(), time: new Date().toISOString() };
+    localStorage.setItem("completion", JSON.stringify([...existing, record]));
+    localStorage.setItem("lastRead", JSON.stringify({ juz: 1, page: 1, name: "ٱلْفَاتِحَةِ", type: "mec", surah: 1, verses: 7 }));
+    showNotify("تم حفظ الختمة بنجاح 🎉", "success", 2500);
+  }, [showNotify]);
+
   const getHighlightedVerseColor = (obj) => {
     const arr = JSON.parse(localStorage.getItem("highlightedVerses")) || [];
     const found = arr.find((item) => item.globalVerse === obj.globalVerse);
@@ -421,7 +454,7 @@ export default function ReadPage() {
     (update) => {
       if (update.networkHint) {
         showNotify(update.notifyDesc || "انت غير متصل بالانترنت", update.notifyClass || "alert", 2000);
-        return;
+        // return;
       }
       if (update.isPlaying !== undefined) setIsPlaying(update.isPlaying);
       if (update.isInitialPlaying !== undefined) setIsInitialPlaying(update.isInitialPlaying);
@@ -488,10 +521,25 @@ export default function ReadPage() {
                   {juz(currentPage[0].juz)}
                 </span>
                 <span
-                  className="font-bold tabular-nums absolute left-1/2 top-1/2 mx-auto inline-block -translate-x-1/2 -translate-y-1/2 text-xs"
-                  style={{ color: isDark ? "rgba(212,168,67,0.6)" : "rgba(120,80,10,0.55)", fontFamily: "Arial,sans-serif" }}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 inline-flex items-center gap-1"
+                  style={{ fontFamily: "Arial,sans-serif" }}
                 >
-                  {arNum(displayNum)} / 604
+                  <input
+                    type="number"
+                    value={pageInputStr}
+                    min={1}
+                    max={604}
+                    onChange={handlePageInputChange}
+                    onBlur={handlePageInputBlur}
+                    className="text-xs font-bold text-center w-10 h-6 rounded-full tabular-nums px-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-[rgba(212,168,67,0.6)]"
+                    style={{
+                      color: isDark ? "rgba(212,168,67,0.95)" : "rgba(120,80,10,0.8)",
+                      border: isDark ? "1px solid rgba(212,168,67,0.45)" : "1px solid rgba(120,80,10,0.35)",
+                      MozAppearance: "textfield",
+                      WebkitAppearance: "none",
+                    }}
+                  />
+                  <span className="text-xs font-bold tabular-nums" style={{ color: isDark ? "rgba(212,168,67,0.95)" : "rgba(120,80,10,0.8)" }}>/ 604</span>
                 </span>
                 <span className="bar-label text-[15px] font-bold text-[#8b5e00] dark:text-[#d4a843] leading-[35px] border-b-2 border-[#c8952a] float-left font-kitab">
                   {surahName}
@@ -513,6 +561,15 @@ export default function ReadPage() {
                   onClick={bookmarkPage}
                 />
                 <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: isDark ? SUN : MOON }} onClick={toggleDark} />
+                {displayNum >= 604 && (
+                  <button
+                    onClick={saveKhatma}
+                    className="float-right h-10 px-3 mx-[5px] rounded-full border-0 outline-none cursor-pointer text-xs font-bold active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]"
+                    style={{ background: "linear-gradient(135deg,#c8952a,#e8b85a)", color: "#1a0f00", boxShadow: "0 4px 16px rgba(212,168,67,0.35)" }}
+                  >
+                    احفظ الختمة
+                  </button>
+                )}
                 {isInitialPlaying &&
                   (isPlaying ? (
                     <button className={optBtnBase} dangerouslySetInnerHTML={{ __html: icons.pause }} onClick={pauseReciting} />
@@ -575,13 +632,13 @@ export default function ReadPage() {
 
           {/* bottom navigation */}
           <div className="flex items-center justify-between px-1 shrink-0">
-            <button
+            {/* <button
               className="nav-btn !w-10 !h-10 rounded-full border-0 outline-none cursor-pointer transition-all disabled:opacity-25 active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]"
               style={{ background: "linear-gradient(135deg,#c8952a,#e8b85a)", boxShadow: "0 4px 16px rgba(212,168,67,0.25)" }}
               dangerouslySetInnerHTML={{ __html: icons.next }}
               onClick={next}
               disabled={displayNum >= 604}
-            ></button>
+            ></button> */}
 
             <div className="select-none flex items-center justify-center gap-4 w-full max-w-[500px] mx-auto my-[10px]">
               <div className="o-select !min-w-36">
@@ -615,9 +672,9 @@ export default function ReadPage() {
                     }}
                   >
                     {[
-                      ["المفضلة", "bookmarks"],
                       ["اذكار", "azkar"],
                       ["تسبيح", "tasbih"],
+                      ["المفضلة", "bookmarks"],
                       ["دعاء الختم", "doaa"],
                       ["الختمات", "completion"],
                     ].map(([label, name]) => (
@@ -643,13 +700,13 @@ export default function ReadPage() {
               </div>
             </div>
 
-            <button
+            {/* <button
               className="nav-btn !w-10 !h-10 rounded-full border-0 outline-none cursor-pointer transition-all disabled:opacity-25 active:[transform:perspective(1px)_translateZ(-0.04px)] active:transition-[200ms_cubic-bezier(0.12,0.8,0.32,1)]"
               style={{ background: "linear-gradient(135deg,#c8952a,#e8b85a)", boxShadow: "0 4px 16px rgba(212,168,67,0.25)" }}
               dangerouslySetInnerHTML={{ __html: icons.prev }}
               onClick={prev}
               disabled={displayNum <= 1}
-            ></button>
+            ></button> */}
           </div>
         </div>
       </div>

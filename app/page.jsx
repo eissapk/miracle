@@ -50,7 +50,7 @@ const TAFSEERS = [
     title: 'تفسير الميسر',
     author: 'نخبة من علماء المملكة العربية السعودية',
     desc: 'تفسير سهل مُيسَّر يُعنى بتوضيح المعاني بأسلوب واضح ومختصر يناسب القارئ المعاصر',
-    sample: 'اقرأ يا محمد ما يُوحى إليك مستعينًا باسم ربك الذي خلق الخلائق كلها',
+    sample: 'اقرأ -أيها النبي- ما أُنزل إليك من القرآن مُفْتَتِحًا باسم ربك المتفرد بالخلق، الذي خلق كل إنسان من قطعة دم غليظ أحمر. اقرأ -أيها النبي- ما أُنزل إليك، وإن ربك لكثير الإحسان واسع الجود، الذي علَّم خلقه الكتابة بالقلم، علَّم الإنسان ما لم يكن يعلم، ونقله من ظلمة الجهل إلى نور العلم.',
   },
   {
     key: 'jalalayn',
@@ -58,7 +58,7 @@ const TAFSEERS = [
     title: 'تفسير الجلالين',
     author: 'جلال الدين المحلي · جلال الدين السيوطي',
     desc: 'من أشهر التفاسير الكلاسيكية، يتميز بالإيجاز والدقة في الشرح اللغوي والبياني للآيات',
-    sample: 'اقرأ مُفتتِحًا بذكر ربك، وهو الذي خلق جميع المخلوقات',
+    sample: '«اقرأ» أوجد القراءة مبتدئا «باسم ربك الذي خلق» الخلائق.',
   },
 ];
 
@@ -86,6 +86,14 @@ const FAQS = [
 ];
 
 const PERKS = ['خط واضح ومتقن', 'استماع للتلاوة', 'تفسير وترجمة', 'بحث متقدم', 'وضع مظلم', 'حفظ المفضلة'];
+
+const HERO_QUICK_LINKS = [
+  ['اذكار', 'azkar'],
+  ['تسبيح', 'tasbih'],
+  ['المفضلة', 'bookmarks'],
+  ['دعاء الختم', 'doaa'],
+  ['الختمات', 'completion'],
+];
 
 /* gold gradient text — same in both modes */
 const GT = {
@@ -447,6 +455,18 @@ export default function LandingPage() {
                 </span>
               ))}
             </div>
+
+            <div className="mt-4 flex flex-wrap gap-2 justify-center lg:justify-start">
+              {HERO_QUICK_LINKS.map(([label, modal]) => (
+                <button key={modal} onClick={() => showModal(modal)}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-all cursor-pointer"
+                  style={{ background: 'transparent', border: '1px solid var(--lp-card-border)', color: 'var(--lp-muted)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--lp-perk-border)'; e.currentTarget.style.color = 'var(--lp-gold-accent)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--lp-card-border)'; e.currentTarget.style.color = 'var(--lp-muted)'; }}>
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* phone carousel */}
@@ -485,37 +505,23 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-5 mt-8">
-              <button onClick={goNext} disabled={carouselPage >= 604}
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-20"
-                style={{ background: 'var(--lp-nav-btn-bg)', border: '1px solid var(--lp-nav-btn-border)', color: 'var(--lp-nav-btn-color)' }}>
-                <ChevronRight size={16} />
-              </button>
-              <div className="flex items-center gap-1.5">
-                <Input
-                  type="number"
-                  value={inputPage}
-                  min={1}
-                  max={604}
-                  onChange={handlePageInputChange}
-                  onBlur={handlePageInputBlur}
-                  className="text-sm font-bold text-center w-16 h-9 rounded-lg tabular-nums px-1"
-                  style={{
-                    color: 'var(--lp-carousel-num)',
-                    background: 'var(--lp-nav-btn-bg)',
-                    borderColor: 'var(--lp-nav-btn-border)',
-                    '--tw-ring-color': 'rgba(212,168,67,0.55)',
-                    MozAppearance: 'textfield',
-                    WebkitAppearance: 'none',
-                  }}
-                />
-                <span className="text-sm tabular-nums" style={{ color: 'var(--lp-carousel-num)' }}>/ 604</span>
-              </div>
-              <button onClick={goPrev} disabled={carouselPage <= 1}
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-20"
-                style={{ background: 'var(--lp-nav-btn-bg)', border: '1px solid var(--lp-nav-btn-border)', color: 'var(--lp-nav-btn-color)' }}>
-                <ChevronRight size={16} className="rotate-180" />
-              </button>
+            <div className="flex items-center gap-1 mt-8" style={{ fontFamily: 'Arial,sans-serif' }}>
+              <Input
+                type="number"
+                value={inputPage}
+                min={1}
+                max={604}
+                onChange={handlePageInputChange}
+                onBlur={handlePageInputBlur}
+                className="text-xs font-bold text-center w-10 h-6 rounded-full tabular-nums px-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-[rgba(212,168,67,0.6)]"
+                style={{
+                  color: 'var(--lp-carousel-num)',
+                  border: '1px solid var(--lp-perk-border)',
+                  MozAppearance: 'textfield',
+                  WebkitAppearance: 'none',
+                }}
+              />
+              <span className="text-xs font-bold tabular-nums" style={{ color: 'var(--lp-carousel-num)' }}>/ 604</span>
             </div>
           </div>
         </div>
@@ -743,7 +749,7 @@ export default function LandingPage() {
                 <div className="rounded-2xl p-4 mt-auto" style={GC}>
                   <p className="text-[10px] font-bold mb-2 tracking-wide" style={{ color: 'var(--lp-gold-accent)' }}>مثال — سورة العلق (١)</p>
                   <p className="font-almushaf text-base leading-loose mb-2" style={{ color: 'var(--lp-text)' }}>ٱقۡرَأۡ بِٱسۡمِ رَبِّكَ ٱلَّذِى خَلَقَ</p>
-                  <p className="text-xs leading-relaxed" style={{ color: 'var(--lp-muted)' }}>{t.sample}</p>
+                  <p className="text-xs leading-relaxed truncate" style={{ color: 'var(--lp-muted)' }}>{t.sample}</p>
                 </div>
               </div>
             ))}

@@ -123,7 +123,7 @@ export default function BookmarksModal() {
                         {arNum(item.localVerse)}
                       </span>
                       <button
-                        className="o-btn w-[35px] h-[35px] p-0 rounded-full relative top-[11px] border-transparent bg-[#f94c66] m-0 pointer-events-auto"
+                        className="o-btn !w-[35px] !h-[35px] !rounded-full p-0 relative top-[11px] border-transparent m-0 pointer-events-auto !bg-[#f94c66]"
                         onClick={(e) => { e.stopPropagation(); removeVerse(item); }}
                         dangerouslySetInnerHTML={{ __html: icons.close }}
                       />
@@ -152,7 +152,7 @@ export default function BookmarksModal() {
                       </span>
                     </div>
                     <button
-                      className="o-btn w-[35px] h-[35px] p-0 rounded-full border-transparent bg-[#f94c66] float-left m-[2px] relative"
+                      className="o-btn !w-[35px] !h-[35px] p-0 !rounded-full border-transparent !bg-[#f94c66] float-left m-[2px] relative"
                       onClick={(e) => { e.stopPropagation(); removePage(item); }}
                       dangerouslySetInnerHTML={{ __html: icons.close }}
                     />
