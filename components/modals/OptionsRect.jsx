@@ -43,7 +43,7 @@ export default function OptionsRect({ options, onUpdate, onTextCopied, onClose, 
   };
 
   const reciteVerse = async (obj) => {
-    if (isOffline()) return showNetworkHint();
+    // if (isOffline()) return showNetworkHint();
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -98,7 +98,7 @@ export default function OptionsRect({ options, onUpdate, onTextCopied, onClose, 
   reciteVerseRef.current = reciteVerse;
 
   const getVerseExplanation = async (obj) => {
-    if (isOffline()) return showNetworkHint();
+    // if (isOffline()) return showNetworkHint();
     const url = `https://api.alquran.cloud/v1/ayah/${obj.surah}:${obj.localVerse}/editions/ar.${options.explainer}`;
     try {
       const res = await fetchWithCache('quran-api', url);
@@ -109,7 +109,7 @@ export default function OptionsRect({ options, onUpdate, onTextCopied, onClose, 
   };
 
   const getVerseTrans = async (obj) => {
-    if (isOffline()) return showNetworkHint();
+    // if (isOffline()) return showNetworkHint();
     const url = `https://api.alquran.cloud/v1/ayah/${obj.surah}:${obj.localVerse}/en.${options.translator}`;
     try {
       const res = await fetchWithCache('quran-api', url);
