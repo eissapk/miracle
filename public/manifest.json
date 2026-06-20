@@ -1,12 +1,15 @@
 {
-  "name": "Miracle - Quran",
-  "short_name": "Miracle",
-  "description": "Quran Reader App",
+  "name": "معجزة — قراءة القرآن الكريم",
+  "short_name": "معجزة",
+  "description": "اقرأ القرآن الكريم كاملاً بخط جميل واضح مع استماع للتلاوة وتفسير وبحث وأذكار",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#fdf8f0",
+  "theme_color": "#c8952a",
   "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["lifestyle", "education", "religion"],
   "icons": [
     {
       "src": "/icon.svg",
