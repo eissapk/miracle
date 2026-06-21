@@ -36,6 +36,10 @@ export const metadata = {
   manifest: '/manifest.json',
   icons: { icon: '/icon.svg', apple: '/icon.svg' },
   appleWebApp: { capable: true, statusBarStyle: 'default', title: 'معجزة' },
+  alternates: {
+    canonical: BASE_URL,
+    languages: { 'ar': BASE_URL, 'ar-SA': BASE_URL },
+  },
 };
 
 const jsonLd = {
@@ -62,16 +66,51 @@ const jsonLd = {
   ],
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'ما هو تطبيق معجزة؟',
+      acceptedAnswer: { '@type': 'Answer', text: 'معجزة تطبيق ويب حديث لقراءة القرآن الكريم، يجمع بين التصميم الأنيق وميزات الاستماع والتفسير والبحث والأذكار في مكان واحد.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'هل أحتاج إلى الإنترنت للقراءة؟',
+      acceptedAnswer: { '@type': 'Answer', text: 'بيانات القرآن الكريم (604 صفحة) مُدمجة كاملة في التطبيق ولا تحتاج اتصالاً للقراءة. الاستماع للتلاوة الصوتية فقط يتطلب اتصالاً بالشبكة.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'كيف يتذكر التطبيق مكان قراءتي؟',
+      acceptedAnswer: { '@type': 'Answer', text: 'يُحفظ موضع قراءتك تلقائياً في المتصفح مع كل صفحة تفتحها. يمكنك أيضاً حفظ أي صفحة في المفضلة للوصول إليها مباشرة.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'ما هي القراء المتاحون في التطبيق؟',
+      acceptedAnswer: { '@type': 'Answer', text: 'يتيح التطبيق الاستماع بصوت الشيخ ماهر المعيقلى والشيخ أحمد العجمى والشيخ محمود خليل الحصرى رحمه الله. يمكن تغيير القارئ من داخل صفحة القراءة.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'كيف أسجّل ختمة في التطبيق؟',
+      acceptedAnswer: { '@type': 'Answer', text: 'عند الوصول للصفحة 604 يظهر زر "احفظ الختمة". بعد الحفظ يُعاد ضبط التقدم، ويمكنك مراجعة جميع ختماتك من قائمة "الختمات".' },
+    },
+  ],
+};
+
 export default function RootLayout({ children }) {
   return (
     <html dir="rtl" lang="ar" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#c8952a" />
         <link rel="apple-touch-icon" href="/icon.svg" />
-        <link rel="canonical" href={BASE_URL} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       </head>
       <body>

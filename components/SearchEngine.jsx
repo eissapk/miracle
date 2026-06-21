@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "../context/AppContext";
 import icons from "../services/icons";
+import { getQuranUrl } from "../services/pageIndex";
 import { normalize, arNum, getFirstPage } from "../services/filters";
 
 export default function SearchEngine({ onHideModal }) {
@@ -81,7 +82,7 @@ export default function SearchEngine({ onHideModal }) {
     if (readViewEnabled && readViewRef.current) {
       readViewRef.current.setPage(+page);
     } else {
-      router.push("/read/" + page);
+      router.push(getQuranUrl(+page));
     }
   };
 

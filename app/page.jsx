@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { arNum } from '../services/filters';
+import { getQuranUrl } from '../services/pageIndex';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '../components/ui/accordion';
 import { Input } from '../components/ui/input';
 
@@ -88,11 +89,11 @@ const FAQS = [
 const PERKS = ['خط واضح ومتقن', 'استماع للتلاوة', 'تفسير وترجمة', 'بحث متقدم', 'وضع مظلم', 'حفظ المفضلة'];
 
 const HERO_QUICK_LINKS = [
-  ['اذكار', 'azkar'],
-  ['تسبيح', 'tasbih'],
-  ['المفضلة', 'bookmarks'],
-  ['دعاء الختم', 'doaa'],
-  ['الختمات', 'completion'],
+  ['اذكار',     'azkar',      Star],
+  ['تسبيح',    'tasbih',     Hash],
+  ['المفضلة',  'bookmarks',  Bookmark],
+  ['دعاء الختم','doaa',      FileText],
+  ['الختمات',  'completion', Trophy],
 ];
 
 /* gold gradient text — same in both modes */
@@ -374,7 +375,7 @@ export default function LandingPage() {
               style={{ background: 'var(--lp-toggle-bg)', border: '1px solid var(--lp-toggle-border)', color: 'var(--lp-toggle-color)' }}>
               {isDark ? <Sun size={15} /> : <Moon size={15} />}
             </button>
-            <Link href={'/read/' + startPage}
+            <Link href={getQuranUrl(startPage)}
               className="px-5 py-2 rounded-full text-sm font-bold no-underline transition-all"
               style={{ background: 'linear-gradient(to left,#c8952a,#e8b85a)', color: '#1a0f00', boxShadow: '0 4px 16px rgba(212,168,67,0.25)' }}>
               ابدأ القراءة
@@ -433,13 +434,13 @@ export default function LandingPage() {
             )}
 
             <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
-              <Link href={'/read/' + startPage}
+              <Link href={getQuranUrl(startPage)}
                 className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-base no-underline transition-all"
                 style={{ background: 'linear-gradient(to left,#c8952a,#e8b85a)', color: '#1a0f00', boxShadow: '0 8px 32px rgba(212,168,67,0.28)' }}>
                 ابدأ القراءة الآن
                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
               </Link>
-              <Link href="/read/1"
+              <Link href="/quran/al-fatiha/1"
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm no-underline transition-all"
                 style={{ border: '1px solid var(--lp-btn-outline-border)', color: 'var(--lp-btn-outline-color)' }}>
                 من البداية
@@ -457,12 +458,13 @@ export default function LandingPage() {
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2 justify-center lg:justify-start">
-              {HERO_QUICK_LINKS.map(([label, modal]) => (
+              {HERO_QUICK_LINKS.map(([label, modal, Icon]) => (
                 <button key={modal} onClick={() => showModal(modal)}
                   className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-all cursor-pointer"
                   style={{ background: 'transparent', border: '1px solid var(--lp-card-border)', color: 'var(--lp-muted)' }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--lp-perk-border)'; e.currentTarget.style.color = 'var(--lp-gold-accent)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--lp-card-border)'; e.currentTarget.style.color = 'var(--lp-muted)'; }}>
+                  <Icon size={11} />
                   {label}
                 </button>
               ))}
@@ -622,7 +624,7 @@ export default function LandingPage() {
                   اقرأ كامل المصحف الشريف بخط مُتقَن جميل مع تتبع تلقائي لآخر صفحة توقفت عندها
                 </p>
               </div>
-              <Link href={'/read/' + startPage}
+              <Link href={getQuranUrl(startPage)}
                 className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold no-underline w-fit transition-all"
                 style={{ background: 'var(--lp-link-bg)', border: '1px solid var(--lp-link-border)', color: 'var(--lp-link-color)' }}>
                 اقرأ الآن <ArrowLeft size={13} />
@@ -708,7 +710,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="font-bold mb-1" style={{ color: 'var(--lp-text)' }}>{r.name}</h3>
                 <p className="text-xs mb-5" style={{ color: 'var(--lp-faint)' }}>{r.country}</p>
-                <Link href={'/read/' + startPage}
+                <Link href={getQuranUrl(startPage)}
                   className="inline-flex items-center gap-1.5 text-xs font-bold no-underline px-4 py-2 rounded-full transition-all"
                   style={{ background: 'var(--lp-chip-bg)', border: '1px solid var(--lp-chip-border)', color: 'var(--lp-link-color)' }}>
                   <Volume2 size={11} />
@@ -944,7 +946,7 @@ export default function LandingPage() {
             انضم لآلاف القراء واستمتع بتجربة قراءة القرآن الكريم بأجمل التصاميم وأفضل الميزات
           </p>
 
-          <Link href={'/read/' + startPage}
+          <Link href={getQuranUrl(startPage)}
             className="group inline-flex items-center gap-3 px-10 py-4 rounded-full font-black text-lg no-underline transition-all"
             style={{ background: 'linear-gradient(to left,#c8952a,#e8b85a)', color: '#1a0f00', boxShadow: '0 12px 40px rgba(212,168,67,0.3)' }}>
             ابدأ القراءة الآن

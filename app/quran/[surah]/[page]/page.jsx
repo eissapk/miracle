@@ -1,11 +1,13 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useApp } from "../../../context/AppContext";
-import NotFound from "../../../components/NotFound";
-import OptionsRect from "../../../components/modals/OptionsRect";
-import icons from "../../../services/icons";
-import { arNum, juz, surahType, highlight } from "../../../services/filters";
+import { useApp } from "../../../../context/AppContext";
+import NotFound from "../../../../components/NotFound";
+import OptionsRect from "../../../../components/modals/OptionsRect";
+import icons from "../../../../services/icons";
+import { arNum, juz, surahType, highlight } from "../../../../services/filters";
+import { getQuranUrl } from "../../../../services/pageIndex";
+import { Star, Hash, Bookmark, FileText, Trophy, LayoutGrid } from "lucide-react";
 
 const START = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ";
 const GOD_ARR = [
@@ -144,7 +146,7 @@ export default function ReadPage() {
     if (num === pageNum.current) return;
     pageNum.current = num;
     setDisplayNum(num);
-    window.history.replaceState(null, "", "/read/" + num);
+    window.history.replaceState(null, "", getQuranUrl(num));
     setOptionsRectShown(false);
     loadPage(num);
   }, [loadPage]);
@@ -154,7 +156,7 @@ export default function ReadPage() {
     if (num === pageNum.current) return;
     pageNum.current = num;
     setDisplayNum(num);
-    window.history.replaceState(null, "", "/read/" + num);
+    window.history.replaceState(null, "", getQuranUrl(num));
     setOptionsRectShown(false);
     loadPage(num);
   }, [loadPage]);
@@ -173,7 +175,7 @@ export default function ReadPage() {
       if (!isNaN(num) && num >= 1 && num <= 604) {
         pageNum.current = num;
         setDisplayNum(num);
-        window.history.replaceState(null, "", "/read/" + num);
+        window.history.replaceState(null, "", getQuranUrl(num));
         setOptionsRectShown(false);
         loadPage(num);
       }
@@ -191,7 +193,7 @@ export default function ReadPage() {
       setPage: (num) => {
         pageNum.current = num;
         setDisplayNum(num);
-        window.history.replaceState(null, "", "/read/" + num);
+        window.history.replaceState(null, "", getQuranUrl(num));
         setOptionsRectShown(false);
         loadPage(num);
       },
@@ -640,7 +642,7 @@ export default function ReadPage() {
               disabled={displayNum >= 604}
             ></button> */}
 
-            <div className="select-none flex items-center justify-center gap-4 w-full max-w-[500px] mx-auto my-[10px]">
+            <div className="select-none flex items-center gap-4 w-full max-w-[500px] mx-auto mb-5 justify-between m-0">
               <div className="o-select !min-w-36">
                 <select className="!bg-[#fdfaf5] dark:!bg-[#050505] dark:!text-white" value={optionsData.reciter} onChange={(e) => saveOptionsData("reciter", e.target.value)}>
                   <option disabled value="">القارئ</option>
@@ -653,38 +655,58 @@ export default function ReadPage() {
               <div className="relative" ref={quickMenuRef}>
                 <button
                   onClick={() => setQuickMenuOpen((o) => !o)}
-                  className="text-xs font-bold px-4 py-2 rounded-full transition-all active:scale-95"
+                  className="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95"
                   style={{
-                    background: isDark ? "rgba(212,168,67,0.1)" : "rgba(180,130,40,0.08)",
+                    background: quickMenuOpen
+                      ? "linear-gradient(135deg,#c8952a,#e8b85a)"
+                      : isDark ? "rgba(212,168,67,0.1)" : "rgba(180,130,40,0.08)",
                     border: `1px solid ${isDark ? "rgba(212,168,67,0.25)" : "rgba(180,130,40,0.28)"}`,
-                    color: isDark ? "#d4a843" : "#8b5e00",
+                    color: quickMenuOpen ? "#1a0f00" : isDark ? "#d4a843" : "#8b5e00",
+                    boxShadow: quickMenuOpen ? "0 4px 16px rgba(212,168,67,0.3)" : "none",
                   }}
                 >
-                  ⋯
+                  <LayoutGrid size={15} />
                 </button>
                 {quickMenuOpen && (
                   <div
-                    className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded-2xl py-1 flex flex-col min-w-[130px] z-50"
+                    className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 rounded-2xl p-2 grid grid-cols-3 gap-1.5 z-50"
                     style={{
-                      background: isDark ? "#1a1200" : "#fff",
-                      border: `1px solid ${isDark ? "rgba(212,168,67,0.2)" : "rgba(180,130,40,0.18)"}`,
-                      boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+                      background: isDark ? "rgba(18,12,2,0.96)" : "rgba(255,252,245,0.96)",
+                      border: `1px solid ${isDark ? "rgba(212,168,67,0.2)" : "rgba(180,130,40,0.15)"}`,
+                      boxShadow: "0 16px 40px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12)",
+                      backdropFilter: "blur(12px)",
+                      minWidth: "186px",
                     }}
                   >
                     {[
-                      ["اذكار", "azkar"],
-                      ["تسبيح", "tasbih"],
-                      ["المفضلة", "bookmarks"],
-                      ["دعاء الختم", "doaa"],
-                      ["الختمات", "completion"],
-                    ].map(([label, name]) => (
+                      ["اذكار",     "azkar",      Star],
+                      ["تسبيح",    "tasbih",     Hash],
+                      ["المفضلة",  "bookmarks",  Bookmark],
+                      ["دعاء الختم","doaa",      FileText],
+                      ["الختمات",  "completion", Trophy],
+                    ].map(([label, name, Icon]) => (
                       <button
                         key={name}
                         onClick={() => { setModal({ name, data: null }); setQuickMenuOpen(false); }}
-                        className="text-xs font-bold px-4 py-2 text-center active:scale-95 hover:!text-white hover:!bg-[linear-gradient(135deg,#c8952a,#e8b85a)] rounded-md"
-                        style={{ color: isDark ? "#d4a843" : "#8b5e00" }}
+                        className="flex flex-col items-center gap-1.5 px-2 py-2.5 rounded-xl transition-all active:scale-95 group"
+                        style={{
+                          background: isDark ? "rgba(212,168,67,0.06)" : "rgba(180,130,40,0.05)",
+                          border: `1px solid ${isDark ? "rgba(212,168,67,0.1)" : "rgba(180,130,40,0.1)"}`,
+                          color: isDark ? "#d4a843" : "#8b5e00",
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.background = "linear-gradient(135deg,#c8952a,#e8b85a)";
+                          e.currentTarget.style.borderColor = "transparent";
+                          e.currentTarget.style.color = "#1a0f00";
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.background = isDark ? "rgba(212,168,67,0.06)" : "rgba(180,130,40,0.05)";
+                          e.currentTarget.style.borderColor = isDark ? "rgba(212,168,67,0.1)" : "rgba(180,130,40,0.1)";
+                          e.currentTarget.style.color = isDark ? "#d4a843" : "#8b5e00";
+                        }}
                       >
-                        {label}
+                        <Icon size={15} />
+                        <span className="text-[10px] font-bold leading-none">{label}</span>
                       </button>
                     ))}
                   </div>
