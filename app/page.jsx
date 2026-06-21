@@ -417,7 +417,7 @@ export default function LandingPage() {
               <span style={GT} className='pt-2'>بتجربة لا مثيل لها</span>
             </h1>
 
-            <p className="text-base mb-8 leading-relaxed max-w-md mx-auto lg:mx-0 lg:mr-auto" style={{ color: 'var(--lp-muted)' }}>
+            <p className="text-base mb-8 leading-relaxed max-w-md mx-auto lg:mx-0" style={{ color: 'var(--lp-muted)' }}>
               تطبيق معجزة يُقدّم لك المصحف الشريف كاملاً بخط جميل واضح، مع استماع وتفسير وبحث وأذكار
             </p>
 
