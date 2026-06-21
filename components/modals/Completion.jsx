@@ -41,7 +41,7 @@ export default function Completion() {
                   {arNum(handleDate(item.time))}
                 </span>
                 <button
-                  className="o-btn w-[35px] h-[35px] p-0 rounded-full border-transparent bg-[#f94c66] float-left m-[2px] relative"
+                  className="o-btn !w-[35px] !h-[35px] p-0 !rounded-full border-transparent !bg-[#f94c66] float-left m-[2px] relative"
                   onClick={() => remove(item)}
                   dangerouslySetInnerHTML={{ __html: icons.close }}
                 />

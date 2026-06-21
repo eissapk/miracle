@@ -88,11 +88,13 @@ export default function ModalSlot({ name, hide, children }) {
     <div
       className="modal-root fixed inset-0 bg-black/30 z-[9999]"
       ref={elmRef}
+      onClick={hideModal}
     >
       <div
         className="modal-box modal-inner-box relative bg-[#fdf8f0] h-[95vh] w-full left-0 rounded-t-[30px] border border-[#e8dcc8] px-[10px] pb-[10px] pt-0 shadow-sm max-w-[560px] mx-auto"
         style={{ transform: 'translate3d(0,5vh,0)' }}
         ref={containerRef}
+        onClick={e => e.stopPropagation()}
       >
         <nav
           className="relative overflow-hidden pb-[15px] pt-[10px] cursor-grab before:absolute before:content-[''] before:left-0 before:right-0 before:mx-auto before:w-[50px] before:h-[3px] before:bg-[#c8b090] before:rounded-[5px]"

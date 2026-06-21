@@ -92,6 +92,10 @@ input[type="checkbox"].o-switch-btn:checked::before { left: calc(100% - 18px); }
 
 /* ---- modal animations — JS adds/removes .hide, .pauseAnimation, .addLayer ---- */
 .modal-box { animation: slideToUp 0.2s linear forwards; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInLeft  { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: translateX(0); } }
+.slide-from-right { animation: slideInRight 0.22s ease forwards; }
+.slide-from-left  { animation: slideInLeft  0.22s ease forwards; }
 .modal-root.hide .modal-box { animation: slideToDown 0.2s linear forwards !important; }
 .pauseAnimation { animation: none !important; transition: none !important; }
 .addLayer::after { position: fixed; content: ""; left: 0; top: 0; width: 100%; height: 100vh; background-color: transparent; z-index: 999999; }
